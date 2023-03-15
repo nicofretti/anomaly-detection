@@ -1,2 +1,15 @@
+# Docker files
+.dockerignore
 docker-compose.yml
 dockerfile.yml
+
+# Git files
+.git
+.gitattributes
+.gitignore
+
+# Project files
+.idea/**/*
+open_master.sh
+LICENSE
+README.md
