@@ -1,0 +1,9 @@
+Topics,Types,Message Count,Frequency
+/fufi/front_laser/scan,sensor_msgs/LaserScan,463,12.67657285856551
+/fufi/rear_laser/scan,sensor_msgs/LaserScan,447,12.672608724552381
+/fufi/robot_pose,geometry_msgs/Pose,356,9.999938011553693
+/fufi/joint_states,sensor_msgs/JointState,2522,51.16377564712484
+/fufi/vectornav/imu/temperature,sensor_msgs/Temperature,1393,51.07219482496195
+/fufi/robotnik_base_control/cmd_vel,geometry_msgs/Twist,2871,50.528304159789904
+/fufi/imu/data,sensor_msgs/Imu,1393,51.10144009356953
+/fufi/robotnik_base_control/odom,nav_msgs/Odometry,1774,50.264293846246034

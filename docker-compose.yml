@@ -1,0 +1,17 @@
+version: '2'
+
+networks:
+  ros:
+    driver: bridge
+
+services:
+  ros-master:
+    build: 
+      context: .
+      dockerfile: dockerfile.yml
+    command: stdbuf -o L roscore
+    volumes:
+      - ${PWD}:/root/catkin_ws/src/anomaly_detection
+    networks:
+      - ros
+    restart: always
