@@ -14,7 +14,9 @@ services:
       - ros
     restart: unless-stopped
   ros-visualizer:
-    image: osrf/ros:melodic-desktop-full
+    build:
+      context: .
+      dockerfile: dockerfile.yml
     container_name: ros-visualizer
     depends_on:
       - ros-master
@@ -35,7 +37,7 @@ services:
       - /etc/sudoers:/etc/sudoers:ro
       - /etc/sudoers.d:/etc/sudoers.d:ro
       - /home/nicof:/home/nicof:rw #share your home with write permissions
-      - ${PWD}:/home/nicof/catkin_ws/src/anomaly_detection
+      # - ${PWD}:/home/nicof/catkin_ws/src/anomaly_detection:rw
     command: rqt
 
 # Network configuration
