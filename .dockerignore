@@ -10,6 +10,6 @@ dockerfile.yml
 
 # Project files
 .idea/**/*
-open_master.sh
+open_terminal.sh
 LICENSE
 README.md

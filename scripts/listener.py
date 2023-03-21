@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import rospy 
+import rospy
 from sensor_msgs.msg import LaserScan, JointState, Temperature, Imu
 from geometry_msgs.msg import Pose, Twist
 from nav_msgs.msg import Odometry
@@ -15,7 +15,7 @@ import pickle
 import math
 import numpy as np
 import pandas as pd
-from hmmlearn import hmm 
+from hmmlearn import hmm
 
 # Plot the data in real time
 import dash
@@ -34,7 +34,7 @@ import os
 import signal
 
 
-def quaternion_to_euler(w,x,y,z):
+def quaternion_to_euler(w, x, y, z):
     """
     Converts the quaternion given by ROS into the corresponding Euler angles.
     """
@@ -46,12 +46,13 @@ def quaternion_to_euler(w,x,y,z):
     t2 = 1 if t2 > 1 else t2
     t2 = -1 if t2 < -1 else t2
     Y = math.asin(t2)
-        
+
     t3 = 2 * (w * z + x * y)
     t4 = 1 - 2 * (y * y + z * z)
     Z = math.atan2(t3, t4)
 
     return X, Y, Z
+
 
 def H1(i, cov1, cov2):
     """Computes H1 metric as in the paper"""
@@ -59,28 +60,35 @@ def H1(i, cov1, cov2):
     sigma2 = cov2[i, i]
     return ((np.sqrt(2) * (sigma1 * sigma2) ** (0.25)) / ((sigma1 + sigma2) ** (0.5)))
 
+
 def H2(i, mean1, cov1, mean2, cov2):
     """Computes H1 metric as in the paper"""
     mean1_i = mean1[i]
     mean2_i = mean2[i]
     sigma1 = cov1[i, i]
     sigma2 = cov2[i, i]
-    return (((mean1_i - mean2_i) ** 2) / (4*(sigma1 + sigma2)))
+    return (((mean1_i - mean2_i) ** 2) / (4 * (sigma1 + sigma2)))
 
-def avoid_null_variance(model_v,most_frequent_variance):
+
+def avoid_null_variance(model_v, most_frequent_variance):
     """Avoid to have null variance when we have 0 at the denominator"""
-    for i in range(len(model_v[0])): 
-        temp = model_v[i,i] * 0.5
-        model_v[i,i] = model_v[i,i] + temp
+    for i in range(len(model_v[0])):
+        temp = model_v[i, i] * 0.5
+        model_v[i, i] = model_v[i, i] + temp
         most_frequent_variance[i] = most_frequent_variance[i] + temp
     return model_v, most_frequent_variance
 
+
 def hellinger_distance(mean1, cov1, mean2, cov2):
     """Hellinger distance manual computation as in the paper"""
-    first_operator = (np.dot(np.linalg.det(cov1)**(0.25),np.linalg.det(cov2)**(0.25))/(np.linalg.det((cov1+cov2)/2.0)**(0.5)))
-    second_operator = np.exp(np.dot((-1/8.0),np.dot(np.dot(np.transpose(mean1 - mean2),np.linalg.inv((cov1+cov2)/2.0)),(mean1 - mean2))))
+    first_operator = (np.dot(np.linalg.det(cov1) ** (0.25), np.linalg.det(cov2) ** (0.25)) / (
+                np.linalg.det((cov1 + cov2) / 2.0) ** (0.5)))
+    second_operator = np.exp(np.dot((-1 / 8.0),
+                                    np.dot(np.dot(np.transpose(mean1 - mean2), np.linalg.inv((cov1 + cov2) / 2.0)),
+                                           (mean1 - mean2))))
     hel = 1 - np.dot(first_operator, second_operator)
     return hel
+
 
 def is_anomaly(h2_variables, state_means, state_covariance):
     """Used to compute a threshold for the H2 metric"""
@@ -96,16 +104,17 @@ def is_anomaly(h2_variables, state_means, state_covariance):
     h2_thr = np.where(h2_variables > h2_thr, h2_variables, h2_thr)
     return is_anomaly
 
+
 def window_processing(dataHMM, hmm_model):
     '''Predict anomalies of KAIROS robot by processing a window of data'''
     global h2_variables
     # global hellinger_distances
-    hmm.GaussianHMM(algorithm = 'viterbi')
-    prediction = hmm_model.predict(dataHMM) # predict a state for each read row in dataHMM
-    most_frequent_state = np.argmax(np.bincount(prediction)) # check which is the most frequent state
-    data_frequent = dataHMM[prediction == most_frequent_state] # returns the rows with the most frequent state
+    hmm.GaussianHMM(algorithm='viterbi')
+    prediction = hmm_model.predict(dataHMM)  # predict a state for each read row in dataHMM
+    most_frequent_state = np.argmax(np.bincount(prediction))  # check which is the most frequent state
+    data_frequent = dataHMM[prediction == most_frequent_state]  # returns the rows with the most frequent state
     # mean and variance
-    mean = np.array(np.mean(data_frequent, axis=0)) # mean of all the rows in data_frequent
+    mean = np.array(np.mean(data_frequent, axis=0))  # mean of all the rows in data_frequent
     variance = np.var(data_frequent, axis=0)
     # Hellinger base score
     model_m = hmm_model.means_[most_frequent_state]
@@ -115,9 +124,9 @@ def window_processing(dataHMM, hmm_model):
         print("ERROR: can't calculate the confidence interval because of n = 1 --> df = 0\n")
         exit(-1)
     # variance correction by adding a delta to avoid a null value
-    model_v, variance = avoid_null_variance(model_v,variance )
+    model_v, variance = avoid_null_variance(model_v, variance)
     hel_score = hellinger_distance(mean1=model_m, cov1=model_v, mean2=mean, cov2=np.diag(variance))
-    size = np.shape(model_v)[0] # square matrix so rows = cols, 6*6
+    size = np.shape(model_v)[0]  # square matrix so rows = cols, 6*6
     # LOOP WHICH COMPUTES THE HELLINGER DECOMPOSITION
     variables_decomposition = []
     for i in range(0, size):
@@ -134,7 +143,8 @@ def window_processing(dataHMM, hmm_model):
     # with open('anomaly_1_decomposition.npy', 'wb') as f:
     #     np.save(f, h2_variables)
     return hel_score, np.array(variables_decomposition)
-    
+
+
 # callback which is executed every time we receive a message from the wanted topic 
 def front_laser_callback(data):
     global dataHMM
@@ -148,8 +158,9 @@ def front_laser_callback(data):
         semaphore = True
         row[3:6] = [left_lasers, front_lasers, right_lasers]
 
+
 def robot_pose_callback(data):
-    global dataHMM 
+    global dataHMM
     global row
     global semaphore
     global X_first
@@ -159,12 +170,13 @@ def robot_pose_callback(data):
 
     position = data.position
     quaternion_orientation = data.orientation
-    euler_orientation = quaternion_to_euler(quaternion_orientation.w, quaternion_orientation.x, quaternion_orientation.y, quaternion_orientation.z)
+    euler_orientation = quaternion_to_euler(quaternion_orientation.w, quaternion_orientation.x,
+                                            quaternion_orientation.y, quaternion_orientation.z)
     Z_orientation = euler_orientation[2]
     X = position.x
     Y = position.y
     # Z_orientation = position.theta
-    
+
     # check_nan = np.sum(row)
     if semaphore:
         if np.shape(dataHMM)[0] == 0:
@@ -174,7 +186,7 @@ def robot_pose_callback(data):
         X = X - X_first
         Y = Y - Y_first
         row[0:3] = [X, Y, Z_orientation]
-        dataHMM = np.append(dataHMM, np.array([row]), axis = 0)
+        dataHMM = np.append(dataHMM, np.array([row]), axis=0)
         with open(training_filename, 'a') as train_csv:
             writer = csv.writer(train_csv, delimiter=',')
             writer.writerow(row)
@@ -209,6 +221,7 @@ def robot_pose_callback(data):
         row = np.full(cols, np.nan)
         semaphore = False
 
+
 # main function in which we call all the above callbacks for each topic
 def listener():
     rospy.init_node('listener', anonymous=True)
@@ -219,22 +232,24 @@ def listener():
     # NEW TOPIC WITH ROBOTNIK UPDATED TOPIC
     # rospy.Subscriber(robot_pose_topic, LocalizationStatus, robot_pose_callback)
     # front_laser average_rate : 13.083 Hz
-    rospy.Subscriber(front_laser_topic, LaserScan, front_laser_callback) 
+    rospy.Subscriber(front_laser_topic, LaserScan, front_laser_callback)
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
+
 
 # NEW GUI: TO BE FINISHED
 app = dash.Dash(__name__)
 app.layout = html.Div(
-        [
-            dcc.Graph(id = 'live-graph', animate=True),
-            dcc.Interval(
-                id = 'graph-update',
-                interval = 1000,
-                n_intervals = 0
-            )
-        ]
-    )
+    [
+        dcc.Graph(id='live-graph', animate=True),
+        dcc.Interval(
+            id='graph-update',
+            interval=1000,
+            n_intervals=0
+        )
+    ]
+)
+
 
 @app.callback(Output('live-graph', 'figure'), Input('graph-update', 'n_intervals'))
 def update_graph(n):
@@ -247,22 +262,23 @@ def update_graph(n):
         anomaly = points_array[:, 2]
         color = np.where(anomaly == 1, 'red', 'blue')
         data = go.Scatter(
-            x = x,
-            y = y,
-            mode = 'markers',
-            marker = dict(
-                color = color
+            x=x,
+            y=y,
+            mode='markers',
+            marker=dict(
+                color=color
             )
         )
         return {
-            'data' : [data], 
-            'layout' : go.Layout(
-                xaxis=dict(range=[-1.5,0.5]), 
+            'data': [data],
+            'layout': go.Layout(
+                xaxis=dict(range=[-1.5, 0.5]),
                 yaxis=dict(range=[-5, 1])
-        )}
+            )}
+
 
 if __name__ == '__main__':
-    
+
     map_filename = "map_data.csv"
     h2_filename = "h2_decomposition_data.csv"
     training_filename = "training_data.csv"
@@ -315,7 +331,7 @@ if __name__ == '__main__':
     hellinger_distances = []
     # h2_thr = np.zeros((6))
     # DATASET NOMNALE 2
-    h2_thr = [1.26020238, 6.67861522, 0.4251171,  0.70920265, 0.94272347, 0.89692743]
+    h2_thr = [1.26020238, 6.67861522, 0.4251171, 0.70920265, 0.94272347, 0.89692743]
 
     # HMM model takes the X, Y, Orientation, Left, Front and Right Lasers.
     # The orientation is taken has Euler Angles, so remember to convert them.
@@ -344,5 +360,5 @@ if __name__ == '__main__':
     # ROS NODE FOR READING SENSORS
     listener()
 
-    app.run_server(Debug = True)
+    app.run_server(Debug=True)
     print("Running Server!")
