@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="prefix" default="wsg50_"/>
+	<arg name="ip_address" default="192.168.0.212"/>
+	<arg name="gripper_port" default="1000"/>
+	<arg name="control_gripper_by_signals" default="false"/>
+	
+    <group unless="$(arg control_gripper_by_signals)">
+
+        <node name="wsg_50_driver"  pkg="wsg_50_driver" type="wsg_50_ip" respawn="true">
+            <param name="prefix" type="string" value="$(arg prefix)"/>
+            <param name="ip" type="string" value="$(arg ip_address)"/>
+            <param name="port" type="int" value="$(arg gripper_port)"/>
+            <remap from="~/joint_states" to="joint_states"/>
+            <remap from="~/status" to="status"/>
+        </node>
+
+    </group>
+
+	
+</launch>

@@ -1,0 +1,6 @@
+demo_sw:
+  global_frame: demo_frame
+  maps_package: robot_bringup
+  maps:
+    localization: maps/demo_sw/demo_sw.yaml
+    routes: maps/demo_sw/demo_sw.yaml

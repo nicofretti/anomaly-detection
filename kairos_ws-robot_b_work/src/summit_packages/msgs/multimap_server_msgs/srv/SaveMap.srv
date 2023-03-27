@@ -1,0 +1,8 @@
+string map_service
+string map_filename
+bool use_default_thresholds
+float32 threshold_occupied
+float32 threshold_free
+---
+bool success
+string msg

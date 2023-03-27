@@ -1,0 +1,220 @@
+# rbrobout configuration for real leds
+
+signals:
+
+# Signals for the provisional movement node
+
+  - id: "forward"
+    enabled: false
+    led_label: ["front_left_leds", "front_right_leds"]
+    mode: "blink"
+    color: [0, 255, 0, 0]
+    ms_on: 500
+    ms_off: 500
+
+  - id: "backward"
+    enabled: false
+    led_label:  ["rear_left_leds", "rear_right_leds"]
+    mode: "blink"
+    color: [0, 255, 0, 0]
+    ms_on: 500
+    ms_off: 500
+
+  - id: "omni_left"
+    enabled: false
+    led_label: ["front_left_leds", "rear_left_leds"]
+    mode: "blink"
+    color: [0, 255, 0, 0]
+    ms_on: 500
+    ms_off: 500
+  
+  - id: "omni_right"
+    enabled: false
+    led_label: ["front_right_leds", "rear_right_leds"]
+    mode: "blink"
+    color: [0, 255, 0, 0]
+    ms_on: 500
+    ms_off: 500
+
+
+  - id: "turn_left"
+    enabled: false
+    led_label: ["front_left_leds", "front_right_leds", "rear_left_leds", "rear_right_leds"]
+    mode: "shift"
+    color: [0, 255, 0, 0]
+    direction: "left"
+    led_increment: 2
+    speed: 600
+
+
+  - id: "turn_right"
+    enabled: false
+    led_label: ["front_right_leds", "front_left_leds", "rear_right_leds", "rear_left_leds"]
+    mode: "shift"
+    color: [0, 255, 0, 0]
+    direction: "right"
+    led_increment: 2
+    speed: 600
+
+
+  - id: "turn_left_inverse"
+    enabled: false
+    led_label: ["front_left_leds", "front_right_leds", "rear_left_leds", "rear_right_leds"]
+    mode: "shift"
+    color: [0, 255, 0, 0]
+    direction: "left"
+    led_increment: 2
+    speed: 600
+
+
+  - id: "turn_right_inverse"
+    enabled: false
+    led_label: ["front_right_leds", "front_left_leds", "rear_right_leds", "rear_left_leds"]
+    mode: "shift"
+    color: [0, 255, 0, 0]
+    direction: "right"
+    led_increment: 2
+    speed: 600
+
+
+  - id: "stop_robot"
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "paint"
+    color: [0, 255, 0, 0]
+
+  
+  - id: "emergency_stop"
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "paint"
+    color: [255, 0, 0, 0]
+
+
+
+
+
+# Signals for Robot Local Control
+
+  - id: "emergency_stop"
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "blink"
+    color: [255,0,0, 0]
+    ms_on: 400
+    ms_off: 20
+    fade_in: 500
+    fade_out: 700
+
+  - id: "safety_obstacle_detected"
+    enabled: false
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "blink"
+    color: [255,0,0, 0]
+    ms_on: 200
+    ms_off: 200
+
+  - id: "low_battery"
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "blink"
+    color: [0,0,255, 0]
+    background_R: 255
+    background_G: 69
+    backgroubd_B: 0
+    background_W: 0
+    ms_on: 1000
+    ms_off: 1000
+
+  - id: "base_controller_error"
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "blink"
+    background_R: 255
+    fade_in: 500
+    fade_out: 500
+    color: [0,255,0, 0]
+    ms_on: 100
+    ms_off: 1000
+
+
+  - id: "charging"
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "blink"
+    background_R: 255
+    fade_in: 500
+    fade_out: 500
+    color: [0,255,0, 0]
+    ms_on: 100
+    ms_off: 1000
+
+  - id: "arm_controller_error"
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "blink"
+    background_R: 255
+    fade_in: 500
+    fade_out: 500
+    color: [0,0,255, 0]
+    ms_on: 100
+    ms_off: 1000
+
+  - id: "sensor_error"
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "blink"
+    background_R: 255
+    fade_in: 500
+    fade_out: 500
+    color: [20,100,200,0]
+    ms_on: 100
+    ms_off: 1000
+
+  - id: "safety_standby"
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "blink"
+    background_R: 255
+    fade_in: 500
+    fade_out: 500
+    color: [20,100,200,0]
+    ms_on: 100
+    ms_off: 1000
+
+
+  - id: "robot_idle"
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "paint"
+    color: [255,69,0, 0]
+
+  - id: "robot_moving"
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "blink"
+    color: [0,255,0, 0]
+    ms_on: 500
+    ms_off: 500
+
+  - id: "raising_elevator"
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "blink"
+    color: [255,255,0, 0]
+    ms_on: 1000
+    ms_off: 1000
+    fade_in: 500
+    fade_out: 500
+
+
+  - id: "lowering_elevator"
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "blink"
+    color: [0,255,255, 0]
+    ms_on: 1000
+    ms_off: 1000
+    fade_in: 500
+    fade_out: 500

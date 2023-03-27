@@ -1,0 +1,23 @@
+ Program
+   Robot Program
+     Control by SXLSK-210223AA
+   Thread_1
+     EGH Acknowledge
+     EGH Reference
+     xmlrpc_ip≔"192.168.0.200"
+     xmlrpc_port≔"50000"
+     gripper_xmlrpc≔rpc_factory("xmlrpc", "http://"+xmlrpc_ip+":"+xmlrpc_port)
+     Loop
+       gripper_command≔gripper_xmlrpc.get_command()
+       Switch gripper_command
+         Case 1
+           'IDLE COMMAND'
+         Case 2
+           'MOVE COMMAND'
+           gripper_desired≔gripper_xmlrpc.get_desired_pos()
+           'Wait EGH_goto_pos(gripper_desired)'
+           EGH_goto_pos(gripper_desired)
+           gripper_xmlrpc.set_idle()
+       gripper_xmlrpc.set_real_pos(EGH_actual_pos())
+       EGH Acknowledge
+       Wait: 0.5

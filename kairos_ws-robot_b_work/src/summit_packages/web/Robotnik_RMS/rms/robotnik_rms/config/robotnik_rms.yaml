@@ -1,0 +1,64 @@
+managers:
+  - type_action: 0
+    manager: "manager_robot_local_control/manager_robot_local_control_go_to"
+    name_class: "ManagerRobotLocalControlGoTo"
+    service_go_to_petition_add: "'/robot/robot_local_control/NavigationComponent/GoToComponent/add'"
+    service_go_to_petition_query_state: "'/robot/robot_local_control/NavigationComponent/GoToComponent/query_state'"
+    service_go_to_petition_cancel: "'/robot/robot_local_control/NavigationComponent/GoToComponent/cancel'"
+    poi_manager_read_pois: "'/robot/poi_manager/read_pois'"
+    go_to_frame_id: "'robot_map'"
+    max_velocity_linear_x: 0
+    max_velocity_linear_y: 0
+    max_velocity_angular_z: 0
+  #- type_action: 1
+  #  manager: "manager_robotnik_trajectory_manager"
+  #  name_class: "ManagerRobotnikTrajectoryManager"
+  #- type_action: 2
+  #  manager: "manager_publish_gripper"
+  #  name_class: "ManagerPublishGripper"
+  #  publish_topic: "'/gripper_prismatic_joint/command'"
+  #- type_action: 3
+  #  manager: "manager_qr"
+  #  name_class: "ManagerQr"
+  #- type_action: 4
+  #  manager: "manager_go_to_gps"
+  #  name_class: "ManagerGoToGPS"
+  #Charger
+  - type_action: 5
+    manager: "manager_robot_local_control/manager_robot_local_control_charge"
+    name_class: "ManagerRobotLocalControlCharge"
+    service_charge_petition_add: "'/robot/robot_local_control/NavigationComponent/ChargeComponent/add'"
+    service_charge_petition_query_state: "'/robot/robot_local_control/NavigationComponent/ChargeComponent/query_state'"
+    service_charge_petition_cancel: "'/robot/robot_local_control/NavigationComponent/ChargeComponent/cancel'"
+  #Kairos
+  - type_action: 6
+    manager: "manager_robotnik_navigation_action"
+    name_class: "ManagerRobotnikNavigationAction"
+    goal_topic: "'/robot/pp_docker/goal'"
+    status_topic: "'/robot/pp_docker/status'"
+    robot_dock_frame: "'robot_base_footprint'"
+    frame_id: "''"
+    dock_frame: "'robot_laser_contact_for_base_frame'"
+  #Pick
+  - type_action: 7
+    manager: "manager_robot_local_control/manager_robot_local_control_pick"
+    name_class: "ManagerRobotLocalControlPick"
+  #Place
+  - type_action: 8
+    manager: "manager_robot_local_control/manager_robot_local_control_place"
+    name_class: "ManagerRobotLocalControlPlace"
+  #Uncharge
+  - type_action: 9
+    manager: "manager_robot_local_control/manager_robot_local_control_unchar"
+    name_class: "ManagerRobotLocalControlUnchar"
+    service_unchar_petition_add: "'/robot/robot_local_control/NavigationComponent/UnchargeComponent/add'"
+    service_unchar_petition_query_state: "'/robot/robot_local_control/NavigationComponent/UnchargeComponent/query_state'"
+    service_unchar_petition_cancel: "'/robot/robot_local_control/NavigationComponent/UnchargeComponent/cancel'"
+#  - type_action: 10
+#    manager: "manager_universal_robots/manager_universal_robots"
+#    name_class: "ManagerUniversalRobots"
+#  - type_action: 11
+#    manager: "manager_action_move"
+#    name_class: "ManagerMoveAction"
+#    default_x: 0.1
+    

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<launch>
+    <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+    <arg name="init_pose_topic_name" default="initialpose"/>
+    <arg name="goto_planner" default="move_base"/>
+    <arg name="frame_id" default="$(arg id_robot)_map"/>
+    <arg name="folder" default="$(find robot_bringup)/config/navigation/poi_manager"/>
+    <arg name="filename" default="poi"/>
+
+    <node name="poi_manager" pkg="poi_manager" type="poi_node.py">
+        <param name="desired_freq" value="2.0"/>
+        <param name="folder" value="$(arg folder)"/>
+        <param name="filename" value="$(arg filename)"/>
+        <param name="publish_markers" value="false"/>
+        <param name="frame_id" value="$(arg frame_id)"/>
+    </node>
+
+    <node name="poi_interactive_marker" pkg="poi_manager" type="poi_marker.py">
+    	<param name="frame_id" value="$(arg frame_id)"/>
+    	<param name="init_pose_topic_name" value="$(arg init_pose_topic_name)"/>
+    	<param name="goto_planner" value="$(arg goto_planner)"/>
+    </node>
+
+  <node name="poi_interactive_marker_proxy" pkg="interactive_marker_proxy" type="proxy">
+      <param name="target_frame" value="$(arg frame_id)"/>
+      <param name="topic_ns" value="poi_interactive_marker"/>
+      <param name="update_rate" value="5.0"/>
+  </node>
+
+
+</launch>

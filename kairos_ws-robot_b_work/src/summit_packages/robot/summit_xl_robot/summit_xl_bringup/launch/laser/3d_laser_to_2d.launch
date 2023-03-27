@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<launch>
+
+	<!--arg name="camera" default="front_3d_laser" /-->
+	
+  <arg name="id_robot" default="summit_xl"/>
+  <arg name="prefix" default="$(arg id_robot)_"/>
+  <arg name="target_frame" default="$(arg prefix)front_3d_laser_depth_optical_frame" />
+	<arg name="max_height" default="1.0"/>
+	<arg name="min_height" default="-0.35"/>
+	<arg name="angle_min" default="-0.52"/>
+	<arg name="angle_max" default="0.52"/>
+	<arg name="angle_increment" default="0.017453293"/> <!-- 1 degree, in rad -->
+	<arg name="range_min" default="0.1"/>
+	<arg name="range_max" default="10"/>
+  <arg name="min_intensity" default="0" />
+	<arg name="input_topic" default="scan"/>
+	<arg name="output_topic" default="scan_2d"/>
+	<arg name="filter_config_file" default="$(find summit_xl_bringup)/config/3d_laser_to_scan_filter.yaml"/>
+  <arg name="node_name" default="pointcloud_to_laserscan" />
+	
+	<!-- run pointcloud_to_laserscan node -->
+	<node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="$(arg node_name)">
+		<remap from="cloud_in" to="$(arg input_topic)"/>
+		<remap from="scan" to="$(arg output_topic)"/>
+		<param name="max_height" value="$(arg max_height)"/>
+		<param name="min_height" value="$(arg min_height)"/>
+		<param name="angle_min" value="$(arg angle_min)"/>
+		<param name="angle_max" value="$(arg angle_max)"/>	
+    <param name="angle_increment" value="$(arg angle_increment)"/>
+		<param name="range_min" value="$(arg range_min)"/>
+		<param name="range_max" value="$(arg range_max)"/>
+    <param name="min_intensity" value="$(arg min_intensity)" />
+		<param name="use_inf" value="true"/>
+	</node>
+	<node pkg="laser_filters" type="scan_to_scan_filter_chain" name="$(arg node_name)_laser_filter">
+		<rosparam command="load" file="$(arg filter_config_file)" />
+		<remap from="scan" to="$(arg output_topic)"/>
+		<remap from="scan_filtered" to="$(arg output_topic)_filtered"/>
+	</node>
+	
+
+
+</launch>

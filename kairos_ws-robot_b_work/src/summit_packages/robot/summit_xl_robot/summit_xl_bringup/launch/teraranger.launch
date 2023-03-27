@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="portname" default="/dev/ttyACM0"/>
+  <arg name="type" default="duo"/>
+  <arg name="node" default="teraranger"/>
+  <arg name="topicname" default="teraranger_$(arg type)/infrared"/>
+  <arg name="topicnamei" default="teraranger_$(arg type)/ultrasound"/>
+  <arg name="frame_id_ir" default="base_range_ir"/>
+  <arg name="frame_id_us" default="base_range_us"/>
+
+
+  <node name="$(arg node)" pkg="teraranger" type="$(arg type)" respawn="false" output="screen">
+    <param name="portname" value="$(arg portname)"/>
+    <param name="topicname" value="$(arg topicname)"/>
+    <param name="topicnamei" value="$(arg topicnamei)"/>
+    <param name="frame_id_ir" value="$(arg frame_id_ir)"/>
+    <param name="frame_id_us" value="$(arg frame_id_us)"/>
+  </node> 
+
+</launch>
+

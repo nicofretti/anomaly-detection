@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="prefix" default="$(arg id_robot)_"/>
+
+  <!-- Camera locator arguments -->
+  <arg name="run_ar_locator" default="$(optenv ROBOT_RUN_AR_LOCATOR false)"/>
+
+  <!-- Laser locator arguments -->
+  <arg name="run_reflector_locator" default="$(optenv ROBOT_RUN_REFLECTOR_LOCATOR false)"/>
+
+  <arg name="cloud_topic" default="perception_filtered_points"/>
+  <arg name="two_tag_locator_node_name" default="laser_locator"/>
+	<arg name="object_frame" default="$(arg prefix)object_frame_laser"/>
+
+  <arg name="tag_distance" default="0.23"/>
+  <arg name="tag_max_distance_detection" default="3.5"/>
+
+  <arg name="merge_locator_distance_threshold" default="0.2"/>
+  <arg name="merge_locator_ar_marker_frame" default="$(arg prefix)ar_marker_noisy_([0-9]+)"/>
+  <arg name="merge_locator_laser_frame" default="$(arg prefix)laser_noisy_([0-9]+)"/>
+  <arg name="merge_locator_position_x_source" default="laser"/>
+  <arg name="merge_locator_position_y_source" default="laser"/>
+  <arg name="merge_locator_orientation_source" default="laser"/>
+  <arg name="merged_object_id" default="merged_object"/>
+  <arg name="cluster_tolerance" default="0.05"/>
+
+
+  <group if="$(arg run_reflector_locator)">
+
+    <!-- Launch laser locator to detect station using reflectors -->
+    <include file="$(find robot_bringup)/launch/perception/multi_two_tags_locator.launch">
+      <arg name="id_robot" value="$(arg id_robot)"/>
+      <arg name="two_tag_locator_node_name" value="$(arg two_tag_locator_node_name)"/>
+      <arg name="object_frame" value="$(arg object_frame)"/>
+      <arg name="input_topic_name" value="$(arg cloud_topic)"/>
+      <arg name="tag_distance" value="$(arg tag_distance)"/>
+      <arg name="tag_max_distance_detection" value="$(arg tag_max_distance_detection)"/>
+      <arg name="cluster_tolerance" value="$(arg cluster_tolerance)"/>
+    </include>
+
+    <!-- if both are running -->
+    <group  if="$(arg run_ar_locator)">
+      <!-- Launch merge_locator to publish docking station merged detections from camera and laser -->
+      <include file="$(find robot_bringup)/launch/perception/merge_locator.launch">
+        <arg name="id_robot" value="$(arg id_robot)"/>
+        <arg name="merged_object" value="$(arg merged_object_id)"/>
+        <arg name="distance_threshold" value="$(arg merge_locator_distance_threshold)"/>
+        <arg name="ar_marker_frame" value="$(arg merge_locator_ar_marker_frame)"/>
+        <arg name="laser_frame" value="$(arg merge_locator_laser_frame)"/>
+        <arg name="position_x_source" value="$(arg merge_locator_position_x_source)"/>
+        <arg name="position_y_source" value="$(arg merge_locator_position_y_source)"/>
+        <arg name="orientation_source" value="$(arg merge_locator_orientation_source)"/>
+      </include>
+    </group>
+
+  </group>
+
+
+</launch>

@@ -1,0 +1,34 @@
+footprint: [[0.375, -0.34], [0.375, 0.34], [-0.375,0.34], [-0.375, -0.34]]
+
+publish_frequency: 1.0
+
+inflation_layer:
+  inflation_radius: 0.3
+
+obstacle_laser_layer_1_2:
+  obstacle_range: 3.5
+  raytrace_range: 5.5
+  observation_sources: scan_1 scan_2
+  scan_1:
+    data_type: LaserScan
+    topic: $(arg scan_topic_1)
+    marking: true
+    clearing: true
+    observation_persistence: 0.0
+  scan_2:
+    data_type: LaserScan
+    topic: $(arg scan_topic_2)
+    marking: true
+    clearing: true
+    observation_persistence: 0.0
+
+obstacle_laser_layer_3:
+  obstacle_range: 2.5
+  raytrace_range: 5.5
+  observation_sources: scan_3
+  scan_3:
+    data_type: LaserScan
+    topic: $(arg scan_topic_3)
+    marking: true
+    clearing: true
+    observation_persistence: 0.0

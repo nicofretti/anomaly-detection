@@ -1,0 +1,12 @@
+rooftop:
+  global_frame: rooftop_map
+  maps_package: multimap_server
+  maps:
+    localization: maps/rooftop/localization.yaml
+    routes: maps/rooftop/routes.yaml
+basement:
+  global_frame: basement_map
+  maps_package: multimap_server
+  maps:
+    localization: maps/basement/localization.yaml
+    routes: maps/basement/routes.yaml

@@ -1,0 +1,5 @@
+# Marker selected to load
+string frame_id
+---
+bool success
+string message

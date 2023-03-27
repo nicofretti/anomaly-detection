@@ -1,0 +1,19 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/juanma/catkin_summit_xl_demo/devel/include",
+        "/home/juanma/catkin_ws/devel/include",
+        "/home/juanma/catkin_astrobot/devel/include",
+        "/home/juanma/catkin_iav/devel/include",
+        "/opt/ros/kinetic/include",
+        "/usr/include"
+      ],
+      "name": "Linux"
+    }
+  ]
+}

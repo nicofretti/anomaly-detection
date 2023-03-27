@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Load arguments -->
+  <arg name="exclusive_signals" default="true"/>
+  <arg name="set_light_properties_service_name" default="/gazebo/set_light_properties"/>
+
+  <!-- Load YAMLs -->
+  <arg name="signals_yaml" default="$(find robotnik_signal_gazebo_manager)/config/signals.yaml"/> 
+
+  <rosparam file="$(arg signals_yaml)" command="load"/>
+
+  <!-- Launch ROS gazebo led controller -->
+  <node name="gazebo_leds_manager" pkg="robotnik_signal_gazebo_manager" type="gazebo_leds_manager_node.py" output="screen">
+    <param name="exclusive_signals" value="$(arg exclusive_signals)"/>
+  </node>
+
+
+</launch>

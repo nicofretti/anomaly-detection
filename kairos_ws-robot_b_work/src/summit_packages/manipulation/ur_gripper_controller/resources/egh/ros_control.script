@@ -1,0 +1,336 @@
+def ros_control():
+  set_tcp(p[0.0,0.0,0.0,0.0,0.0,0.0])
+  set_target_payload(0.000000, [0.000000, 0.000000, 0.000000], [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000])
+  step_count_7709f8a6_b455_4a67_8d42_00e824318fbd = 0.0
+  thread Step_Counter_Thread_fb322bc2_388e_43a5_8cec_904a046b26f1():
+    while (True):
+      step_count_7709f8a6_b455_4a67_8d42_00e824318fbd = step_count_7709f8a6_b455_4a67_8d42_00e824318fbd + 1.0
+      sync()
+    end
+  end
+  run Step_Counter_Thread_fb322bc2_388e_43a5_8cec_904a046b26f1()
+  set_gravity([0.0, 0.0, 9.82])
+  set_tool_communication(False, 115200, 0, 1, 1.5, 3.5)
+  set_tool_output_mode(0)
+  set_tool_digital_output_mode(0, 1)
+  set_tool_digital_output_mode(1, 1)
+  set_tool_voltage(0)
+  set_safety_mode_transition_hardness(1)
+  set_standard_analog_input_domain(0, 1)
+  set_standard_analog_input_domain(1, 1)
+  set_tool_analog_input_domain(0, 1)
+  set_tool_analog_input_domain(1, 1)
+  set_analog_outputdomain(0, 0)
+  set_analog_outputdomain(1, 0)
+  set_input_actions_to_default()
+  global Back_Plane=p[-0.5562739532530478,0.22264932332728038,0.13192003098130986,1.2093494221501366,-1.2091438443101563,-1.2093530561691657]
+  global Base_Plane=p[-0.35844714120299553,-0.08254969723414167,0.012857133220278122,-2.2868608094654883,-2.1539176367980004,3.384915752187663E-4]
+  global Front_Plane=p[0.1577533274446684,-0.18014083778825485,0.09228375487219238,1.20920950524818,1.2091980762158456,1.2091928717288687]
+  global Left_Plane=p[0.020851015098047647,0.3076790180194591,0.11645545378904094,6.0059289939522E-5,-2.2213003570844294,-2.2214682209739522]
+  global Right_Plane=p[-0.42555599174617403,-0.3014445952572764,0.07327199492253468,1.5706475366673012,-1.4754356469828643E-4,-2.3446900274030173E-4]
+  # begin: URCap Installation Node
+  #   Source: External Control, 1.0.2, FZI Research Center for Information Technology
+  #   Type: External Control
+  # end: URCap Installation Node
+  # begin: URCap Installation Node
+  #   Source: EGH-SCHUNK, 1.0.1, SCHUNK GmbH & Co. KG
+  #   Type: SCHUNK EGH Gripper
+    EGH = rpc_factory("xmlrpc", "http://127.0.0.1:40408/RPC2")
+  global error_updated = False
+  global error_internal = 0
+  def EGH_error():
+          if EGH.getActStatus() != 3:
+              if error_updated == False:
+                  error_internal = EGH.getDetailDeviceStatus(1)
+                  error_updated = True
+              end
+              return error_internal
+          else:
+              error_updated = False
+              error_internal = 0
+              return 0
+          end
+  end
+  def EGH_reference_ok():
+          sync()
+          return EGH.get_Referenced()
+  end
+  def EGH_is_success():
+          sync()
+          return EGH.isSuccess()
+  end
+  def EGH_is_blocked():
+          sync()
+          return EGH.isBlocked()
+  end
+  def EGH_is_endstop():
+          sync()
+          return EGH.isEndStop()
+  end
+  def EGH_is_closed():
+          sync()
+          return EGH.isClosed()
+  end
+  def EGH_is_open():
+          sync()
+          return EGH.isOpen()
+  end
+  def EGH_in_pos():
+          sync()
+          return EGH.isInPosition()
+  end
+  def EGH_actual_pos():
+          sync()
+          return EGH.get_CurrentPosition()
+  end
+  def EGH_status():
+          sync()
+          return EGH.getActStatus()
+  end
+  def EGH_error_check(name):
+      local err =  EGH_status()
+      if (err != 3):
+          local err =  EGH_error()
+          err_msg = EGH.getErrorMsg(err)
+          textmsg(name, err_msg)
+          popup(err_msg, title=name, error=True, blocking=True)
+      end
+      EGH_conn_check(name)
+  end
+  def EGH_conn_check(name):
+      if (not EGH.is_connected()):
+          err_msg = "Gripper disconnected"
+          textmsg(name, err_msg)
+          popup(err_msg, title=name, error=True, blocking=True)
+          halt
+      end
+  end
+  def EGH_goto_pos(value):
+          sync()
+      EGH.cmdPositioning(value)
+  end
+  def EGH_gripped_workpiece(wp):
+      return EGH.isGrippedWp(wp)
+  end
+  
+  EGH.resetPrgBreak()
+  Gripper_LB_Enabled = True
+  if (Gripper_LB_Enabled):
+    set_digital_out(0, False)
+    set_digital_out(1, True)
+  end
+  # end: URCap Installation Node
+  $ 3 "Thread_1"
+  thread Thread_1():
+    # begin: URCap Program Node
+    #   Source: EGH-SCHUNK, 1.0.1, SCHUNK GmbH & Co. KG
+    #   Type: EGH Commands
+    $ 4 "EGH Acknowledge"
+        EGH_conn_check("EGH Commands")
+        EGH.cmdAcknowledge()
+         while(EGH_status() == 0 ):
+             EGH.cmdAcknowledge()
+             sync()
+         end
+         sleep(0.200)
+    # end: URCap Program Node
+    # begin: URCap Program Node
+    #   Source: EGH-SCHUNK, 1.0.1, SCHUNK GmbH & Co. KG
+    #   Type: EGH Commands
+    $ 5 "EGH Reference"
+        EGH_error_check("EGH Commands")
+        EGH.cmdReferencing()
+         while(not EGH_reference_ok() and EGH_is_success() != True ):
+        EGH_error_check("EGH Commands")
+         end
+    # end: URCap Program Node
+    $ 6 "xmlrpc_ip≔'192.168.0.200'"
+    global xmlrpc_ip="192.168.0.200"
+    $ 7 "xmlrpc_port≔'50000'"
+    global xmlrpc_port="50000"
+    $ 8 "gripper_xmlrpc≔rpc_factory('xmlrpc', 'http://'+xmlrpc_ip+':'+xmlrpc_port)"
+    global gripper_xmlrpc=rpc_factory("xmlrpc", "http://"+xmlrpc_ip+":"+xmlrpc_port)
+    $ 9 "Loop"
+    while (True):
+      $ 10 "gripper_command≔gripper_xmlrpc.get_command()"
+      global gripper_command=gripper_xmlrpc.get_command()
+      $ 11 "Switch gripper_command"
+      switch_1 = gripper_command
+      $ 12 "Case 1"
+      if (1 == switch_1):
+        $ 13 "'IDLE COMMAND'"
+        # 'IDLE COMMAND'
+      elif (2 == switch_1):
+        $ 14 "Case 2"
+        $ 15 "'MOVE COMMAND'"
+        # 'MOVE COMMAND'
+        $ 16 "gripper_desired≔gripper_xmlrpc.get_desired_pos()"
+        global gripper_desired=gripper_xmlrpc.get_desired_pos()
+        $ 18 "EGH_goto_pos(gripper_desired)"
+         EGH_goto_pos (gripper_desired)
+        $ 19 "gripper_xmlrpc.set_idle()"
+        gripper_xmlrpc.set_idle()
+      end
+      $ 20 "gripper_xmlrpc.set_real_pos(EGH_actual_pos())"
+      gripper_xmlrpc.set_real_pos( EGH_actual_pos ())
+      # begin: URCap Program Node
+      #   Source: EGH-SCHUNK, 1.0.1, SCHUNK GmbH & Co. KG
+      #   Type: EGH Commands
+      $ 21 "EGH Acknowledge"
+          EGH_conn_check("EGH Commands")
+          EGH.cmdAcknowledge()
+           while(EGH_status() == 0 ):
+               EGH.cmdAcknowledge()
+               sync()
+           end
+           sleep(0.200)
+      # end: URCap Program Node
+      $ 22 "Wait: 0.5"
+      sleep(0.5)
+    end
+  end
+  threadId_Thread_1 = run Thread_1()
+  while (True):
+    $ 1 "Robot Program"
+    # begin: URCap Program Node
+    #   Source: External Control, 1.0.2, FZI Research Center for Information Technology
+    #   Type: External Control
+    $ 2 "Control by SXLSK-210223AA"
+ 
+ 
+ steptime = get_steptime()
+ 
+ textmsg("ExternalControl: steptime=", steptime)
+ MULT_jointstate = 1000000
+ 
+ #Constants
+ SERVO_UNINITIALIZED = -1
+ SERVO_IDLE = 0
+ SERVO_RUNNING = 1
+ 
+ MODE_STOPPED = -2
+ MODE_UNINITIALIZED = -1
+ MODE_IDLE = 0
+ MODE_SERVOJ = 1
+ MODE_SPEEDJ = 2
+ 
+ #Global variables are also showed in the Teach pendants variable list
+ global cmd_servo_state = SERVO_UNINITIALIZED
+ global cmd_servo_qd = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+ global cmd_servo_q = get_actual_joint_positions()
+ global cmd_servo_q_last = get_actual_joint_positions()
+ global extrapolate_count = 0
+ global extrapolate_max_count = 0
+ global control_mode = MODE_UNINITIALIZED
+ cmd_speedj_active = True
+ 
+ def set_servo_setpoint(q):
+   cmd_servo_state = SERVO_RUNNING
+   cmd_servo_q_last = cmd_servo_q
+   cmd_servo_q = q
+ end
+ 
+ def extrapolate():
+   diff = [cmd_servo_q[0] - cmd_servo_q_last[0], cmd_servo_q[1] - cmd_servo_q_last[1], cmd_servo_q[2] - cmd_servo_q_last[2], cmd_servo_q[3] - cmd_servo_q_last[3], cmd_servo_q[4] - cmd_servo_q_last[4], cmd_servo_q[5] - cmd_servo_q_last[5]]
+   cmd_servo_q_last = cmd_servo_q
+   cmd_servo_q = [cmd_servo_q[0] + diff[0], cmd_servo_q[1] + diff[1], cmd_servo_q[2] + diff[2], cmd_servo_q[3] + diff[3], cmd_servo_q[4] + diff[4], cmd_servo_q[5] + diff[5]]
+ 
+   return cmd_servo_q
+ end
+ 
+ thread servoThread():
+   textmsg("ExternalControl: Starting servo thread")
+   state = SERVO_IDLE
+   while control_mode == MODE_SERVOJ:
+     enter_critical
+     q = cmd_servo_q
+     do_extrapolate = False
+     if (cmd_servo_state == SERVO_IDLE):
+       do_extrapolate = True
+     end
+     state = cmd_servo_state
+     if cmd_servo_state > SERVO_UNINITIALIZED:
+       cmd_servo_state = SERVO_IDLE
+     end
+ 
+     if do_extrapolate:
+       extrapolate_count = extrapolate_count + 1
+       if extrapolate_count > extrapolate_max_count:
+         extrapolate_max_count = extrapolate_count
+       end
+ 
+       q = extrapolate()
+       servoj(q, t=steptime, lookahead_time=0.03, gain=2000)
+ 
+     elif state == SERVO_RUNNING:
+       extrapolate_count = 0
+       servoj(q, t=steptime, lookahead_time=0.03, gain=2000)
+     else:
+       extrapolate_count = 0
+       sync()
+     end
+     exit_critical
+   end
+   textmsg("ExternalControl: servo thread ended")
+   stopj(4.0)
+ end
+ 
+ # Helpers for speed control
+ def set_speed(qd):
+   cmd_servo_qd = qd
+   control_mode = MODE_SPEEDJ
+ end
+ 
+ thread speedThread():
+   textmsg("ExternalControl: Starting speed thread")
+   while control_mode == MODE_SPEEDJ:
+     qd = cmd_servo_qd
+     speedj(qd, 40.0, steptime)
+   end
+   textmsg("ExternalControl: speedj thread ended")
+   stopj(5.0)
+ end
+ 
+ socket_open("192.168.0.200", 50001, "reverse_socket")
+ 
+ control_mode = MODE_UNINITIALIZED
+ thread_move = 0
+ global keepalive = -2
+ textmsg("ExternalControl: External control active")
+ params_mult = socket_read_binary_integer(1+6+1, "reverse_socket")
+ keepalive = params_mult[1]
+ while keepalive > 0 and control_mode > MODE_STOPPED:
+   enter_critical
+   socket_send_line(1, "reverse_socket")
+   params_mult = socket_read_binary_integer(1+6+1, "reverse_socket", 0.02) # steptime could work as well, but does not work in simulation
+   if params_mult[0] > 0:
+     keepalive = params_mult[1]
+     if control_mode != params_mult[8]:
+       control_mode = params_mult[8]
+       join thread_move
+       if control_mode == MODE_SERVOJ:
+         thread_move = run servoThread()
+       elif control_mode == MODE_SPEEDJ:
+         thread_move = run speedThread()
+       end
+     end
+     if control_mode == MODE_SERVOJ:
+       q = [params_mult[2] / MULT_jointstate, params_mult[3] / MULT_jointstate, params_mult[4] / MULT_jointstate, params_mult[5] / MULT_jointstate, params_mult[6] / MULT_jointstate, params_mult[7] / MULT_jointstate]
+       set_servo_setpoint(q)
+     elif control_mode == MODE_SPEEDJ:
+       qd = [params_mult[2] / MULT_jointstate, params_mult[3] / MULT_jointstate, params_mult[4] / MULT_jointstate, params_mult[5] / MULT_jointstate, params_mult[6] / MULT_jointstate, params_mult[7] / MULT_jointstate]
+       set_speed(qd)
+     end
+   else:
+     keepalive = keepalive - 1
+   end
+   exit_critical
+ end
+ 
+ textmsg("ExternalControl: Stopping communication and control")
+ control_mode = MODE_STOPPED
+ join thread_move
+ textmsg("ExternalControl: All threads ended")
+ socket_close("reverse_socket")    # end: URCap Program Node
+  end
+end

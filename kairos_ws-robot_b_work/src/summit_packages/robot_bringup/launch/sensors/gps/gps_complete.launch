@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<!-- This launch is intended to bringup all the cameras of the system -->
+<launch>
+
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="prefix" default="$(arg id_robot)_"/>
+
+  <!-- GPS -->
+  <arg name="gps_model" default="$(optenv ROBOT_GPS_MODEL none)"/>
+  <arg name="gps_config" default="$(optenv ROBOT_GPS_CONFIG none)"/>
+  <arg name="gps_port" default="$(optenv ROBOT_GPS_PORT /dev/ttyUSB_GPS)"/>
+  
+  <!-- 1 -->
+  <include if="$(eval gps_model != 'none')" file="$(find robot_bringup)/launch/sensors/gps/$(arg gps_model)_$(arg gps_config).launch">
+    <arg name="frame_id" value="$(arg prefix)gps_base_link"/>
+    <arg name="port" value="$(arg gps_port)"/>
+  </include>
+  
+</launch>

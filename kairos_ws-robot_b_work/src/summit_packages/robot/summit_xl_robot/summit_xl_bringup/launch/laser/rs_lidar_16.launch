@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="frame_id" default="rslidar" />
+  <arg name="prefix" default="robot_" />
+  <arg name="model" default="RS16" />
+  <arg name="device_ip" default="192.168.1.200" />
+  <arg name="msop_port" default="6699" />
+  <arg name="difop_port" default="7788" />
+  <arg name="lidar_param_path" default="$(find rslidar_pointcloud)/data/rs_lidar_16/"/>
+  <arg name="run_3d_to_2d" default="true"/>
+
+  <node name="rslidar_node" pkg="rslidar_driver" type="rslidar_node" output="screen" >
+    <param name="frame_id" value="$(arg frame_id)"/>
+    <param name="model" value="$(arg model)"/>
+    <param name="device_ip" value="$(arg device_ip)" />
+    <param name="msop_port" value="$(arg msop_port)" />
+    <param name="difop_port" value="$(arg difop_port)"/>
+    <!--param name="pcap" value="path_to_pcap"/-->
+  </node>
+
+  <node name="cloud_node" pkg="rslidar_pointcloud" type="cloud_node" output="screen" >
+    <param name="model" value="$(arg model)"/>
+    <param name="curves_path" value="$(arg lidar_param_path)/curves.csv" />
+    <param name="angle_path" value="$(arg lidar_param_path)/angle.csv" />
+    <param name="channel_path" value="$(arg lidar_param_path)/ChannelNum.csv" />
+    <!--remap from="rslidar_points" to="point_cloud"/-->
+    <param name="output_points_topic" value="point_cloud" />
+  </node>
+
+  <!--node name="rviz" pkg="rviz" type="rviz"  args="-d $(find rslidar_pointcloud)/rviz_cfg/rslidar.rviz" /-->
+
+  <include if="$(arg run_3d_to_2d)" file="$(find summit_xl_bringup)/launch/laser/3d_laser_to_2d.launch">
+    <arg name="target_frame" value="$(arg prefix)top_3d_laser_link"/>
+    <arg name="max_height" value="2.0"/>
+    <arg name="min_height" value="-0.35"/>
+    <arg name="angle_min" value="-0"/>
+    <arg name="angle_max" value="3.14"/>
+    <arg name="range_min" value="0.05"/>
+    <arg name="range_max" value="10"/>
+  </include>
+
+</launch>

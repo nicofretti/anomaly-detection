@@ -1,0 +1,4 @@
+Place procedure 
+---
+procedures_msgs/ProcedureState state
+procedures_msgs/ProcedureResult result

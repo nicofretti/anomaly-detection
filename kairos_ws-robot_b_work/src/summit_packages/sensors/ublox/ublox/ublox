@@ -1,0 +1,10 @@
+<!-- start rtk-dgps -->
+          <node name="throttle_pose" pkg="topic_tools" type="throttle" output="screen" args="messages /odometry/filtered_world 5.0"/>
+          <include file="$(find ublox_bringup)/launch/ublox_device.launch">
+                <arg name="node_name" value="gps"/>
+                <arg name="param_file_name" value="c94_m8p_rover"/>     
+                <arg name="debug" value="false"/>
+                <arg name="respawn_delay" value="1"/>
+          </include>
+          <node pkg="tf" type="static_transform_publisher" name="world2grid" args="0 0 0 -0.973 0.0 0.0 world grid 20"/>
+          <include file="$(find ublox_bringup)/launch/utm_odometry.launch"/>

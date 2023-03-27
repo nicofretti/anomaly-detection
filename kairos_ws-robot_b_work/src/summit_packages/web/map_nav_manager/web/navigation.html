@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Localization and Navigation</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/common.css" rel="stylesheet">
+    
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/three.js"></script>
+
+	<script type="text/javascript" src="js/STLLoader.js"></script>
+	<!--script type="text/javascript" src="js/ColladaLoader2.js"></script-->
+	<script type="text/javascript" src="js/eventemitter2.js"></script>
+	<script type="text/javascript" src="js/easeljs.min.js"></script>
+	<script type="text/javascript" src="js/ros3d.js"></script>
+	<script type="text/javascript" src="js/nav2d.js"></script>
+	<script type="text/javascript" src="js/roslib.js"></script>
+	<script type="text/javascript" src="js/ros2d.js"></script>
+	<!--WARNING! THE IMPORT OF COLLADALOADER MUST BE DONE AFTER THE ROS3D.JS IMPORT otherwise the model is not shown correctly-->
+	<script type="text/javascript" src="js/ColladaLoader.js"></script>
+	<script type="text/javascript" src="js/global_config.js"></script>
+	<script type="text/javascript" src="js/common.js"></script>
+	<script type="text/javascript" src="js/navigation.js"></script>
+    
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+	<div class="page-header">
+		<div class="logo">
+				<a href="http://www.robotnik.eu/"><img width="200" src="images/robotnik.png"></a>
+		</div>
+	</div>
+    
+	<div class="column">
+		<div class="col-lg-9 col-md-9">
+			<div class="panel panel-default">
+				<div class="panel-heading">3D Map Visualization</div>
+				<div id="occupancygrid" class="panel-body"></div>
+			</div>
+		</div>
+	</div
+	<div class="column">	
+		<div class="col-lg-3 col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">Control Panel</div>
+					<div class="panel-body">
+						 <table id="button_table" class="table">
+                                <tbody>
+                                    <tr>
+                                    	<td>
+                                    	 	<label for="text">Map name: </label>
+                                    	 	<input type="text" id="filename"/>
+                                    	 </td>
+                                    	<td>
+                                    	 	<div class="form-check">
+												<label class="form-check-label">
+												  <input type="checkbox" class="form-check-input" id="checkbox_map_default">
+												  Use this map by default
+												</label>
+											 </div>
+                                    	 </td>
+                                    </tr>	
+                                    <tr> 
+                                    	<td>
+                                        	<button type="button" class="btn btn-success btn-lg" width="100" alt="" align="middle" onClick="startMapServer()" id="button_start_map_server">
+  												<span class="glyphicon glyphicon-play" aria-hidden="true"></span> <br>Start Map Server	
+											</button>
+										</td> 
+										<td>
+                                        	<button type="button" class="btn btn-danger btn-lg" width="100" alt="" align="middle" onClick="stopMapServer()" id="button_stop_map_server">
+  												<span class="glyphicon glyphicon-stop" aria-hidden="true"></span> <br>Stop Map Server	
+											</button>
+										</td> 
+                                    </tr>
+                                    <tr>
+                                    	 <td>
+                                    	 	<button type="button" class="btn btn-success btn-lg" width="100" alt="" align="middle" onClick="startLocalization()" id="button_start_localization">
+  												<span class="glyphicon glyphicon-play" aria-hidden="true"></span> <br>Start Localization	
+											</button>
+                                    	 </td>
+                                    	  <td>
+                                        	<button type="button" class="btn btn-danger btn-lg" width="100" alt="" align="middle" onClick="stopLocalization()" id="button_stop_localization">
+  												<span class="glyphicon glyphicon-stop" aria-hidden="true"></span> <br>Stop Localization	
+											</button>
+                                        </td>
+									</tr>
+									<tr>
+                                    	 <td>
+                                    	 	<button type="button" class="btn btn-success btn-lg" width="100" alt="" align="middle" onClick="startNavigation()" id="button_start_navigation">
+  												<span class="glyphicon glyphicon-play" aria-hidden="true"></span> <br>Start Navigation	
+											</button>
+                                    	 </td>
+                                    	  <td>
+                                        	<button type="button" class="btn btn-danger btn-lg" width="100" alt="" align="middle" onClick="stopNavigation()" id="button_stop_navigation">
+  												<span class="glyphicon glyphicon-stop" aria-hidden="true"></span> <br>Stop Navigation	
+											</button>
+                                        </td>
+									</tr>
+									<tr>
+                                    	 <td>
+                                    	 	<button type="button" class="btn btn-success btn-lg" width="100" alt="" align="middle" onClick="enableLocalizationAutorun()" id="button_enable_localization_autorun">
+  												<span class="glyphicon glyphicon-play" aria-hidden="true"></span> <br>Enable Autorun	
+											</button>
+                                    	 </td>
+                                    	  <td>
+                                        	<button type="button" class="btn btn-danger btn-lg" width="100" alt="" align="middle" onClick="disableLocalizationAutorun()" id="button_disable_localization_autorun">
+  												<span class="glyphicon glyphicon-stop" aria-hidden="true"></span> <br>Disable Autorun	
+											</button>
+                                        </td>
+									</tr>
+									
+                                    <tr>
+                                        <td>
+                                        	<button type="button" class="btn btn-primary btn-lg" width="100" alt="" align="middle" onClick="goIndex()">
+  												<span class="glyphicon glyphicon-home" aria-hidden="true"></span> <br>Home
+											</button>
+                                        	
+                                        </td>
+                                        <td>
+											<button type="button" class="btn btn-primary btn-lg" width="100" alt="" align="middle" onClick="goMapping()">
+  												<span class="glyphicon glyphicon-edit" aria-hidden="true"></span> <br>Map & Nav	
+											</button>
+                                        </td>
+                                    </tr>	
+                                    
+                                    </tbody>
+                            </table>
+					</div>
+				</div>		
+				<div class="panel-heading">Status Panel</div>
+						<div class="panel-body">
+							 <table id="button_table" class="table">
+									<tbody>
+										<tr>
+											<td>
+												<div id="mapping_status">Mapping</div>
+											</td>
+											<td>
+												<div id="navigation_status">Navigation</div>
+											</td>
+											
+										</tr>	
+										<tr>
+											<td>
+												<div id="localization_status">Localization</div>
+											</td>
+											<td>
+												<div id="map_server_status">Map Server</div>
+											</td>
+											
+										</tr>
+									   
+										</tbody>
+								</table>
+						</div>
+					</div>											
+			</div>
+		</div>
+
+	</div>
+
+
+  </body>
+</html>

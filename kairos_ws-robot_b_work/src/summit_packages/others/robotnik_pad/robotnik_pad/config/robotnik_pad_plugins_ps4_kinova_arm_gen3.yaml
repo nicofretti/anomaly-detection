@@ -1,0 +1,56 @@
+plugins:
+  - Movement
+  - Elevator
+  - KinovaArmGen3
+
+pad:
+  type: ps4
+  num_of_buttons: 14
+  num_of_axes: 14
+  joy_topic: joy
+
+Movement:
+  type: robotnik_pad_plugins/Movement
+  max_linear_speed: 1.5
+  max_angular_speed: 3
+  cmd_topic_vel: pad_teleop/cmd_vel
+  config:
+    button_deadman: 5
+    axis_linear_x: 1
+    axis_linear_y: 0
+    axis_angular_z: 2
+    button_speed_up: 3
+    button_speed_down: 1
+    button_kinematic_mode: 7
+
+Elevator:
+  type: robotnik_pad_plugins/Elevator
+  elevator_service_name: robotnik_base_control/set_elevator
+  config:
+    deadman: 5
+    axis_elevator: 10
+
+KinovaArmGen3:
+  type: kinova_gen3_pad_plugin/KinovaArmGen3
+  arm_control_topic_name: /robot/arm/in/cartesian_velocity
+  set_home_service_name: /robot/arm/in/home_arm
+  max_linear_speed: 2.0
+  max_angular_speed: 3.0
+  config:
+    button_deadman: 4
+    button_movement_deadman: 5 # this plugin will not work if movement deadman button is pressed
+    button_home_arm: 12
+
+    axis_open_gripper: 4
+    axis_close_gripper: 3
+
+    axis_linear_x_ee: 1
+    axis_linear_y_ee: 0
+    axis_linear_z_ee: 10
+
+    axis_angular_x_ee: 5
+    axis_angular_y_ee: 2
+    axis_angular_z_ee: 9
+
+    button_speed_up: 3
+    button_speed_down: 1

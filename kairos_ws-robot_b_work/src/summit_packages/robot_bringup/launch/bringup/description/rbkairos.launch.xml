@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="urdf_xacro"  default="rbkairos.urdf.xacro"/>  
+  <arg name="prefix" default="robot_"/>
+
+  <arg name="load_kinematics_file" default="true"/>
+  
+  <!-- Load the URDF into ROS parameter server -->
+  <arg name="urdf_file" default="$(find xacro)/xacro '$(find rbkairos_description)/robots/$(arg urdf_xacro)' prefix:=$(arg prefix) load_kinematics_file:=$(arg load_kinematics_file) --inorder" />
+  <param name="robot_description" command="$(arg urdf_file)" />
+</launch>

@@ -1,0 +1,7 @@
+# Server config
+ip_address: $(arg ip_address)
+port: $(arg port)
+
+# Gripper joint limits in millimeters
+min_pos: 1
+max_pos: 39

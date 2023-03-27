@@ -1,0 +1,86 @@
+signals:
+
+  - id: "forward"
+    enabled: false
+    led_label: ["front"]
+    mode: "blink"
+    color: [0, 255, 0, 0]
+    ms_on: 500
+    ms_off: 500
+
+  - id: "backward"
+    enabled: false
+    led_label: ["back"]
+    mode: "blink"
+    color: [0, 255, 0, 0]
+    ms_on: 500
+    ms_off: 500
+
+  - id: "omni_right"
+    enabled: false
+    led_label: ["right"]
+    mode: "blink"
+    color: [0, 255, 0, 0]
+    ms_on: 500
+    ms_off: 500
+
+  - id: "omni_left"
+    enabled: false
+    led_label: ["left"]
+    mode: "blink"
+    color: [0, 255, 0, 0]
+    ms_on: 500
+    ms_off: 500
+
+
+  - id: "turn_left"
+    enabled: false
+    led_label: ["front", "right", "back", "left"]
+    mode: "shift"
+    color: [0, 255, 0, 0]
+    direction: "right"
+    led_increment: 1
+    speed: 1000
+    sleep: 0
+
+  - id: "turn_left_inverse"
+    enabled: false
+    led_label: ["front", "right", "back", "left"]
+    mode: "shift"
+    color: [0, 255, 0, 0]
+    direction: "right"
+    led_increment: 1
+    speed: 1000
+    sleep: 0
+
+  - id: "turn_right"
+    enabled: false
+    led_label: ["front", "right", "back", "left"]
+    mode: "shift"
+    color: [0, 255, 0, 0]
+    direction: "left"
+    speed: 1000
+    sleep: 0
+
+  - id: "turn_right_inverse"
+    enabled: false
+    led_label: ["front", "right", "back", "left"]
+    mode: "shift"
+    color: [0, 255, 0, 0]
+    direction: "left"
+    speed: 1000
+    sleep: 0
+
+  - id: "emergency_stop"
+    enabled: false
+    led_label: ["front", "right", "back", "left"]
+    mode: "blink"
+    color: [255, 0, 0, 0]
+    ms_on: 1000
+    ms_off: 1000
+  
+  - id: "stop_robot"
+    enabled: true
+    led_label: ["all_leds"]
+    mode: "paint"
+    color: [0 , 255, 0, 0]

@@ -1,0 +1,4 @@
+---
+robot_simple_command_manager_msgs/EventSchedulerArray list
+bool success
+string message

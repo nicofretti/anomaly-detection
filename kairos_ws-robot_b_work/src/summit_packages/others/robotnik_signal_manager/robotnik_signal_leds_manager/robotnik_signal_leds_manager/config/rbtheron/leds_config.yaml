@@ -1,0 +1,48 @@
+#rbtheron: real led zone
+
+leds_config:
+
+
+  - led_label: "front_right_leds"
+    leds_zone: [42, 62]
+    channel: 0
+    type: "RGB"
+
+
+  - led_label: "front_left_leds"
+    leds_zone: [22, 41]
+    channel: 0
+    type: "RGB"
+
+
+
+  - led_label: "rear_right_leds"
+    leds_zone: [1, 20]
+    channel: 0
+    type: "RGB"
+
+
+  - led_label: "rear_left_leds"
+    leds_zone: [63, 83]
+    channel: 0
+    type: "RGB"
+
+
+  
+  - led_label: "left_leds"
+    leds_zone: [1, 41]
+    channel: 0
+    type: "RGB"
+
+
+  - led_label: "right_leds"
+    leds_zone: [42, 83]
+    channel: 0
+    type: "RGB"
+
+  - led_label: "all_leds"
+    leds_zone: [1, 83]
+    channel: 0
+    type: "RGB"
+
+

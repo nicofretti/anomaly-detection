@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="host"	default="localhost"/>
+  <arg name="port"	default="8080"/>
+ 
+ <!--  run the following
+  rostopic pub -r 1 /hello std_msgs/String "hello"
+  rostopic pub -r 1 /bye std_msgs/String "bye"
+  rosrun rostful_tests fake_node.py
+
+  -->
+  <node pkg="rostful" type="server" name="rostful_server" 
+output="screen"
+	args="--jwt  --host $(arg host) -p $(arg port) --topics /hello bye --services fake_node/service --actions fake_node/wait "/>
+	<!-- rest-prefix ros -->
+
+</launch>
+

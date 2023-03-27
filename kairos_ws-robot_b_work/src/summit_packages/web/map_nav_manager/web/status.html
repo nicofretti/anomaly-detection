@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Robot Status</title>
+  <!-- author Robotnik 
+ VERSION FOR SUMMITXL STEEL ROBOT
+-->
+  <!-- Bootstrap -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/common.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/status/my_mini.css">
+  <link rel="stylesheet" href="css/status/bootOver.css">
+  <link rel="stylesheet" href="css/status/jquery-ui.css">
+  <script type="text/javascript" src="js/global_config.js"></script>  
+  <script type="text/javascript" src="js/status/eventemitter2.min.js"></script>
+  <script type="text/javascript" src="js/status/roslib.min.js"></script>
+  <script type="text/javascript" src="js/status/jquery-2.1.0.min.js"></script>
+  <script type="text/javascript" src="js/status/jquery-ui-1.10.4.min.js"></script>
+  <script type="text/javascript" src="js/status/Ros3D.js"></script>
+  <script type="text/javascript" src="js/status/three.min.js"></script>
+  <script type="text/javascript" src="js/status/ColladaLoader2.js"></script>
+  <script type="text/javascript" src="js/status/status.js"></script>
+  <link rel="icon" href="images/favicon.ico"> </head>
+
+<body>
+    <div class="page-header">
+      <div class="logo">
+        <a href="http://www.robotnik.eu/">
+          <img width="200" src="images/robotnik.png"> </a>
+      </div>
+    </div>
+
+
+    <div id="exTab1">	
+      <ul  class="nav nav-pills">
+        <li class="active">
+          <a  href="#tabs-3" data-toggle="tab">Robot Status</a>
+        </li>
+        <li>
+            <a href="#tabs-2" data-toggle="tab">System monitor</a>
+        </li>
+        <li>
+          <a href="#tabs-1" data-toggle="tab">Camera</a>
+        </li>
+      </ul>
+    
+    <div class="tab-content clearfix">
+      <div class="tab-pane active" id="tabs-3">
+        <div class="column" >
+          <div class="col-lg-5 col-md-5">
+            <div id="sensortopic">
+
+              <table border="0px">
+                <tbody>
+                  <tr>
+                    <td> IMU state &nbsp;&nbsp;&nbsp;&nbsp; </td>
+                    <td> Battery State &nbsp;&nbsp;&nbsp;&nbsp; </td>
+                    <td> IMU temperature &nbsp;&nbsp;&nbsp;&nbsp; </td>
+                    <td> Stop Button </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align:center">
+                      <div id="imu_status"> <span></span></div>
+                    </td>
+                    <td style="text-align:center">
+                      <div id="battery_ok"> <span></span></div>
+                    </td>
+                    <td style="text-align:center">
+                      <div id="imu_temperature_alarm"> <span></span></div>
+                    </td>
+                    <td style="text-align:center">
+                      <div id="emergency_stop"> <span></span></div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br>
+              <h3>Battery</h3>
+              <div id="progressbar_battery" style="width: 20em; float:left; margin-left:1em" class="ui-progressbar3"></div>
+                <br> &nbsp;&nbsp; 0% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 25% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 50% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 75% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100%
+                <br>
+                <br>
+                <div id="battery_status">Battery voltage = <span></span></div>
+              </div>
+              <h3>IMU</h3>
+              <div id="imu_temperature">IMU temperature = <span></span></div>
+              <h3>GPS</h3>
+              <div id="gps_latitude">Latitude = <span></span></div>
+              <div id="gps_longitude">Longitude = <span></span></div>
+              <div id="gps_altitude">Altitude = <span></span></div>
+              <h3>Odometry</h3>
+              <table>
+                <tbody>
+                  <tr>
+                    <td style="width: 4em"></td>
+                    <td style="width: 4em">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x</td>
+                    <td style="width: 4em">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y</td>
+                    <td style="width: 4em">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z</td>
+                  </tr>
+                  <tr>
+                    <td>Position</td>
+                    <td style="width: 4em">
+                      <div id="odometry_position_x" style="float:right"><span></span></div>
+                    </td>
+                    <td style="width: 4em">
+                      <div id="odometry_position_y" style="float:right"><span></span></div>
+                    </td>
+                    <td style="width: 4em">
+                      <div id="odometry_position_z" style="float:right"><span></span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Orientation</td>
+                    <td style="width: 4em">
+                      <div id="odometry_orientation_x" style="float:right"><span></span></div>
+                    </td>
+                    <td style="width: 4em">
+                      <div id="odometry_orientation_y" style="float:right"><span></span></div>
+                    </td>
+                    <td style="width: 4em">
+                      <div id="odometry_orientation_z" style="float:right"><span></span></div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br>
+              <input type="button" value="Reset odometry" onclick="reset_odometry()" class="btn btn-danger">
+              <br>
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="col-lg-4 col-md-4"> 
+            <table>
+              <tbody>
+                <tr>
+                  <td>  
+                    <br><br>
+                    <br><br>
+                    <h3>Motor Status</h3>
+                    <table border="0px" >
+                      <tbody>
+                        <tr>
+                          <td width="35%"> Front Left Wheel</td>
+                          <td width="15%"> </td>
+                          <td width="35%"> Front Right Wheel</td>
+                          <td width="15%"> </td>
+                        </tr>
+                        <tr>
+                          <td style="text-align:center">
+                            <div id="front_left_wheel_status"> <span>
+                            </span></div>
+                          </td>
+                          <td>
+                            <input type="button" value="Flags" class="btn btn-danger" id="button_flw">
+                          </td>
+                          <td style="text-align:center">
+                            <div id="front_right_wheel_status"> <span></span></div>
+                          </td>
+                          <td>
+                            <input type="button" value="Flags" class="btn btn-danger" id="button_frw">
+                          </td>
+                        </tr>
+                        <tr >
+                          <td width="35%"> Back Left Wheel</td>
+                          <td width="15%"> </td>
+                          <td width="35%"> Back Right Wheel</td>
+                          <td width="15%"> </td>
+                        </tr>
+                        <tr>
+                          <td style="text-align:center">
+                            <div id="back_left_wheel_status"> <span></span></div>
+                          </td>
+                          <td>
+                            <input type="button" value="Flags" class="btn btn-danger" id="button_blw">
+                          </td>
+                          <td style="text-align:center">
+                            <div id="back_right_wheel_status"> <span></span></div>
+                          </td>
+                          <td>
+                            <input type="button" value="Flags" class="btn btn-danger" id="button_brw">
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <br>
+                    <!--input type="button" Value="Flags front left wheel" class = "btn btn-danger" id="button_flw"/>
+                    <input type="button" Value="Flags front right wheel" class = "btn btn-danger" id="button_frw"/>
+                    <br><br>
+                    <input type="button" Value="Flags back left wheel" class = "btn btn-danger" id="button_blw"/>
+                    <input type="button" Value="Flags back right wheel" class = "btn btn-danger" id="button_brw"/-->
+                    <div id="dialog_flw" title="Flags front left wheel"> Flags info:
+                      <br> Flag is off
+                      <br> <b>Flag is on</b>
+                      <br> <ins>Flag has been activated before</ins>
+                      <br>
+                      <br>
+                      <div id="flw_state">State = <span></span></div>
+                      <div id="flw_status">Status = <span></span></div>
+                      <br> Flags:
+                      <div id="flw_status_words"><span></span></div>
+                        <br> Driver flags:
+                        <div id="flw_driver_status_words"><span></span></div>
+                      </div>
+                      <div id="dialog_frw" title="Flags front right wheel"> Flags info:
+                        <br> Flag is off
+                        <br> <b>Flag is on</b>
+                        <br> <ins>Flag has been activated before</ins>
+                        <br>
+                        <br>
+                        <div id="frw_state">State = <span></span></div>
+                        <div id="frw_status">Status = <span></span></div>
+                        <br> Flags:
+                        <div id="frw_status_words"><span></span></div>
+                        <br> Driver flags:
+                        <div id="frw_driver_status_words"><span></span></div>
+                      </div>
+                      <div id="dialog_blw" title="Flags back left wheel"> Flags info:
+                        <br> Flag is off
+                        <br> <b>Flag is on</b>
+                        <br> <ins>Flag has been activated before</ins>
+                        <br>
+                        <br>
+                        <div id="blw_state">State = <span></span></div>
+                        <div id="blw_status">Status = <span></span></div>
+                        <br> Flags:
+                        <div id="blw_status_words"><span></span></div>
+                        <br> Driver flags:
+                        <div id="blw_driver_status_words"><span></span></div>
+                      </div>
+                      <div id="dialog_brw" title="Flags back right wheel"> Flags info:
+                        <br> Flag is off
+                        <br> <b>Flag is on</b>
+                        <br> <ins>Flag has been activated before</ins>
+                        <br>
+                        <br>
+                        <div id="brw_state">State = <span></span></div>
+                        <div id="brw_status">Status = <span></span></div>
+                        <br> Flags:
+                        <div id="brw_status_words"><span></span></div>
+                        <br> Driver flags:
+                        <div id="brw_driver_status_words"><span></span></div>
+                      </div>
+                      <h3>Robot Control</h3>
+                      <div align="center">
+                        <p></p>
+                        <table border="0">
+                          <tbody>
+                            <tr>
+                              <th> </th>
+                              <th>
+                                <input type="button" value="+" onclick="Foward()" class="btn btn-danger">
+                              </th>
+                            </tr>
+                            <tr></tr>
+                            <tr> </tr>
+                            <tr>
+                              <td>
+                                <input type="button" value="- " onclick="Left()" class="btn btn-danger"> </td>
+                                <td>
+                                  <input type="button" value="H" onclick="StopRobot()" class="btn btn-danger"> </td>
+                                <td>
+                                <input type="button" value="+" onclick="Right()" class="btn btn-danger">
+                              </td>
+                            </tr>
+                            <tr>
+                              <th> </th>
+                              <td>
+                                <input type="button" value="- " onclick="Back()" class="btn btn-danger">
+                             </td>
+                            </tr>
+                            <tr>
+                              <th> </th>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <br>
+                        <br>
+                        <button type="button" class="btn btn-sm btn-danger" width="100" align="middle" onclick="goIndex()" alt="" height="20">
+                          <br>Home 
+                        </button>
+                      </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>            
+      </div>
+      
+      <div class="tab-pane" id="tabs-2">
+      <!-- SYSTEM MONITOR TAB-->
+	  <!---------------------->
+		  <table>
+		    <tr>
+			  <td>
+			    <h3>CPU (Usage)</h3>
+			  </td>
+			  <td>
+			    <h3>CPU (Temperature)</h3>
+			  </td>	
+			</tr>
+			<tr>
+			  <td>
+			    <table id="cpu_usage_tb">
+				</table>
+			  </td>
+			  <td style="vertical-align:top">
+				<div id="cpu_temperature">
+				</div>	
+			  </td>	
+			</tr>
+			<tr>
+			  <td>  
+			    <table>
+				  <tr>
+					<td id="cpu_usage_ld1" style="width: 10em")>
+					</td>
+					<td id="cpu_usage_ld5" style="width: 10em">
+					</td>
+					<td id="cpu_usage_ld15" style="width: 10em">	
+					</td>
+                  </tr>
+                </table>
+			  </td>
+			</tr>
+			<tr>
+			  <td>
+			    <h3>Net (Usage)</h3>
+			  </td>
+			  <td>
+			    <h3>HDD (Usage)</h3>
+			  </td>
+			</tr>
+			<tr>
+			  <td>
+			    <table id="net_usage_tb">
+				</table>
+			  </td>
+			  <td style="vertical-align:top">
+			    <table id="hdd_usage_tb">
+				</table>
+			  </td>
+			</tr>
+		  </table>			
+		  <table>
+			<tr>
+			  <td>
+			    <h3>Memory (Usage)</h3>
+			  </td>
+			</tr>
+			<tr>
+			  <td>
+			    <table id="mem_usage_tb">
+				</table>
+			  </td>
+			</tr>
+			<tr>
+			  <td>
+			    <table>
+				  <tr>
+				    <td id="mem_total" style="width: 10em")>
+					</td>
+					<td id="mem_used" style="width: 10em">
+					</td>
+					<td id="mem_free" style="width: 10em">
+					</td>
+				  </tr>
+			    </table>
+			  </td>	
+			</tr>
+		  </table>
+      </div>
+
+      <div class="tab-pane" id="tabs-1">
+        <div style="float:left">
+          <img width="600" height="600" src="http://192.168.0.186/axis-cgi/mjpg/video.cgi?videocodec=h264&amp;streamprofile=Bandwidth">
+        </div>
+        <div style="float:left">
+          <br> <span id="videoStatus"></span>
+          <!-- Button to save image, NEEDS image transport node in summit_xl_web.launch (commented) -->
+          <!--input type="button" Value="Save Image" onClick="saveImage()" class = "btn btn-danger"/-->
+          <br> <span id="imageStatus"></span>
+          <table border="0">
+            <tbody>
+              <tr>
+                <td>
+                  <h3>Zoom</h3>
+                  <div id="slider_camera_front_zoom" style="width: 25em; float:left; margin-left: 1em;"></div>
+                  <h3>Camera Front</h3>
+                  <div align="center">
+                    <p></p>
+                    <table border="0">
+                      <tbody>
+                        <tr>
+                          <th> </th>
+                          <th>
+                            <input type="button" value="+" onclick="move_camera_front_top()" class="btn btn-danger">
+                          </th>
+                        </tr>
+                        <tr></tr>
+                        <tr> </tr>
+                        <tr>
+                          <td>
+                            <input type="button" value="- " onclick="move_camera_front_left()" class="btn btn-danger"> 
+                          </td>
+                          <td>
+                            <input type="button" value="H" onclick="init_camera_front()" class="btn btn-danger">
+                          </td>
+                          <td>
+                            <input type="button" value="+" onclick="move_camera_front_right()" class="btn btn-danger">
+                          </td>
+                        </tr>
+                        <tr>
+                          <th> </th>
+                          <td>
+                            <input type="button" value="- " onclick="move_camera_front_dowm()" class="btn btn-danger">
+                          </td>
+                        </tr>
+                        <tr>
+                          <th> </th>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>      
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="float:left">
+                    <br> <span id="videoStatus"></span>
+                    <!-- Button to save image, NEEDS image transport node in summit_xl_web.launch (commented) -->
+                    <!--input type="button" Value="Save Image" onClick="saveImage()" class = "btn btn-danger"/-->
+                    <br> <span id="imageStatus"></span>
+                    <h3>Zoom</h3>
+                    <div id="slider_camera_rear_zoom" style="width: 25em; float:left; margin-left: 1em;"></div>
+                    <h3>Camera Rear</h3>
+                    <div align="center">
+                      <p></p>
+                      <table border="0">
+                        <tbody>
+                          <tr>
+                            <th> </th>
+                            <th>
+                              <input type="button" value="+" onclick="move_camera_rear_top()" class="btn btn-danger">
+                            </th>
+                          </tr>
+                          <tr></tr>
+                          <tr> </tr>
+                          <tr>
+                            <td>
+                              <input type="button" value="- " onclick="move_camera_rear_left()" class="btn btn-danger">
+                            </td>
+                            <td>
+                              <input type="button" value="H" onclick="init_camera_rear()" class="btn btn-danger">
+                            </td>
+                            <td>
+                              <input type="button" value="+" onclick="move_camera_rear_right()" class="btn btn-danger">
+                            </td>
+                          </tr>
+                          <tr>
+                            <th> </th>
+                              <td>
+                                <input type="button" value="- " onclick="move_camera_rear_dowm()" class="btn btn-danger">
+                              </td>
+                          </tr>
+                          <tr>
+                            <th> </th>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br><br>
+          <br><br>
+          <br>
+        </div>
+        <div style="float:left">
+          <img width="600" height="600" src="http://192.168.0.187/axis-cgi/mjpg/video.cgi?videocodec=h264&amp;streamprofile=Bandwidth">
+        </div>
+      </div>
+      
+      
+    </div>
+    </div>
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+</body>
+
+</html>

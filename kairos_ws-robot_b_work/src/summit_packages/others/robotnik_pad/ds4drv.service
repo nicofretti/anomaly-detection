@@ -1,0 +1,12 @@
+[Unit]
+Description=Start ds4drv after boot. Daemon to pair PS4 bluetooth controllers. 
+After=multi-user.target
+Requires=bluetooth.target
+
+[Service]
+Type=idle
+ExecStart=/usr/local/bin/ds4drv --config=/etc/ds4drv.conf
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

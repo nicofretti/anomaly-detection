@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<topics>
+	<topic_robot_local_control_msgs>
+	  <topic_name>/robot_local</topic_name>
+	  <type>/robot_local robot_local_control_msgs/Status</type>
+	</topic_robot_local_control_msgs>
+</topics>
+
+<view_in_page>
+	<battery>true</battery>
+	<tree_data>false</tree_data>
+</view_in_page>

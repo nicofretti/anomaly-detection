@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+
+<!-- This launch is intended to bringup all the cameras of the system -->
+<launch>
+
+	<arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+	<arg name="prefix" default="$(arg id_robot)_"/>
+
+	<!-- 1 LASER -->
+	<arg name="laser_1_model" default="$(optenv ROBOT_LASER_1_MODEL none)"/>
+	<arg name="laser_1_port" default="$(optenv ROBOT_LASER_1_PORT /dev/ttyACM_LASER_1)"/>
+	<arg name="laser_1_ip" default="$(optenv ROBOT_LASER_1_IP )"/>
+	<arg name="laser_1_id" default="$(optenv ROBOT_LASER_1_ID laser_1)"/>
+	<arg name="laser_1_frame_id" default="$(arg prefix)$(arg laser_1_id)_link"/>
+	<arg name="laser_1_min_angle" default="$(optenv ROBOT_LASER_1_MIN_ANGLE -2.35619)"/>
+	<arg name="laser_1_max_angle" default="$(optenv ROBOT_LASER_1_MAX_ANGLE 2.35619)"/>
+
+	<!-- 2 LASER -->
+	<arg name="laser_2_model" default="$(optenv ROBOT_LASER_2_MODEL none)"/>
+	<arg name="laser_2_port" default="$(optenv ROBOT_LASER_2_PORT /dev/ttyACM_LASER_2)"/>
+	<arg name="laser_2_ip" default="$(optenv ROBOT_LASER_2_IP 192.168.0.11)"/>
+	<arg name="laser_2_id" default="$(optenv ROBOT_LASER_2_ID laser_2)"/>
+	<arg name="laser_2_frame_id" default="$(arg prefix)$(arg laser_2_id)_link"/>
+	<arg name="laser_2_min_angle" default="$(optenv ROBOT_LASER_2_MIN_ANGLE -2.35619)"/>
+	<arg name="laser_2_max_angle" default="$(optenv ROBOT_LASER_2_MAX_ANGLE 2.35619)"/>
+
+	<!-- 3 LASER -->
+	<arg name="laser_3_model" default="$(optenv ROBOT_LASER_3_MODEL none)"/>
+	<arg name="laser_3_port" default="$(optenv ROBOT_LASER_3_PORT /dev/ttyACM_LASER_3)"/>
+	<arg name="laser_3_ip" default="$(optenv ROBOT_LASER_3_IP 192.168.0.12)"/>
+	<arg name="laser_3_id" default="$(optenv ROBOT_LASER_3_ID laser_3)"/>
+	<arg name="laser_3_frame_id" default="$(arg prefix)$(arg laser_3_id)_link"/>
+	<arg name="laser_3_min_angle" default="$(optenv ROBOT_LASER_3_MIN_ANGLE -2.35619)"/>
+	<arg name="laser_3_max_angle" default="$(optenv ROBOT_LASER_3_MAX_ANGLE 2.35619)"/>
+
+	<!-- 4 LASER -->
+	<arg name="laser_4_model" default="$(optenv ROBOT_LASER_4_MODEL none)"/>
+	<arg name="laser_4_port" default="$(optenv ROBOT_LASER_4_PORT )"/>
+	<arg name="laser_4_ip" default="$(optenv ROBOT_LASER_4_IP 192.168.0.13)"/>
+	<arg name="laser_4_id" default="$(optenv ROBOT_LASER_4_ID laser_4)"/>
+	<arg name="laser_4_frame_id" default="$(arg prefix)$(arg laser_4_id)_link"/>
+	<arg name="laser_4_min_angle" default="$(optenv ROBOT_LASER_4_MIN_ANGLE -2.35619)"/>
+	<arg name="laser_4_max_angle" default="$(optenv ROBOT_LASER_4_MAX_ANGLE 2.35619)"/>
+
+	<!-- 5 LASER -->
+	<arg name="laser_5_model" default="$(optenv ROBOT_LASER_5_MODEL none)"/>
+	<arg name="laser_5_port" default="$(optenv ROBOT_LASER_5_PORT )"/>
+	<arg name="laser_5_ip" default="$(optenv ROBOT_LASER_5_IP 192.168.0.14)"/>
+	<arg name="laser_5_id" default="$(optenv ROBOT_LASER_5_ID laser_5)"/>
+	<arg name="laser_5_frame_id" default="$(arg prefix)$(arg laser_5_id)_link"/>
+	<arg name="laser_5_min_angle" default="$(optenv ROBOT_LASER_5_MIN_ANGLE -2.35619)"/>
+	<arg name="laser_5_max_angle" default="$(optenv ROBOT_LASER_5_MAX_ANGLE 2.35619)"/>
+
+	<!-- 1 -->
+	<include if="$(eval laser_1_model != 'none')" file="$(find robot_bringup)/launch/sensors/laser/$(arg laser_1_model).launch">
+	  <arg name="port" value="$(arg laser_1_port)"/>
+	  <arg name="ip_address" value="$(arg laser_1_ip)"/>
+	  <arg name="node_name" value="$(arg laser_1_id)"/>
+	  <arg name="frame_id" value="$(arg laser_1_frame_id)"/>
+	  <arg name="angle_min" value="$(arg laser_1_min_angle)"/>
+	  <arg name="angle_max" value="$(arg laser_1_max_angle)"/>
+	</include>
+	<!-- 2 -->
+	<include if="$(eval laser_2_model != 'none')" file="$(find robot_bringup)/launch/sensors/laser/$(arg laser_2_model).launch">
+	  <arg name="port" value="$(arg laser_2_port)"/>
+	  <arg name="ip_address" value="$(arg laser_2_ip)"/>
+	  <arg name="node_name" value="$(arg laser_2_id)"/>
+	  <arg name="frame_id" value="$(arg laser_2_frame_id)"/>
+	  <arg name="angle_min" value="$(arg laser_2_min_angle)"/>
+	  <arg name="angle_max" value="$(arg laser_2_max_angle)"/>
+	</include>
+	<!-- 3 -->
+	<include if="$(eval laser_3_model != 'none')" file="$(find robot_bringup)/launch/sensors/laser/$(arg laser_3_model).launch">
+	  <arg name="port" value="$(arg laser_3_port)"/>
+	  <arg name="ip_address" value="$(arg laser_3_ip)"/>
+	  <arg name="node_name" value="$(arg laser_3_id)"/>
+	  <arg name="frame_id" value="$(arg laser_3_frame_id)"/>
+	  <arg name="angle_min" value="$(arg laser_3_min_angle)"/>
+	  <arg name="angle_max" value="$(arg laser_3_max_angle)"/>
+	</include>
+
+	<!-- 4 -->
+	<include if="$(eval laser_4_model != 'none')" file="$(find robot_bringup)/launch/sensors/laser/$(arg laser_4_model).launch">
+	  <arg name="port" value="$(arg laser_4_port)"/>
+	  <arg name="ip_address" value="$(arg laser_4_ip)"/>
+	  <arg name="node_name" value="$(arg laser_4_id)"/>
+	  <arg name="frame_id" value="$(arg laser_4_frame_id)"/>
+	  <arg name="angle_min" value="$(arg laser_4_min_angle)"/>
+	  <arg name="angle_max" value="$(arg laser_4_max_angle)"/>
+	</include>
+
+	<!-- 5 -->
+	<include if="$(eval laser_5_model != 'none')" file="$(find robot_bringup)/launch/sensors/laser/$(arg laser_5_model).launch">
+	  <arg name="port" value="$(arg laser_5_port)"/>
+	  <arg name="ip_address" value="$(arg laser_5_ip)"/>
+	  <arg name="node_name" value="$(arg laser_5_id)"/>
+	  <arg name="frame_id" value="$(arg laser_5_frame_id)"/>
+	  <arg name="angle_min" value="$(arg laser_5_min_angle)"/>
+	  <arg name="angle_max" value="$(arg laser_5_max_angle)"/>
+	</include>
+
+
+
+
+
+</launch>

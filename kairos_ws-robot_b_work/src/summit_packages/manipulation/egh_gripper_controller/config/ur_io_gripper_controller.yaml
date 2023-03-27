@@ -1,0 +1,12 @@
+status_topic_name: status
+close_service_name: close
+open_service_name: open
+
+ur_io_service_name: /robot/arm/ur_hardware_interface/set_io
+update_joints_service_name: joint_position_publisher/set_joints
+
+min_opening: 0.0
+max_opening: 0.096
+
+master_joint: robot_egh_gripper_finger_left_joint
+master_joint_direction: -1

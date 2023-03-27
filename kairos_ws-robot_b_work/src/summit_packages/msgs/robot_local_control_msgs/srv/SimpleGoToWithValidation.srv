@@ -1,0 +1,7 @@
+float32 max_velocity
+bool validation
+string command
+geometry_msgs/Pose2D goal
+---
+bool success
+string message

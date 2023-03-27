@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="config_package" default="$(optenv ROBOT_NAVIGATION_CONFIG_PACKAGE robot_bringup)"/>
+  <arg name="config_folder" default="config/navigation/move_base"/>
+  <arg name="config_path" default="$(eval find(config_package) + '/' + config_folder)"/>
+
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="prefix" default="$(arg id_robot)_"/>
+
+  <!-- Topics argumments -->
+  <arg name="cmd_vel_topic" default="move_base/cmd_vel"/>
+  <arg name="odom_topic" default="robotnik_base_control/odom"/>
+  <arg name="scan_topic_1" default="$(optenv ROBOT_NAVIGATION_2D_SCAN_1 front_laser/scan)"/>
+  <arg name="scan_topic_2" default="$(optenv ROBOT_NAVIGATION_2D_SCAN_2 none)"/>
+  <arg name="scan_topic_3" default="$(optenv ROBOT_NAVIGATION_2D_SCAN_3 none)"/>
+
+  <!-- Frames arguments -->
+  <arg name="global_frame" default="$(arg prefix)map"/>
+  <arg name="odom_frame" default="$(arg prefix)odom"/>
+  <arg name="base_frame" default="$(arg prefix)base_footprint"/>
+
+  <arg name="kinematics" default="$(optenv ROBOT_KINEMATICS diff)"/>
+
+  <arg name="local_planner" default="$(optenv ROBOT_MOVE_BASE_LOCAL_PLANNER teb)"/>
+
+  <include file="$(find robot_bringup)/launch/navigation/move_base_$(arg local_planner).launch">
+    <arg name="config_path" value="$(arg config_path)"/>
+    <arg name="id_robot" value="$(arg id_robot)"/>
+
+    <!-- Topics argumments -->
+    <arg name="cmd_vel_topic" value="$(arg cmd_vel_topic)"/>
+    <arg name="odom_topic" value="$(arg odom_topic)"/>
+    <arg name="scan_topic_1" value="$(arg scan_topic_1)"/>
+    <arg name="scan_topic_2" value="$(arg scan_topic_2)"/>
+    <arg name="scan_topic_3" value="$(arg scan_topic_3)"/>
+
+    <!-- Frames arguments -->
+    <arg name="global_frame" value="$(arg global_frame)"/>
+    <arg name="odom_frame" value="$(arg odom_frame)"/>
+    <arg name="base_frame" value="$(arg base_frame)"/>
+
+    <arg name="kinematics" value="$(arg kinematics)"/>
+
+  </include>
+
+</launch>

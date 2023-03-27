@@ -1,0 +1,5 @@
+string[] joints_names
+float32[] positions
+---
+bool success
+string message

@@ -1,0 +1,4 @@
+poi_manager_msgs/LabeledPose p
+---
+bool success
+string message

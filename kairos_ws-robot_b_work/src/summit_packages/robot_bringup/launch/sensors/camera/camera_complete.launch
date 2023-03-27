@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+
+<!-- This launch is intended to bringup all the cameras of the system -->
+<launch>
+
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="prefix" default="$(arg id_robot)_"/>
+  
+  <!-- 1 CAMERA -->
+  <arg name="camera_1_model" default="$(optenv ROBOT_CAMERA_1_MODEL none)"/>
+  <arg name="camera_1_ip" default="$(optenv ROBOT_CAMERA_1_IP )"/>
+  <arg name="camera_1_calibration" default="$(optenv ROBOT_CAMERA_1_CALIBRATION )"/>
+  <arg name="camera_1_id" default="$(optenv ROBOT_CAMERA_1_ID camera_1)"/>
+  <arg name="camera_1_device_id" default="$(optenv ROBOT_CAMERA_1_DEVICE_ID #1)"/>
+
+  <!-- 2 CAMERA -->
+  <arg name="camera_2_model" default="$(optenv ROBOT_CAMERA_2_MODEL none)"/>
+  <arg name="camera_2_ip" default="$(optenv ROBOT_CAMERA_2_IP )"/>
+  <arg name="camera_2_calibration" default="$(optenv ROBOT_CAMERA_2_CALIBRATION )"/>
+  <arg name="camera_2_id" default="$(optenv ROBOT_CAMERA_2_ID camera_2)"/>
+  <arg name="camera_2_device_id" default="$(optenv ROBOT_CAMERA_2_DEVICE_ID #2)"/>
+
+  <!-- 3 CAMERA -->
+  <arg name="camera_3_model" default="$(optenv ROBOT_CAMERA_3_MODEL none)"/>
+  <arg name="camera_3_ip" default="$(optenv ROBOT_CAMERA_3_IP )"/>
+  <arg name="camera_3_calibration" default="$(optenv ROBOT_CAMERA_3_CALIBRATION )"/>
+  <arg name="camera_3_id" default="$(optenv ROBOT_CAMERA_3_ID camera_3)"/>
+  <arg name="camera_3_device_id" default="$(optenv ROBOT_CAMERA_3_DEVICE_ID #3)"/>
+
+  <!-- 4 CAMERA -->
+  <arg name="camera_4_model" default="$(optenv ROBOT_CAMERA_4_MODEL none)"/>
+  <arg name="camera_4_ip" default="$(optenv ROBOT_CAMERA_4_IP )"/>
+  <arg name="camera_4_calibration" default="$(optenv ROBOT_CAMERA_4_CALIBRATION )"/>
+  <arg name="camera_4_id" default="$(optenv ROBOT_CAMERA_4_ID camera_4)"/>
+  <arg name="camera_4_device_id" default="$(optenv ROBOT_CAMERA_4_DEVICE_ID #4)"/>
+
+  <!-- 5 CAMERA -->
+  <arg name="camera_5_model" default="$(optenv ROBOT_CAMERA_5_MODEL none)"/>
+  <arg name="camera_5_ip" default="$(optenv ROBOT_CAMERA_5_IP )"/>
+  <arg name="camera_5_calibration" default="$(optenv ROBOT_CAMERA_5_CALIBRATION )"/>
+  <arg name="camera_5_id" default="$(optenv ROBOT_CAMERA_5_ID camera_5)"/>
+  <arg name="camera_5_device_id" default="$(optenv ROBOT_CAMERA_5_DEVICE_ID #5)"/>
+
+  <!-- 1 -->
+  <include if="$(eval camera_1_model != 'none')" file="$(find robot_bringup)/launch/sensors/camera/$(arg camera_1_model).launch">
+    <arg name="prefix" value="$(arg prefix)$(arg camera_1_id)"/>
+    <!-- <arg name="ip_address" value="$(arg camera_1_ip)"/> -->
+    <!-- <arg name="calibration" value="$(arg camera_1_calibration)"/> -->
+    <!-- <arg name="node_name" value="$(arg camera_1_id)"/> -->
+    <arg name="device_id" value="$(arg camera_1_device_id)"/>
+  </include>
+  
+  <!-- 2 -->
+  <include if="$(eval camera_2_model != 'none')" file="$(find robot_bringup)/launch/sensors/camera/$(arg camera_2_model).launch">
+    <arg name="prefix" value="$(arg prefix)$(arg camera_2_id)_"/>
+    <arg name="ip_address" value="$(arg camera_2_ip)"/>
+    <arg name="calibration" value="$(arg camera_2_calibration)"/>
+    <arg name="node_name" value="$(arg camera_2_id)"/>
+    <arg name="device_id" value="$(arg camera_2_device_id)"/>
+  </include>
+    
+  <!-- 3 -->
+  <include if="$(eval camera_3_model != 'none')" file="$(find robot_bringup)/launch/sensors/camera/$(arg camera_3_model).launch">
+    <arg name="prefix" value="$(arg prefix)$(arg camera_3_id)_"/>
+    <arg name="ip_address" value="$(arg camera_3_ip)"/>
+    <arg name="calibration" value="$(arg camera_3_calibration)"/>
+    <arg name="node_name" value="$(arg camera_3_id)"/>
+    <arg name="device_id" value="$(arg camera_3_device_id)"/>
+  </include>
+    
+  <!-- 4 -->
+  <include if="$(eval camera_4_model != 'none')" file="$(find robot_bringup)/launch/sensors/camera/$(arg camera_4_model).launch">
+    <arg name="prefix" value="$(arg prefix)$(arg camera_4_id)_"/>
+    <arg name="ip_address" value="$(arg camera_4_ip)"/>
+    <arg name="calibration" value="$(arg camera_4_calibration)"/>
+    <arg name="node_name" value="$(arg camera_4_id)"/>
+    <arg name="device_id" value="$(arg camera_4_device_id)"/>
+  </include>
+    
+  <!-- 5 -->
+  <include if="$(eval camera_5_model != 'none')" file="$(find robot_bringup)/launch/sensors/camera/$(arg camera_5_model).launch">
+    <arg name="prefix" value="$(arg prefix)$(arg camera_5_id)_"/>
+    <arg name="ip_address" value="$(arg camera_5_ip)"/>
+    <arg name="calibration" value="$(arg camera_5_calibration)"/>
+    <arg name="node_name" value="$(arg camera_5_id)"/>
+    <arg name="device_id" value="$(arg camera_5_device_id)"/>
+  </include>
+    
+</launch>

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="frame_id"  default="robot_front_laser_link"/>
+  <arg name="sensor_type"           default="sick_lms_5xx"/>
+  <arg name="angle_min"  default="-1.48353"/> <!-- default -1.48353 -->
+  <arg name="angle_max"  default="1.48353"/>
+  <arg name="range_max" default="100.0"/>
+  <arg name="intensity"             default="true"/>
+  <arg name="intensity_resolution_16bit" default="false"/>
+  <arg name="ip_address"  default="192.168.0.10"/>
+  <arg name="port"  default="2112"/>
+  <arg name="timelimit" default="5"/>
+
+  <arg name="node_name" default="sick_lms_5xx"/>
+
+  <arg name="scan_topic"  default="scan"/>
+  <arg name="use_binary_protocol"   default="true"/>
+
+
+
+  <include file="$(find robot_bringup)/launch/sensors/laser/include/sick_generic_scanners.launch.xml">
+    <arg name="ip_address" value="$(arg ip_address)"/>
+    <arg name="port" value="$(arg port)" />
+    <arg name="node_name" value="$(arg node_name)"/>
+    <arg name="frame_id" value="$(arg frame_id)"/>
+    <arg name="scan_topic" value="$(arg scan_topic)"/>
+    <arg name="angle_start" value="$(arg angle_min)" />
+    <arg name="angle_end"   value="$(arg angle_max)" />
+    <arg name="range_max"   value="$(arg range_max)" />
+    <arg name="sensor_type"   value="$(arg sensor_type)" />
+    <arg name="intensity"   value="$(arg intensity)" />
+    <arg name="intensity_resolution_16bit" value="$(arg intensity_resolution_16bit)"/>
+    <arg name="use_binary_protocol" value="$(arg use_binary_protocol)"/>
+    <arg name="timelimit" value="$(arg timelimit)"/>
+
+    <!-- possible angular resolutions are 1,0.6667,0.5,0.3333,0.25,0.1667
+         possible scan frequencies are 25,35,50,75,100 Hz
+         Make sure to check in the manual whether the desired scanning frequency
+         and angular resolution combination is available.
+         The parameters scan_freq and ang_res must always be used together.
+    !-->
+
+    <!--arg name="ang_res" value="0.5" />
+    <arg name="scan_freq" value="50" /-->
+
+  </include>
+
+</launch>

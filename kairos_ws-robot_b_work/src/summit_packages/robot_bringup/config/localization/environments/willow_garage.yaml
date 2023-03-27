@@ -1,0 +1,6 @@
+willow_garage:
+  global_frame: robot_map
+  maps_package: robot_bringup
+  maps:
+    localization: maps/willow_garage/localization.yaml
+    routes: maps/willow_garage/routes.yaml

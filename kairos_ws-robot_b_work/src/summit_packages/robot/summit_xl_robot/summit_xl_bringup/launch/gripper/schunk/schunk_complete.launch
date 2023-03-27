@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="prefix" default="gripper_"/>
+	<arg name="gripper_model" default="egh"/>
+	<arg name="gripper_ip" default="192.168.0.212"/>
+	<arg name="gripper_port" default="1000"/>
+	<arg name="control_gripper_by_signals" default="true"/>
+	
+	<group ns="gripper">
+	
+    <!-- Convert joint states to /tf tranforms -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+    <include file="$(find summit_xl_bringup)/launch/gripper/schunk/$(arg gripper_model)_gripper.launch">
+    	<arg name="prefix" value="$(arg prefix)"/>
+	    <arg name="gripper_ip" value="$(arg gripper_ip)"/>
+	    <arg name="gripper_port" value="$(arg gripper_port)"/>
+	    <arg name="control_gripper_by_signals" value="$(arg control_gripper_by_signals)"/>
+    </include>
+
+  </group>
+	
+  <node name="joint_state_publisher_gripper" pkg="joint_state_publisher" type="joint_state_publisher" >   
+	  <rosparam param="source_list">["joint_states", "gripper/joint_states"]</rosparam> 
+  </node>
+  
+</launch>

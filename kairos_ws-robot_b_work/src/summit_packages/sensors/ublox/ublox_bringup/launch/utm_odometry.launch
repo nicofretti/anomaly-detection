@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+  <node name="utm_odometry_node" pkg="gps_common" type="utm_odometry_node">
+    <!-- remap from="odom" to="vo1"/ --> <!-- if two gpss used, otherwise -->
+    <remap from="odom" to="/utm_coords" />
+    <remap from="fix" to="/campero/gps/fix" />
+    <param name="rot_covariance" value="99999" />
+    <param name="frame_id" value="world" />
+  </node>
+</launch>
+
+

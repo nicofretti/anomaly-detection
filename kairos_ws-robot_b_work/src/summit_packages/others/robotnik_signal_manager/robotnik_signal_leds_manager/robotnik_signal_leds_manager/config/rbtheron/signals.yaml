@@ -1,0 +1,90 @@
+# rbtheron: configuration for real leds
+
+signals:
+
+  - id: "forward"
+    enabled: false
+    led_label: ["front_left_leds", "front_right_leds"]
+    mode: "blink"
+    color: [0, 255, 0, 0]
+    ms_on: 500
+    ms_off: 500
+
+  - id: "backward"
+    enabled: false
+    led_label: ["rear_left_leds", "rear_right_leds"]
+    mode: "blink"
+    color: [0, 255, 0, 0]
+    ms_on: 500
+    ms_off: 500
+
+  - id: "omni_left"
+    enabled: false
+    led_label: ["left_leds"]
+    mode: "blink"
+    color: [0, 255, 0, 0]
+    ms_on: 500
+    ms_off: 500
+  
+  - id: "omni_right"
+    enabled: false
+    led_label: ["right_leds"]
+    mode: "blink"
+    color: [0, 255, 0, 0]
+    ms_on: 500
+    ms_off: 500
+
+
+  - id: "turn_left"
+    enabled: false
+    led_label: ["left_leds", "right_leds"]
+    mode: "shift"
+    color: [0, 255, 0, 0]
+    direction: "left"
+    led_increment: 1
+    speed: 600
+
+
+  - id: "turn_right"
+    enabled: false
+    led_label: ["right_leds", "left_leds"]
+    mode: "shift"
+    color: [0, 255, 0, 0]
+    direction: "right"
+    led_increment: 1
+    speed: 600
+
+
+  - id: "turn_left_inverse"
+    enabled: false
+    led_label: ["right_leds","left_leds"]
+    mode: "shift"
+    color: [0, 255, 0, 0]
+    direction: "left"
+    led_increment: 1
+    speed: 600
+
+
+  - id: "turn_right_inverse"
+    enabled: false
+    led_label: ["right_leds", "left_leds"]
+    mode: "shift"
+    color: [0, 255, 0, 0]
+    direction: "right"
+    led_increment: 1
+    speed: 600
+
+
+  - id: "stop_robot"
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "paint"
+    color: [0, 255, 0, 0]
+
+  
+  - id: "emergency_stop"
+    enabled: false
+    led_label: ["all_leds"]
+    mode: "paint"
+    color: [255, 0, 0, 0]
+

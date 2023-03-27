@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Load arguments -->
+  <arg name="robot_model" default="$(optenv ROBOT_MODEL summit_xl)"/>
+  <arg name="leds_port" default="$(optenv ROBOT_LEDS_PORT /dev/ttyUSB_LEDS)"/>
+  <arg name="baud_rate" default="2000000"/>
+  <arg name="exclusive_signals" default="true"/>
+
+  <!-- Load YAMLs -->
+  <arg name="signals_yaml" default="$(find robot_bringup)/config/bringup/leds/signals.yaml"/>
+  <arg name="leds_config_yaml" default="$(find robot_bringup)/config/bringup/leds/config.yaml"/>  
+
+  <rosparam file="$(arg signals_yaml)" command="load"/>
+  <rosparam file="$(arg leds_config_yaml)" command="load"/>
+
+
+  <!-- Launch real led device hardware -->
+  <node name="serial_node" pkg="rosserial_python" type="serial_node.py" output="screen">
+    <param name="port" value="$(arg leds_port)"/>
+    <param name="baud" value="$(arg baud_rate)"/>	
+  </node>
+
+  <!-- Launch ROS led driver interface -->
+  <node name="leds_driver" pkg="robotnik_signal_leds_manager" type="leds_driver_node.py" output="screen">
+    <param name="exclusive_signals" value="$(arg exclusive_signals)"/>
+  </node>
+
+  <!-- Launch user application example-->
+  <node pkg="robotnik_leds_example" type="robot_leds.py" name="leds_node" output="screen">
+    <param name="cmd_vel_topic" value="robotnik_base_control/cmd_vel"/>
+    <param name="verbose" value="false" />
+  </node>
+
+
+</launch>

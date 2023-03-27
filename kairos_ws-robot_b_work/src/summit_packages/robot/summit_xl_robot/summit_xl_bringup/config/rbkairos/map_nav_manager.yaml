@@ -1,0 +1,38 @@
+localization:
+  args: ''
+  autorun: true
+  command: roslaunch summit_xl_localization amcl.launch
+  killwith: ''
+  params: prefix:=robot_ odom_model_type:=omni
+  process: ''
+map_saver:
+  args: ''
+  command: rosrun map_server map_saver
+  default_map: default
+  killwith: ''
+  maps_folder: /home/rbkairos/catkin_ws/src/map_nav_manager/map
+  params: ''
+  process: ''
+map_server:
+  args: ''
+  autorun: true
+  command: rosrun map_server map_server __name:=map_server
+  default_map: test1
+  killwith: rosnode
+  maps_folder: /home/rbkairos/catkin_ws/src/map_nav_manager/map
+  params: _frame_id:=robot_map
+  process: ''
+mapping:
+  args: ''
+  autorun: false
+  command: roslaunch summit_xl_localization slam_gmapping.launch
+  killwith: ''
+  params: prefix:=robot_
+  process: ''
+navigation:
+  args: ''
+  autorun: true
+  command: roslaunch summit_xl_navigation rbkairos_move_base.launch
+  killwith: ''
+  params: prefix:=robot_ local_planner_params:=/home/rbkairos/catkin_ws/src/summit_xl_robot/summit_xl_bringup/config/navigation/eband_local_planner_diff_params.yaml
+  process: ''

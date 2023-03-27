@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package>
+  <name>robot_local_control_msgs</name>
+  <version>1.2.0</version>
+  <description>The robot_local_control_msgs package</description>
+
+  <maintainer email="mbosch@robotnik.es">Marc Bosch</maintainer>
+  <maintainer email="dredo@robotnik.es">David Redó</maintainer>
+  <maintainer email="aarnal@robotnik.es">Alejandro Arnal</maintainer>
+  <maintainer email="rnavarro@robotnik.es">Román Navarro</maintainer>
+  <maintainer email="avillena@robotnik.es">Álvaro Villena</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>procedures_msgs</build_depend>
+  <build_depend>robotnik_msgs</build_depend>
+  <build_depend>robotnik_signal_msgs</build_depend>
+
+  <run_depend>procedures_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>robotnik_msgs</run_depend>
+  <run_depend>robotnik_signal_msgs</run_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>

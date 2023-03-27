@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- valid for summitxl - summitxl hl - summitxl hls -->
+  <!-- The environment variables should be set in a file or .bashrc -->
+
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="robot_model" default="$(optenv ROBOT_MODEL summit_xl)"/>
+  <arg name="xacro_robot" default="$(optenv ROBOT_XACRO summit_xl.urdf.xacro)"/>
+
+  <!-- BASE HW -->
+  <arg name="battery_voltage_offset" default="$(optenv ROBOT_BASE_HW_BATTERY_VOLTAGE_OFFSET 0.0)"/>
+  <arg name="wheel_diameter" default="$(optenv ROBOT_WHEEL_DIAMETER 0.22)"/>
+
+  <!-- BMS -->
+  <arg name="bms_model" default="$(optenv ROBOT_BMS_MODEL none)"/>
+  <arg name="bms_port" default="$(optenv ROBOT_BMS_PORT /dev/ttyUSB_BMS)"/>
+
+  <!-- BATTERY ESTIMATION -->
+  <arg name="battery_voltage" default="$(optenv ROBOT_BATTERY_VOLTAGE 24)"/>
+  <arg name="battery_duration" default="$(optenv ROBOT_BATTERY_DURATION 500)"/>
+  <arg name="read_voltage_from_analog_input" default="$(optenv ROBOT_READ_VOLTAGE_FROM_ANALOG_INPUT true)"/>
+  <arg name="voltage_analog_input_number" default="$(optenv ROBOT_VOLTAGE_ANALOG_INPUT_NUMBER 1)" />
+  <arg name="current_analog_input_number" default="$(optenv ROBOT_CURRENT_ANALOG_INPUT_NUMBER 2)" />
+
+  <!-- CHARGE MANAGER -->
+  <arg name="docker_mode" default="$(optenv ROBOT_DOCKER_MODE automatic_sw)"/>
+  <arg name="inverted_contact_relay_input" default="$(optenv ROBOT_BATTERY_INVERTED_CONTACT_RELAY false)" />
+  <arg name="contact_relay_input_number" default="$(optenv ROBOT_BATTERY_CONTACT_RELAY_INPUT_NUMBER 2)" />
+  <arg name="charger_relay_output_number" default="$(optenv ROBOT_BATTERY_CHARGER_RELAY_OUTPUT_NUMBER 1)" />
+
+  <!-- SAFETY MODULE-->
+  <arg name="has_safety_module" default="$(optenv ROBOT_HAS_SAFETY_MODULE false)"/>
+  <arg name="modbus_server_ip_address" default="$(optenv ROBOT_MODBUS_SERVER_IP 192.168.0.250)"/>
+  <arg name="safety_laser_model" default="$(optenv ROBOT_SAFETY_LASER_MODEL sick_microscan3)"/>
+
+  <!-- PAD -->
+  <arg name="pad_model" default="$(optenv ROBOT_PAD_MODEL ps4)"/>
+
+  <!-- LEDS -->  
+  <arg name="has_leds" default="$(optenv ROBOT_HAS_LEDS false)"/>
+
+  <!-- ELEVATOR -->
+  <arg name="has_elevator" default="$(optenv ROBOT_HAS_ELEVATOR false)"/>
+
+  <group ns="$(arg id_robot)">
+
+    <arg name="prefix" value="$(arg id_robot)_"/>
+
+    <include file="$(find robot_bringup)/launch/bringup/description/$(arg robot_model).launch.xml">
+      <arg name ="prefix" value ="$(arg prefix)"/>
+      <arg name ="urdf_xacro" value ="$(arg xacro_robot)"/>
+    </include>
+
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+      <remap from="/joint_states" to="joint_states"/>
+    </node>
+
+    <!-- start robotnik_pad nodes -->
+    <include file="$(find robot_bringup)/launch/bringup/pad.launch">
+      <arg name="pad_model" value="$(arg pad_model)"/>
+    </include>
+
+    <!-- start robotnik_base_hw node -->
+    <include file="$(find robot_bringup)/launch/bringup/robotnik_base_hw.launch">
+      <arg name="prefix" value="$(arg prefix)"/>
+      <arg name="battery_voltage_offset" value="$(arg battery_voltage_offset)"/>
+    </include>
+
+    <!-- start dock_manager node -->
+    <include file="$(find robot_bringup)/launch/bringup/battery/charge_manager.launch">
+      <arg name="docker_mode" value="$(arg docker_mode)"/>
+      <arg name="inverted_contact_relay_input" value="$(arg inverted_contact_relay_input)"/>
+      <arg name="contact_relay_input_number" value="$(arg contact_relay_input_number)"/>
+      <arg name="charger_relay_output_number" value="$(arg charger_relay_output_number)"/>
+    </include>
+
+    <!-- start battery_estimation node -->
+    <include if="$(eval bms_model == 'none')" file="$(find robot_bringup)/launch/bringup/battery/table_battery.launch">
+      <arg name="battery_voltage" value="$(arg battery_voltage)"/>
+      <arg name="battery_duration" value="$(arg battery_duration)"/>
+      <arg name="read_voltage_from_analog_input" value="$(arg read_voltage_from_analog_input)"/>
+      <arg name="voltage_analog_input_number" value="$(arg voltage_analog_input_number)" />
+      <arg name="current_analog_input_number" value="$(arg current_analog_input_number)" />
+    </include>
+
+    <include unless="$(eval bms_model == 'none')" file="$(find robot_bringup)/launch/bringup/battery/$(arg bms_model)_bms.launch">
+      <arg name="port" value="$(arg bms_port)"/>
+    </include>
+
+    <!-- start summit_xl_control nodes -->
+    <include file="$(find robot_bringup)/launch/bringup/summit_xl_control.launch">
+      <arg name="prefix" value="$(arg prefix)"/>
+    </include>
+
+    <group if="$(arg has_safety_module)">
+      <!-- start robotnik_modbus_io -->
+      <include file="$(find robot_bringup)/launch/bringup/robotnik_modbus_io.launch">
+        <arg name="ip_address" value="$(arg modbus_server_ip_address)"/>
+      </include>
+      <!-- start safety module-->
+      <include file="$(find robot_bringup)/launch/bringup/safety_module.launch">
+        <arg name="laser_model" value="$(arg safety_laser_model)"/>
+      </include>
+    </group>
+
+    <include if="$(arg has_leds)" file="$(find robot_bringup)/launch/bringup/leds.launch"/>
+
+
+
+
+  </group>
+
+</launch>
+

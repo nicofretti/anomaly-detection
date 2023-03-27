@@ -1,0 +1,38 @@
+type: robot_local_control_components/RobotStatusComponent
+
+desired_freq: 1.0
+odom_topic: robotnik_base_control/odom
+battery_estimator_topic: battery_estimator/data
+base_hw_emergency_stop_topic: robotnik_base_hw/emergency_stop
+has_elevator: $(arg has_elevator)
+elevator_topic: robotnik_base_control/elevator_status
+battery_docking_status_topic: charge_manager/docking_status
+has_safety_module: $(arg has_safety_module)
+safety_status_topic: safety_module/status
+
+
+sensors:
+  front_laser:
+    type: robot_local_control_components/LaserComponent
+    desired_freq: 1.0
+    topic: $(arg laser_1_id)/scan
+
+  camera:
+    type: robot_local_control_components/CameraComponent
+    desired_freq: 1.0
+    topic: $(arg camera_1_id)/rgb/image_raw
+
+  imu:
+    type: robot_local_control_components/ImuComponent
+    desired_freq: 1.0
+    topic: imu/data
+
+controllers:
+  base:
+    type: robot_local_control_components/BaseComponent
+    topic: robotnik_base_hw/status
+
+#  gps:
+#    type: robot_local_control_components/GPSComponent
+#    desired_freq: 0.5
+#    topic: gps/fix

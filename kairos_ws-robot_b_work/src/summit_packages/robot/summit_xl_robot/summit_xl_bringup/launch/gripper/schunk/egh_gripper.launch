@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="prefix" default="egh_"/>
+	<arg name="gripper_ip" default="192.168.0.212"/>
+	<arg name="gripper_port" default="1000"/>
+	<arg name="control_gripper_by_signals" default="true"/>
+	
+    <group if="$(arg control_gripper_by_signals)">
+        <include file="$(find egh_gripper_controller)/launch/ur_io_gripper_controller.launch"/>
+    </group>
+
+    <!-- TODO: Develop EGH controller-->
+	
+</launch>

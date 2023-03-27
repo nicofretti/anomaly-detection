@@ -1,0 +1,2 @@
+float32 velocity_level
+string kinematic_mode

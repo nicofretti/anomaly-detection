@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="node_name" default="sick_laser"/>
+  <arg name="scan_topic"  default="scan"/>
+  <arg name="frame_id"              default="laser_link" />
+  <arg name="sensor_type" 	    default="sick_lms_5xx"/>
+  <arg name="angle_start"           default="-1.658062789" />
+  <arg name="angle_end"             default="1.658062789" />
+  <arg name="range_max"	     	    default="100"/>
+  <arg name="intensity"	     	    default="true"/>
+  <arg name="intensity_resolution_16bit" default="false"/>  
+  <arg name="ip_address"  default="192.168.0.10"/> 
+  <arg name="port"  default="2112"/>
+  <arg name="timelimit" default="5"/>
+  <arg name="use_binary_protocol"   default="true"/>
+  
+  <!--arg name="time_offset"           default="0.001" /-->
+  
+  <!--arg name="ang_res" default="0.1667" />
+  <arg name="scan_freq" default="25" /-->
+
+  
+
+  <group ns="$(arg node_name)">
+
+    <!-- launch file for the lms_5xx series -->
+    <node name="$(arg node_name)" pkg="sick_scan" type="sick_generic_caller" respawn="false" output="screen">
+
+        <!-- default values: -->
+        <!--
+          <param name="min_ang" type="double" value="-1.658062789" />
+          <param name="max_ang" type="double" value="1.658062789" />
+          <param name="intensity" type="bool" value="True" />
+          <param name="skip" type="int" value="0" />
+          <param name="frame_id" type="str" value="laser" />
+          <param name="time_offset" type="double" value="-0.001" />
+          <param name="publish_datagram" type="bool" value="False" />
+          <param name="subscribe_datagram" type="bool" value="false" />
+          <param name="device_number" type="int" value="0" />
+          <param name="range_min" type="double" value="0.05" />
+        -->
+        <param name="frame_id" type="string" value="$(arg frame_id)"/>
+        <param name="scanner_type" type="string" value="$(arg sensor_type)"/>
+	<!--param name="skip" type="int" value="$(arg skip)" /-->
+        <!-- -95° -->
+        <param name="min_ang" type="double" value="$(arg angle_start)"/>
+        <!-- 95° -->
+        <param name="max_ang" type="double" value="$(arg angle_end)"/>
+        <param name="range_max" type="double" value="$(arg range_max)"/>
+        <param name="intensity" type="bool" value="$(arg intensity)"/>
+        <param name="intensity_resolution_16bit" type="bool" value="$(arg intensity_resolution_16bit)"/>
+        <param name="hostname" type="string" value="$(arg ip_address)"/>
+        <param name="port" type="string" value="$(arg port)"/>
+        <param name="timelimit" type="int" value="$(arg timelimit)"/>
+        <param name="use_binary_protocol" type="bool" value="$(arg use_binary_protocol)"/>
+
+	<remap from="scan" to="$(arg scan_topic)"/>
+	
+        <!-- possible angular resolutions are 1,0.6667,0.5,0.3333,0.25,0.1667
+         possible scan frequencies are 25,35,50,75,100 Hz
+         Make sure to check in the manual whether the desired scanning frequency
+         and angular resolution combination is available.
+         The parameters scan_freq and ang_res must always be used together.
+        !-->
+        <!--param name="ang_res" type="double" value="$(arg ang_res)" />
+        <param name="scan_freq" type="double" value="$(arg scan_freq)" /-->
+
+
+    </node>
+  </group>
+  
+</launch>

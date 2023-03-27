@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>robot_bringup</name>
+  <version>0.2.0</version>
+  <description>The robot_bringup package</description>
+
+  <author email="rnavarro@robotnik.es">Román Navarro</author>
+  
+  <maintainer email="rnavarro@robotnik.es">Román Navarro</maintainer>
+  <maintainer email="aarnal@robotnik.es">Alejandro Arnal</maintainer>
+  <maintainer email="jgomez@robotnik.es">José Gómez</maintainer>
+  <maintainer email="rvasquez@robotnik.es">Robert Vásquez</maintainer>
+  <maintainer email="amartinez@robotnik.es">Álvaro Martínez</maintainer>
+  <maintainer email="jmnavarrete@robotnik.es">Juan Manuel Navarrete</maintainer>
+
+  <license>BSD</license>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- Command manager dependencies -->
+  <exec_depend>robot_simple_command_manager</exec_depend>
+  <exec_depend>robot_simple_command_manager_msgs</exec_depend>
+  <exec_depend>robot_simple_command_sequencer</exec_depend>
+
+  <!-- Control runtime dependencies -->
+  <exec_depend>joy</exec_depend>
+  <exec_depend>robotnik_pad</exec_depend>
+
+  <!-- HMI runtime dependencies -->
+  <exec_depend>rosbridge_server</exec_depend>
+  <exec_depend>tf2_web_republisher</exec_depend>
+  <exec_depend>topic_tools</exec_depend>
+  <exec_depend>system_monitor</exec_depend>
+  <exec_depend>robotnik_hmi</exec_depend>
+
+  <!-- Interfaces runtime dependencies -->
+  <exec_depend>rostful</exec_depend>
+
+  <!-- Localization runtime dependencies -->
+  <exec_depend>amcl</exec_depend>
+  <exec_depend>marker_mapping</exec_depend>
+  <exec_depend>multimap_server</exec_depend>
+  <exec_depend>map_server</exec_depend>
+  <exec_depend>robot_localization</exec_depend>
+  <exec_depend>gmapping</exec_depend>
+
+  <!-- Manipulation runtime dependencies -->
+  <!-- Manipulation > arm -->
+  <exec_depend>ur_robot_driver</exec_depend>
+  <!-- Manipulation > gripper -->
+  <exec_depend>ur_gripper_controller</exec_depend>
+  <exec_depend>fake_joint_position_publisher</exec_depend>
+
+  <!-- Navigation runtime dependencies -->
+  <exec_depend>robotnik_docker</exec_depend>
+  <exec_depend>robotnik_move</exec_depend>
+  <exec_depend>move_base</exec_depend>
+  <exec_depend>teb_local_planner</exec_depend>
+  <exec_depend>eband_local_planner</exec_depend>
+
+  <!-- Perception runtime dependencies -->
+  <exec_depend>robotnik_locator</exec_depend>
+  <exec_depend>robotnik_pose_filter</exec_depend>
+  <exec_depend>laser_filters</exec_depend>
+
+  <!-- RLC runtime dependencies -->
+  <exec_depend>robot_local_control</exec_depend>
+
+  <!-- Sensors runtime dependencies -->
+  <!-- Sensors > Camera -->
+  <exec_depend>axis_camera</exec_depend>
+  <exec_depend>image_transport</exec_depend>
+  <exec_depend>image_proc</exec_depend>
+  <exec_depend>astra_launch</exec_depend>
+  <!-- Sensors > GPS -->
+  <exec_depend>ublox_gps</exec_depend>
+  <!-- Sensors > IMU -->
+  <exec_depend>mavros</exec_depend>
+  <exec_depend>imu_complementary_filter</exec_depend>
+  <!-- Sensors > Laser -->
+  <exec_depend>urg_node</exec_depend>
+  <exec_depend>rslidar_driver</exec_depend>
+  <exec_depend>rslidar_pointcloud</exec_depend>
+  <exec_depend>sick_scan</exec_depend>
+  <exec_depend>sick_tim</exec_depend>
+  <exec_depend>sick_safetyscanners</exec_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<launch>
+	<arg name="debug" default="false"/>
+    <arg     if="$(arg debug)" name="launch_prefix" default="gdb -ex run --args"/>
+    <arg unless="$(arg debug)" name="launch_prefix" default=""/>
+
+	<!-- Set namespace -->
+	<!--arg name="id_robot" default="robot"/-->
+
+	<!-- Desired frequency -->
+	<arg name="desired_freq" default="1.0" />
+	
+	<!-- Name of the example topic, defined on the parent class in case that you
+		 have used the RComponent "node_creator" script. -->
+	<arg name="example_subscriber_name" default="example" />
+
+	<!-- Load .yaml example -->
+	<!--rosparam file="$(find ?pkg_name)/config/example.yaml" command="load" /-->
+
+	<!--group ns="$(arg id_robot)"-->
+
+		<!-- start ?NewNode node -->
+		<node name="?new_node" pkg="?pkg_name" type="?new_node_node" output="screen" respawn="false" launch-prefix="$(arg launch_prefix)">
+			<param name="desired_freq" value="$(arg desired_freq)"/>
+			<param name="example_subscriber_name" value="$(arg example_subscriber_name)"/>
+		</node>
+
+	<!--/group-->
+
+</launch>

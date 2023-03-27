@@ -1,0 +1,57 @@
+managers:
+  - type_action: 0
+    manager: "manager_poi_go_to"
+    name_class: "ManagerPoiGoTo"
+    goto_tag_poi_service: "'/robot/poi_interactive_marker/goto_tag'"
+    state_poi_topic: "'/robot/poi_interactive_marker/state'"
+  #- type_action: 1
+  #  manager: "manager_robotnik_trajectory_manager"
+  #  name_class: "ManagerRobotnikTrajectoryManager"
+  #- type_action: 2
+  #  manager: "manager_publish_gripper"
+  #  name_class: "ManagerPublishGripper"
+  #  publish_topic: "'/gripper_prismatic_joint/command'"
+  #- type_action: 3
+  #  manager: "manager_qr"
+  #  name_class: "ManagerQr"
+  #- type_action: 4
+  #  manager: "manager_go_to_gps"
+  #  name_class: "ManagerGoToGPS"
+  - type_action: 6
+    manager: "manager_robotnik_navigation_action"
+    name_class: "ManagerRobotnikNavigationAction"
+    goal_topic: "'/robot/pp_docker/goal'"
+    status_topic: "'/robot/pp_docker/status'"
+    robot_dock_frame: "'robot_base_footprint'"
+    frame_id: "''"
+    dock_frame: "'robot_laser_contact_for_base_frame'"
+  - type_action: 7
+    manager: "manager_robotnik_navigation_action"
+    name_class: "ManagerRobotnikNavigationAction"
+    goal_topic: "'/robot/pp_docker/goal'"
+    status_topic: "'/robot/pp_docker/status'"
+    robot_dock_frame: "'robot_base_footprint'"
+    frame_id: "''"
+    dock_frame: "'robot_cart_laser_contact_for_base_frame'"
+  - type_action: 8
+    manager: "manager_robotnik_navigation_action"
+    name_class: "ManagerRobotnikNavigationAction"
+    goal_topic: "'/robot/pp_docker/goal'"
+    status_topic: "'/robot/pp_docker/status'"
+    robot_dock_frame: "'robot_base_footprint'"
+    frame_id: "''"
+    dock_frame: "'robot_docking_station_laser_contact_for_base_frame'"
+  - type_action: 9
+    manager: "manager_publish_move"
+    name_class: "ManagerPublishMove"
+    publish_topic: "'/robot/move/cmd_vel'"
+    linear_x: "-0.2"
+  - type_action: 10
+    manager: "manager_pick"
+    name_class: "ManagerPick"
+    dock_action: "'/robot/move/cmd_vel'"
+    elevator_action: "''"
+    dock_frame: "''"
+    linear_x: "-0.2"
+    
+

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="packet_loss_threshold" default="100.0"/>
+
+  <node pkg="network_monitor" type="network_monitor.py" name="network_monitor" output="screen">
+  	<param name="packet_loss_threshold" value="$(arg packet_loss_threshold)" type="double"/>
+  </node>
+
+</launch>

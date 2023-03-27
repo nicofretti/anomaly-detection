@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- publishes gps_2_base topic of type geometry_msgs::Pose - utm coords read from tf -->
+  <node name="gps_publisher_node" pkg="gps_publisher" type="gps_publisher">
+    <!-- remap from="odom" to="vo1"/ --> <!-- if two gpss used, otherwise -->
+  </node>
+</launch>
+

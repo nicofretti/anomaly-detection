@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="node_name" default="sick_outdoorscan3"/>
+  <arg name="ip_address"  default="192.168.0.10"/>
+  <arg name="port"  default=""/> <!-- not used for this node -->
+  <arg name="scan_topic"  default="scan"/>
+  <arg name="frame_id"  default="laser_link"/>
+  <arg name="angle_min" default="-2.35619" />
+  <arg name="angle_max"   default="2.35619" />
+
+  <include file="$(find robot_bringup)/launch/sensors/laser/include/sick_safetyscanners.launch.xml">
+    <arg name="ip_address" value="$(arg ip_address)"/>
+    <arg name="node_name" value="$(arg node_name)"/>
+    <arg name="frame_id" value="$(arg frame_id)"/>
+    <arg name="scan_topic" value="$(arg scan_topic)"/>
+    <arg name="angle_start" value="$(arg angle_min)" />
+	  <arg name="angle_end"   value="$(arg angle_max)" />
+  </include>
+
+</launch>

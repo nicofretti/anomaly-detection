@@ -1,0 +1,6 @@
+mapa_test:
+  global_frame: robot_map
+  maps_package: robot_bringup
+  maps:
+    localization: maps/mapa_test/mapa_test.yaml
+    routes: maps/mapa_test/mapa_test.yaml

@@ -1,0 +1,13 @@
+joints: 
+  - world_2_base
+  - world_2_base_2
+
+world_2_base:
+  max_value: 0.0
+  min_value: -0.38
+  velocity: 0.01
+
+world_2_base_2:
+  max_value: 0.0
+  min_value: -0.38
+  velocity: 0.01

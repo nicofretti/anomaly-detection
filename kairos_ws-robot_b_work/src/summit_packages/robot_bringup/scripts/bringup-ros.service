@@ -1,0 +1,13 @@
+[Unit]
+Description=Launches all ROS stuff through screen
+Requires=dbus.socket
+After=multi-user.target
+
+[Service]
+User=robot
+RemainAfterExit=yes
+ExecStartPre=/bin/sleep 15
+ExecStart=/home/robot/kairos_ws/src/summit_packages/robot_bringup/scripts/bringup.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,4 @@
+string environments_url
+---
+bool success
+string msg

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>robot_complex_command_sequencer</name>
+  <version>0.2.0</version>
+  <description>The robot_complex_command_sequencer package intended to create sequences of commands using simple command sequencer node</description>
+
+  <license>BSD</license>
+
+  <author email="jmaparicio@robotnik.es">Jesús Aparicio</author>
+  <maintainer email="rnavarro@robotnik.es">Román Navarro</maintainer>
+  <maintainer email="jmaparicio@robotnik.es">Jesús Aparicio</maintainer>
+  <maintainer email="aarnal@robotnik.es">Álex Arnal</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <build_export_depend>rospy</build_export_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>robot_simple_command_manager_msgs</exec_depend>
+  <exec_depend>rcomponent</exec_depend>
+  <exec_depend>robotnik_msgs</exec_depend>
+
+  <export>
+  </export>
+</package>

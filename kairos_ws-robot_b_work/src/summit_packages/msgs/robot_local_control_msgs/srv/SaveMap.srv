@@ -1,0 +1,5 @@
+string name     # name of the map
+string frame_id # frame_id associated
+---
+bool success   # indicate successful run of triggered service
+string message # informational, e.g. for error messages

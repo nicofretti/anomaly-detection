@@ -1,0 +1,5 @@
+string action_namespace  # this will be the new action_namespace of the move_base client
+string frame_id          # the new global frame_id
+---
+bool success   # indicate successful run of triggered service
+string message # informational, e.g. for error messages

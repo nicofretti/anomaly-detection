@@ -1,0 +1,9 @@
+<library path="lib/librobotnik_elevator_controller">
+
+  <class name="robotnik_elevator_controller/RobotnikElevatorController" type="robotnik_elevator_controller::RobotnikElevatorController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      The Robotnik Elevator Controller controls 1 prismatic joint
+    </description>
+  </class>
+
+</library>

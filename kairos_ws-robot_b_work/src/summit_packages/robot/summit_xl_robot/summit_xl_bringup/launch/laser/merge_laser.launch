@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<launch>
+	<arg name="prefix" default="robot_"/>
+  <arg name="angle_min" default="-3.1415" />
+  <arg name="angle_max" default="3.1415" />
+  <arg name="node_name" default="merged_laser" />
+  <arg name="destination_frame" default="$(arg prefix)base_footprint"/>
+  <arg name="fixed_frame" default="$(arg prefix)odom"/>
+  <arg name="cloud_destination_topic" default="cloud"/>
+  <arg name="scan_destination_topic" default="scan"/>
+  <arg name="filtered_scan_destination_topic" default="scan_filtered"/>
+  <arg name="check_topic_type" default="true" />
+  <arg name="laserscan_topics" default="front_laser/scan rear_laser/scan" />
+
+	<node pkg="ira_laser_tools" type="laserscan_multi_merger" name="$(arg node_name)">
+		<param name="angle_min" value="$(arg angle_min)" />
+		<param name="angle_max" value="$(arg angle_max)" />
+		<param name="fixed_frame" value="$(arg fixed_frame)"/>
+		<param name="destination_frame" value="$(arg destination_frame)"/>
+		<param name="cloud_destination_topic" value="$(arg cloud_destination_topic)"/>
+		<param name="scan_destination_topic" value="$(arg scan_destination_topic)"/>
+		<param name="check_topic_type" value="$(arg check_topic_type)" />
+		<param name="laserscan_topics" value="$(arg laserscan_topics)" /> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
+	</node>
+
+</launch>

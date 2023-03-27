@@ -1,0 +1,45 @@
+plugins:
+  - Movement
+  - Elevator
+  - Ackermann
+
+pad:
+  type: itowa
+  num_of_buttons: 16
+  num_of_axes: 3
+  joy_topic: joy
+
+Movement:
+  type: robotnik_pad_plugins/Movement
+  max_linear_speed: 3
+  max_angular_speed: 3
+  cmd_topic_vel: pad_teleop/cmd_vel
+  config:
+    button_deadman: 0
+    axis_linear_x: 0
+    axis_linear_y: 1
+    axis_angular_z: 2
+    button_speed_up: 2
+    button_speed_down: 3
+    button_kinematic_mode: 1
+
+Elevator:
+  type: robotnik_pad_plugins/Elevator
+  elevator_service_name: robotnik_base_control/set_elevator
+  config:
+    deadman: 5
+    axis_elevator: 10
+
+AckermannMovement:
+  type: robotnik_pad_plugins/AckermannMovement
+  max_speed: 1.5
+  max_steering_angle: 0.6
+  cmd_topic_vel: pad_teleop/ack_cmd_vel
+  config:
+    button_deadman: 0
+    axis_linear_x: 0
+    axis_linear_y: 1
+    axis_angular_z: 2
+    button_speed_up: 2
+    button_speed_down: 3
+

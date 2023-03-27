@@ -1,0 +1,4 @@
+string node
+float32 speed_factor
+float32 orientation_offset
+float32 position_offset

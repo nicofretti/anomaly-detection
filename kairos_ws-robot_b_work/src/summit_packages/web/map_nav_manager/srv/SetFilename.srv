@@ -1,0 +1,6 @@
+string name
+# used to use it this file by default
+bool use_it_by_default
+---
+bool ret
+string msg

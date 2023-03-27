@@ -1,0 +1,4 @@
+poi_manager_msgs/LabeledPose[] pose_list
+---
+bool success
+string message

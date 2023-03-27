@@ -1,0 +1,46 @@
+{
+	"folders": [
+		{
+			"path": "/home/juanma/source_aidimme/source/tb2_aidimme/debs"
+		},
+		{
+			"path": "/home/juanma/source_aidimme/source/tb2_aidimme/kobuki_auto_docking"
+		},
+		{
+			"path": "/home/juanma/source_aidimme/source/tb2_aidimme/map_nav_manager"
+		},
+		{
+			"path": "/home/juanma/source_aidimme/source/tb2_aidimme/poi_manager"
+		},
+		{
+			"path": "/home/juanma/source_aidimme/source/tb2_aidimme/rms"
+		},
+		{
+			"path": "/home/juanma/source_aidimme/source/tb2_aidimme/robotnik_trajectory_suite"
+		},
+		{
+			"path": "/home/juanma/source_aidimme/source/tb2_aidimme/system_monitor"
+		},
+		{
+			"path": "/home/juanma/source_aidimme/source/tb2_aidimme/tb2_aidimme_bringup"
+		},
+		{
+			"path": "/home/juanma/source_aidimme/source/tb2_aidimme/tb2_moveit"
+		},
+		{
+			"path": "/home/juanma/source_aidimme/source/tb2_aidimme/turtlebot"
+		},
+		{
+			"path": "/home/juanma/source_aidimme/source/tb2_aidimme/turtlebot_apps"
+		},
+		{
+			"path": "/home/juanma/source_aidimme/source/tb2_aidimme/turtlebot_msgs"
+		},
+		{
+			"path": "/home/juanma/source_aidimme/source/tb2_aidimme/web_launch"
+		},
+		{
+			"path": "/home/juanma/source_aidimme/source/tb2_aidimme/widowx_arm"
+		}
+	]
+}

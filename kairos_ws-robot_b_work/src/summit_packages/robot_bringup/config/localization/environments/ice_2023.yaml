@@ -1,0 +1,6 @@
+ice_2023:
+  global_frame: robot_map
+  maps_package: robot_bringup
+  maps:
+    localization: maps/ice_2023/ice_2023.yaml
+    routes: maps/ice_2023/ice_2023.yaml

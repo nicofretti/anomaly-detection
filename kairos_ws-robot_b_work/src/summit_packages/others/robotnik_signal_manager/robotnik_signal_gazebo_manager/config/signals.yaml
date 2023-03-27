@@ -1,0 +1,37 @@
+signals:
+
+  - id: "charging"
+    enabled: false
+
+  - id: "safety_standby"
+    enabled: false
+  
+  - id: "emergency_stop"
+    enabled: false
+  
+  - id: "safety_obstacle_detected"
+    enabled: false
+  
+  - id: "low_battery"
+    enabled: false
+  
+  - id: "base_controller_error"
+    enabled: false
+  
+  - id: "arm_controller_error"
+    enabled: false
+  
+  - id: "sensor_error"
+    enabled: false
+  
+  - id: "robot_idle"
+    enabled: false
+  
+  - id: "robot_moving"
+    enabled: false
+  
+  - id: "raising_elevator"
+    enabled: false
+  
+  - id: "lowering_elevator"
+    enabled: false

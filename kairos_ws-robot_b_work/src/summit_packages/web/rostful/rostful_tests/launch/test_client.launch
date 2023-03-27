@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="url"	default="localhost:8080"/>
+  <!--  -->
+  <node pkg="rostful" type="client" name="rostful_client" 
+output="screen"
+	args="--jwt --test --publish-interval 1 --prefix test $(arg url)"/>
+    <!-- rest-prefix-server ros -->
+</launch>
+

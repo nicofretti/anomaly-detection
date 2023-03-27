@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+  <launch>
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="prefix" default="$(arg id_robot)_"/>
+
+  <!-- 1 ARM -->
+  <arg name="arm_1_model" default="$(optenv ROBOT_ARM_1_MODEL none)"/>
+  <arg name="arm_1_manufacturer" default="$(optenv ROBOT_ARM_1_MANUFACTURER ur)"/>
+  <arg name="arm_1_ip" default="$(optenv ROBOT_ARM_1_IP 192.168.0.210)"/>
+  <arg name="arm_1_reverse_port" default="$(optenv ROBOT_ARM_1_REVERSE_PORT 50001)"/>
+  <arg name="arm_1_sender_port" default="$(optenv ROBOT_ARM_1_SENDER_PORT 50002)"/>
+  <arg name="arm_1_id" default="$(optenv ROBOT_ARM_1_ID arm)"/>
+  <arg name="arm_1_run_traj_control" default="$(optenv ROBOT_ARM_1_ENABLE_TRAJECTORY_CONTROL false)"/>
+
+  <!-- 2 ARM -->
+  <arg name="arm_2_model" default="$(optenv ROBOT_ARM_2_MODEL none)"/>
+  <arg name="arm_2_manufacturer" default="$(optenv ROBOT_ARM_2_MANUFACTURER ur)"/>
+  <arg name="arm_2_ip" default="$(optenv ROBOT_ARM_2_IP 192.168.0.210)"/>
+  <arg name="arm_2_reverse_port" default="$(optenv ROBOT_ARM_2_REVERSE_PORT 50001)"/>
+  <arg name="arm_2_sender_port" default="$(optenv ROBOT_ARM_2_SENDER_PORT 50002)"/>
+  <arg name="arm_2_id" default="$(optenv ROBOT_ARM_2_ID second_arm)"/>
+  <arg name="arm_2_run_traj_control" default="$(optenv ROBOT_ARM_2_ENABLE_TRAJECTORY_CONTROL false)"/>
+
+  <!-- 1 -->
+  <include if="$(eval arm_1_model != 'none')" file="$(find robot_bringup)/launch/manipulation/arm/$(arg arm_1_manufacturer)/$(arg arm_1_manufacturer)_complete.launch">
+    <arg name="prefix" value="$(arg prefix)"/>
+    <arg name="model" value="$(arg arm_1_model)"/>
+    <arg name="ip_address" value="$(arg arm_1_ip)"/>
+    <arg name="reverse_port" value="$(arg arm_1_reverse_port)"/>
+    <arg name="script_sender_port" value="$(arg arm_1_sender_port)"/>
+    <arg name="namespace" value="$(arg arm_1_id)"/>
+    <arg name="run_traj_control" value="$(arg arm_1_run_traj_control)"/>
+  </include>
+
+  <!-- 2 -->
+  <include if="$(eval arm_2_model != 'none')" file="$(find robot_bringup)/launch/manipulation/arm/$(arg arm_2_manufacturer)/$(arg arm_2_manufacturer)_complete.launch">
+    <arg name="prefix" value="$(arg prefix)"/>
+    <arg name="model" value="$(arg arm_2_model)"/>
+    <arg name="ip_address" value="$(arg arm_2_ip)"/>
+    <arg name="reverse_port" value="$(arg arm_2_reverse_port)"/>
+    <arg name="script_sender_port" value="$(arg arm_2_sender_port)"/>
+    <arg name="namespace" value="$(arg arm_2_id)"/>
+    <arg name="run_traj_control" value="$(arg arm_2_run_traj_control)"/>
+  </include>
+
+
+
+  <!-- RGBD wrist camera -->
+  <!--arg name="has_wrist_rgbd_camera" default="$(optenv ROBOT_HAS_WRIST_RGBD_CAMERA false)"/>
+  <arg name="wrist_rgbd_camera_node" default="wrist_rgbd_camera"/>
+  <arg name="wrist_rgbd_camera_model" default="$(optenv ROBOT_WRIST_RGBD_CAMERA_MODEL realsense)"/>
+  <arg name="wrist_rgbd_camera_id" default="$(optenv ROBOT_WRIST_RGBD_CAMERA_ID #1)"/-->
+  <!-- Gripper arguments -->
+  <!--arg name="has_gripper" default="$(optenv ROBOT_HAS_GRIPPER false)"/>
+  <arg name="gripper_model" default="$(optenv ROBOT_GRIPPER_MODEL egh)"/>
+  <arg name="gripper_manufacturer" default="$(optenv ROBOT_GRIPPER_MANUFACTURER schunk)"/>
+  <arg name="gripper_ip" default="$(optenv ROBOT_GRIPPER_IP 192.168.0.212)"/>
+  <arg name="gripper_port" default="$(optenv ROBOT_GRIPPER_PORT 1000)"/>
+  <arg name="control_gripper_by_signals" default="$(optenv ROBOT_CONTROL_GRIPPER_BY_SIGNALS true)"/-->
+
+
+  <!-- Arm controllers -->
+  <!--group ns="$(arg id_robot)">
+   
+      <include if="$(arg has_wrist_rgbd_camera)" file="$(find summit_xl_bringup)/launch/$(arg wrist_rgbd_camera_model).launch">
+          <arg name="camera" value="$(arg wrist_rgbd_camera_node)"/>
+          <arg name="prefix" value="robot_$(arg wrist_rgbd_camera_node)"/>
+          <arg name="device_id" value="$(arg wrist_rgbd_camera_id)"/>
+      </include>
+  </group-->
+
+  
+</launch>

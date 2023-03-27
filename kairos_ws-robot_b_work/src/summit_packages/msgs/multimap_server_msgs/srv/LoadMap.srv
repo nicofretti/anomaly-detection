@@ -1,0 +1,7 @@
+string map_url
+string ns
+string map_name
+string global_frame
+---
+bool success
+string msg

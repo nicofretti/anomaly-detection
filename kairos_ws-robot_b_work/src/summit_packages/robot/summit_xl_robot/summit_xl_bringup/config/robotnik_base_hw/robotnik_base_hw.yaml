@@ -1,0 +1,67 @@
+robotnik_base_hw:
+  port: /dev/pcan_base
+  
+  # Auto-recovery behaviour when motors are in EMERGENCY and cannot recover by themselves
+  auto_restart: true
+  recovery_period: 30
+  
+  # Use encoder position instead of velocity for motor velocity calculation
+  calculate_vel_using_pose: $(arg has_encoder)
+  # 24V motors: 12.52, 48V motors: 9.56
+  gearbox_ratio: $(arg robot_gearbox)
+  # Be carefull if motors don't have enconders and you put motors_enconder: true speed will increase x 4000
+  motors_encoder: $(arg has_encoder)
+  motors_encoder_factor: 4000
+
+  joint_name: [$(arg prefix)front_left_wheel_joint,$(arg prefix)back_left_wheel_joint,$(arg prefix)front_right_wheel_joint,$(arg prefix)back_right_wheel_joint]
+  joint_can_id: [1,2,3,4]
+  joint_type: [vel,vel,vel,vel]
+  joint_home_offset: [0,0,0,0]
+  joint_spin: [1,1,-1,-1]
+
+  # Values to multiply on IO raw data received
+  k_analog_inputs_multipliers: $(arg k_analog_inputs_multipliers)
+  k_battery_voltage_offset: $(arg battery_voltage_offset)
+
+  # Control loop params - don't change unless you know what you are doing
+  # desired_freq: 50.0
+
+  # 20A driver parameter
+  # current_kp: 0.25390625
+  # current_ki: 0.09375
+  # peak_current_limit_amps: 10.0
+  # peak_current_limit_secs: 4.0
+  # continuous_current_limit: 6.0
+  # current_foldback_secs: 3.0
+  # velocity_kp: 0.008
+  # velocity_ki: 0.08
+  # velocity_kd: 0.000000022
+
+  # 40A driver parameter
+  # current_kp: 0.25390625
+  # current_ki: 0.09375
+  # peak_current_limit_amps: 20.0
+  # peak_current_limit_secs: 4.0
+  # continuous_current_limit: 12.0
+  # current_foldback_secs: 3.0
+  # velocity_kp: 0.0014
+  # velocity_ki: 0.25
+  # velocity_kd: 0.000000022
+
+generic_hw_control_loop:
+  loop_hz: 300 
+  cycle_time_error_threshold: 0.01
+
+
+# Settings for ros_control hardware interface
+hardware_interface:
+  joints:
+     - $(arg prefix)front_right_wheel_joint
+     - $(arg prefix)front_left_wheel_joint
+     - $(arg prefix)back_right_wheel_joint
+     - $(arg prefix)back_left_wheel_joint
+
+     #- left_wheel_joint
+     #- right_wheel_joint
+   
+     

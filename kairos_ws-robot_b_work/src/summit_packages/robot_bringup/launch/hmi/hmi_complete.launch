@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="launch_system_monitor" default="true"/>
+  <arg name="odom_topic" default="$(arg id_robot)/robotnik_base_control/odom"/>
+  <arg name="map_topic" default="$(arg id_robot)/map"/>
+
+  <arg name="sensor_2d_1" default="$(optenv ROBOT_HMI_2D_SENSOR_1 none)"/>
+  <arg name="sensor_2d_2" default="$(optenv ROBOT_HMI_2D_SENSOR_2 none)"/>
+  <arg name="sensor_2d_3" default="$(optenv ROBOT_HMI_2D_SENSOR_3 none)"/>
+
+  <arg name="sensor_3d_1" default="$(optenv ROBOT_HMI_3D_SENSOR_1 none)"/>
+  <arg name="sensor_3d_2" default="$(optenv ROBOT_HMI_3D_SENSOR_2 none)"/>
+  <arg name="sensor_3d_3" default="$(optenv ROBOT_HMI_3D_SENSOR_3 none)"/>
+
+  <arg name="gps_fix_topic" default="$(arg id_robot)/gps/fix"/>
+  <arg name="throttle_namespace" default="$(arg id_robot)/throttle"/>
+  <arg name="lazy_throttle" default="true"/> <!-- If True, don't subscribe to input topic unless there is at least one subscriber on the output topic -->
+
+  <!-- inits rosbridge server -->
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
+    <arg name="address" value=""/>
+  </include>
+
+  <!-- inits tf2_web_republisher node -->
+  <node name="tf2_web_republisher" pkg="tf2_web_republisher" type="tf2_web_republisher" output="screen" />
+
+
+
+  <!-- republish the odometry messages with lower frequency -->
+  <node name="throttle_odom" pkg="topic_tools" type="throttle" args="messages $(arg odom_topic) 5.0 $(arg throttle_namespace)/odom">
+      <arg name="lazy" value="$(arg lazy_throttle)"/>
+  </node>
+  <!-- map -->
+  <node name="throttle_map" pkg="topic_tools" type="throttle" args="messages  $(arg map_topic) 0.2 $(arg throttle_namespace)/map">
+      <arg name="lazy" value="$(arg lazy_throttle)"/>
+  </node>
+
+  <!-- 2d scan -->
+  <node if="$(eval sensor_2d_1 != 'none')" name="throttle_2d_scan_1" pkg="topic_tools" type="throttle" args="messages $(arg id_robot)/$(arg sensor_2d_1) 2.0 $(arg throttle_namespace)/$(arg sensor_2d_1)">
+      <arg name="lazy" value="$(arg lazy_throttle)"/>
+  </node>
+  <node if="$(eval sensor_2d_2 != 'none')" name="throttle_2d_scan_2" pkg="topic_tools" type="throttle" args="messages $(arg id_robot)/$(arg sensor_2d_2) 2.0 $(arg throttle_namespace)/$(arg sensor_2d_2)">
+      <arg name="lazy" value="$(arg lazy_throttle)"/>
+  </node>
+  <node if="$(eval sensor_2d_3 != 'none')" name="throttle_2d_scan_3" pkg="topic_tools" type="throttle" args="messages $(arg id_robot)/$(arg sensor_2d_3) 2.0 $(arg throttle_namespace)/$(arg sensor_2d_3)">
+      <arg name="lazy" value="$(arg lazy_throttle)"/>
+  </node>
+  <!-- 3d scan -->
+  <node if="$(eval sensor_3d_1 != 'none')" name="throttle_3d_scan_1" pkg="topic_tools" type="throttle" args="messages $(arg id_robot)/$(arg sensor_3d_1) 1.0 $(arg throttle_namespace)/$(arg sensor_3d_1)">
+      <arg name="lazy" value="$(arg lazy_throttle)"/>
+  </node>
+  <node if="$(eval sensor_3d_2 != 'none')" name="throttle_3d_scan_2" pkg="topic_tools" type="throttle" args="messages $(arg id_robot)/$(arg sensor_3d_2) 1.0 $(arg throttle_namespace)/$(arg sensor_3d_2)">
+      <arg name="lazy" value="$(arg lazy_throttle)"/>
+  </node>
+  <node if="$(eval sensor_3d_3 != 'none')" name="throttle_3d_scan_3" pkg="topic_tools" type="throttle" args="messages $(arg id_robot)/$(arg 3d_sensor_3) 1.0 $(arg throttle_namespace)/$(arg sensor_3d_3)">
+      <arg name="lazy" value="$(arg lazy_throttle)"/>
+  </node>
+
+  <!-- gps -->
+  <node name="throttle_gps_fix" pkg="topic_tools" type="throttle" args="messages $(arg gps_fix_topic) 2.0 $(arg throttle_namespace)/gps/fix">
+      <arg name="lazy" value="$(arg lazy_throttle)"/>
+  </node>
+
+  <group if="$(arg launch_system_monitor)" ns="$(arg id_robot)">
+    <!-- system monitor-->
+    <include file="$(find system_monitor)/launch/system_monitor.launch"/>
+  </group>
+
+  <group ns="$(arg id_robot)">
+    <include file="$(find robot_bringup)/launch/hmi/interactive_markers.launch"/>
+    <!-- serving in local ip -->
+    <include file="$(find robot_bringup)/launch/hmi/web_video_server.launch">
+        <arg name="node_name" value="web_video_server_local"/>
+        <arg name="address" value="127.0.0.1"/>
+    </include>
+    <include file="$(find robot_bringup)/launch/hmi/web_video_server.launch">
+        <arg name="node_name" value="web_video_server"/>
+    </include>
+    <include file="$(find robot_bringup)/launch/hmi/web_pad.launch">
+    </include>
+  </group>
+
+</launch>

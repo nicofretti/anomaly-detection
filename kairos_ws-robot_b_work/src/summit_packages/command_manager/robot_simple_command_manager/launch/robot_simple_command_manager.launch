@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="command_input_name" default="command"/>
+  <arg name="fixed_frame" default="robot_map"/>
+  <arg name="handlers_file_path" default="$(find robot_simple_command_manager)/config/handlers.yaml"/>
+
+  <node name="command_manager" pkg="robot_simple_command_manager" type="simple_command_manager_node.py" output="screen">
+    <param name="command_input_name" value="$(arg command_input_name)"/>
+    <rosparam command="load" file="$(arg handlers_file_path)" subst_value="true"/>
+  </node>
+
+
+</launch>

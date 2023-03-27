@@ -1,0 +1,5 @@
+int16 ACTIVE    =  1
+int16 CANCELLED =  2
+int16 SUCCEEDED =  3
+int16 FAILED    =  4
+int16 REJECTED  =  5

@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="robot_id" default="robot"/>
+	<arg name="arm_model" default="j2s7s300"/>
+	<arg name="node_name" default="$(arg arm_model)_controller"/>
+	<arg name="prefix" default="$(arg robot_id)_$(arg arm_model)"/>
+	<arg name="run_traj_control"  default="false"/> <!-- Not used -->
+	<arg name="arm_ip_address"  default="192.168.0.210"/> <!-- Not used -->
+  <arg name="serial_number" default="not_set" />
+  <arg name="use_jaco_v1_fingers" default="false" />
+	<arg name="feedback_publish_rate" default="0.1" />
+
+  <node name="$(arg node_name)" pkg="kinova_driver" type="kinova_arm_driver" output="screen" cwd="node" args="$(arg arm_model)" respawn="true" respawn_delay="5">
+    <rosparam file="$(find summit_xl_bringup)/config/arm/kinova.yaml" command="load" />
+    <param name="serial_number" value="$(arg serial_number)" />
+    <param name="robot_name" value="$(arg prefix)" />
+    <param name="robot_type" value="$(arg arm_model)" />
+    <param name="use_jaco_v1_fingers" value="$(arg use_jaco_v1_fingers)" />   
+    <param name="status_interval_seconds" value="$(arg feedback_publish_rate)" />
+    <remap from="~out/joint_state" to="joint_states" />
+  </node>
+
+  <!-- joint trajectory action server -->
+  <param name="/$(arg prefix)_driver/robot_type" value="$(arg arm_model)" />
+  <node name="$(arg arm_model)_joint_trajectory_action_server" pkg="kinova_driver" type="joint_trajectory_action_server" output="screen" respawn="false" args="$(arg prefix)">
+    <remap from="/$(arg prefix)_driver/trajectory_controller/command" to="$(arg arm_model)_controller/trajectory_controller/command" />
+    <remap from="/$(arg prefix)_driver/trajectory_controller/state" to="$(arg arm_model)_controller/trajectory_controller/state" />
+    <remap from="/$(arg prefix)/follow_joint_trajectory/cancel" to="$(arg arm_model)_arm_controller/follow_joint_trajectory/cancel" />
+    <remap from="/$(arg prefix)/follow_joint_trajectory/feedback" to="$(arg arm_model)_arm_controller/follow_joint_trajectory/feedback" />
+    <remap from="/$(arg prefix)/follow_joint_trajectory/goal" to="$(arg arm_model)_arm_controller/follow_joint_trajectory/goal" />
+    <remap from="/$(arg prefix)/follow_joint_trajectory/result" to="$(arg arm_model)_arm_controller/follow_joint_trajectory/result" />
+    <remap from="/$(arg prefix)/follow_joint_trajectory/status" to="$(arg arm_model)_arm_controller/follow_joint_trajectory/status" />
+    <remap from="/$(arg prefix)_driver/robot_type" to="$(arg arm_model)_controller/robot_type" />
+  </node>
+
+  <node name="$(arg arm_model)_gripper_command_action_server" pkg="kinova_driver" type="gripper_command_action_server" output="screen" respawn="false" args="$(arg prefix)">
+    <remap from="/$(arg prefix)_driver/fingers_action/finger_positions/cancel" to="$(arg arm_model)_controller/fingers_action/finger_positions/cancel" />
+    <remap from="/$(arg prefix)_driver/fingers_action/finger_positions/feedback" to="$(arg arm_model)_controller/fingers_action/finger_positions/feedback" />
+    <remap from="/$(arg prefix)_driver/fingers_action/finger_positions/goal" to="$(arg arm_model)_controller/fingers_action/finger_positions/goal" />
+    <remap from="/$(arg prefix)_driver/fingers_action/finger_positions/result" to="$(arg arm_model)_controller/fingers_action/finger_positions/result" />
+    <remap from="/$(arg prefix)_driver/fingers_action/finger_positions/status" to="$(arg arm_model)_controller/fingers_action/finger_positions/status" />
+    <remap from="/$(arg prefix)_driver/out/finger_position" to="$(arg arm_model)_controller/out/finger_position" />
+    <remap from="/$(arg prefix)_gripper/gripper_command/feedback" to="$(arg arm_model)_gripper_controller/gripper_command/feedback" />
+    <remap from="/$(arg prefix)_gripper/gripper_command/result" to="$(arg arm_model)_gripper_controller/gripper_command/result" />
+    <remap from="/$(arg prefix)_gripper/gripper_command/status" to="$(arg arm_model)_gripper_controller/gripper_command/status" />
+    <remap from="/$(arg prefix)_gripper/gripper_command/cancel" to="$(arg arm_model)_gripper_controller/gripper_command/cancel" />
+    <remap from="/$(arg prefix)_gripper/gripper_command/goal" to="$(arg arm_model)_gripper_controller/gripper_command/goal" />
+  </node>
+
+
+</launch>

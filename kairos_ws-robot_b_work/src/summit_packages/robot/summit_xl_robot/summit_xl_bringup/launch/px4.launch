@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- vim: set ft=xml noet : -->
+  <!-- example launch script for PX4 based FCU's -->
+  <arg name="port" default="$(optenv ROBOT_IMU_PORT /dev/ttyUSB_PX4)" />
+  <arg name="prefix" default="robot_"/>
+  <arg name="fcu_url" default="$(arg port):921600" />
+  <arg name="gcs_url" default="" />
+  <arg name="tgt_system" default="1" />
+  <arg name="tgt_component" default="1" />
+  <arg name="log_output" default="screen" />
+  <arg name="imu_frame_id" default="imu_link" />
+
+  <include file="$(find summit_xl_bringup)/launch/mavros_node.launch">
+    <arg name="pluginlists_yaml" value="$(find summit_xl_bringup)/config/px4_pluginlists.yaml" />
+    <arg name="config_yaml" value="$(find mavros)/launch/px4_config.yaml" />
+    <arg name="fcu_url" value="$(arg fcu_url)" />
+    <arg name="gcs_url" value="$(arg gcs_url)" />
+    <arg name="tgt_system" value="$(arg tgt_system)" />
+    <arg name="tgt_component" value="$(arg tgt_component)" />
+    <arg name="log_output" value="$(arg log_output)" />
+    <arg name="imu_frame_id" value="$(arg prefix)$(arg imu_frame_id)" />
+  </include>
+</launch>

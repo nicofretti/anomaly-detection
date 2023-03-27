@@ -1,0 +1,4 @@
+robot_local_control_msgs/Pose2DStamped pose
+---
+bool success
+string message

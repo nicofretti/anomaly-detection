@@ -1,0 +1,2 @@
+geometry_msgs/Pose2D goal
+geometry_msgs/Twist maximum_velocity

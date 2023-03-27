@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+
+  <group ns="$(arg id_robot)">
+
+    <arg name="prefix" value="$(arg id_robot)_"/>
+
+    <!-- ARM -->
+    <include file="$(find robot_bringup)/launch/manipulation/arm/arm_complete.launch"/>
+
+    <!-- GRIPPER -->
+    <include file="$(find robot_bringup)/launch/manipulation/gripper/gripper_complete.launch"/>
+
+  </group>
+
+
+
+</launch>

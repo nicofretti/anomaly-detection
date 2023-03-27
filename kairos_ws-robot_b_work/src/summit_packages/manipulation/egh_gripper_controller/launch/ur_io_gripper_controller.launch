@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node name="joint_position_publisher" pkg="fake_joint_position_publisher" type="joint_publisher.py" output="screen">
+        <rosparam command="load" file="$(find egh_gripper_controller)/config/joint_position_publisher.yaml"/>
+    </node>
+
+    <node name="gripper_controller" pkg="egh_gripper_controller" type="ur_io_gripper_controller_node.py" output="screen">
+        <rosparam command="load" file="$(find egh_gripper_controller)/config/ur_io_gripper_controller.yaml"/>
+    </node>
+</launch>

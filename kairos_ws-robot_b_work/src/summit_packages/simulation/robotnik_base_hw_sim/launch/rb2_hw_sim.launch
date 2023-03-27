@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+
+	<arg name="config_yaml" default="rb2"/>
+	<arg name="prefix" default="robot_"/> 
+	<arg name="left_joint" default="$(arg prefix)left_joint"/>
+	<arg name="right_joint" default="$(arg prefix)right_joint"/>
+
+	<node pkg="robotnik_base_hw_sim" type="robotnik_base_hw_sim_node.py" name="robotnik_base_hw">
+		<rosparam command="load" file="$(find robotnik_base_hw_sim)/config/$(arg config_yaml).yaml" />
+		<param name="motors/m1/joint" value="$(arg left_joint)"/>
+		<param name="motors/m2/joint" value="$(arg right_joint)"/>
+	</node>
+
+</launch>

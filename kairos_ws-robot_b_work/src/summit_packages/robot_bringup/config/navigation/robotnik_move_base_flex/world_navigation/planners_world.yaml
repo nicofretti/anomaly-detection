@@ -1,0 +1,34 @@
+planners:
+  - name: 'GlobalPlanner'
+    type: 'global_planner/GlobalPlanner'
+#  - name: 'SBPLLatticePlanner'
+#    type: 'SBPLLatticePlanner'
+planner_patience: 10.0
+GlobalPlanner:
+  allow_unknown: false
+  default_tolerance: 0.0
+  visualize_potential: true
+  use_dijkstra: true
+  use_quadratic: false
+  use_grid_path: false
+  old_navfn_behaviour: false
+  lethal_cost: 253
+  neutral_cost: 66
+  cost_factor: 0.55
+#SBPLLatticePlanner:
+#  environment_type: XYThetaLattice # only supported value
+#  planner_type: ARAPlanner # ARAPlanner or ADPlanner
+#  allocated_time: 10.0 # time to find a solution. if solution is found before, then it will be optimized until time runs out. if no solution is found, aborts
+#  initial_epsilon: 3.0 # the bigger, the faster and less optimal solution will be found.
+#  forward_search: false # search in solution space. important for ADPlanner, useless for ARAPlanner
+#  primitive_filename: "" # absolute path for primitives file. better if overwrited in launch file with $(find)
+#  force_scratch_limit: 500 # for AD, number of dirty cells allowed for reusing data. the bigger, the faster and less optimal
+#  nominalvel_mpersecs: 1.0 # nominal linear velocity
+#  timetoturn45degsinplace_secs: 10 # time to turn 45 degrees in place.
+#  lethal_obstacle: 20 # to modify costs. not sure how it works
+#  smooth_window: 20 # to smooth plan in case a small map resolution is used
+#  numberofangles: 64 #
+#  maximum_time_between_plannings: 0
+#  distance_between_plannings: 200
+#  maximum_planning_distance: 1000
+

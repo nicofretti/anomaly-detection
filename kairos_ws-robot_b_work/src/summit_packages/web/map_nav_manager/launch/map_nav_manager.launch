@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<launch>
+	
+  <arg name="global_frame_id" default="map"/>
+  <arg name="poi_marker_name" default="poi_interactive_marker"/>
+  <arg name="poi_topic_marker_name" default="poi_interactive_marker"/>
+  <arg name="init_pose_topic_name" default="initialpose"/>
+  <arg name="goto_planner" default="move_base"/>
+  <arg name="map_nav_config" default="$(find map_nav_manager)/config/map_nav_manager.yaml"/>
+  	
+  <node name="map_nav_manager" pkg="map_nav_manager" type="map_nav_manager_node.py">
+	<rosparam file="$(arg map_nav_config)" command="load"/>    
+  </node>
+
+  <node name="$(arg poi_marker_name)" pkg="map_nav_manager" type="poi_marker.py">
+	<param name="frame_id" value="$(arg global_frame_id)"/>
+	<param name="init_pose_topic_name" value="$(arg init_pose_topic_name)"/>
+	<param name="goto_planner" value="$(arg goto_planner)"/>	
+  </node>	
+
+  <node name="$(arg poi_marker_name)_proxy" pkg="interactive_marker_proxy" args="topic_ns:=$(arg poi_topic_marker_name) target_frame:=/$(arg global_frame_id)" type="proxy"/>
+ 	
+
+</launch>

@@ -1,0 +1,38 @@
+localization:
+  args: ''
+  autorun: false
+  command: roslaunch summit_xl_localization amcl.launch
+  killwith: ''
+  params: prefix:=robot_
+  process: ''
+map_saver:
+  args: ''
+  command: rosrun map_server map_saver
+  default_map: default
+  killwith: ''
+  maps_folder: /home/summit/catkin_ws/src/map_nav_manager/map
+  params: ''
+  process: ''
+map_server:
+  args: ''
+  autorun: false
+  command: rosrun map_server map_server __name:=map_server
+  default_map: test
+  killwith: rosnode
+  maps_folder: /home/summit/catkin_ws/src/map_nav_manager/map
+  params: _frame_id:=robot_map
+  process: ''
+mapping:
+  args: ''
+  autorun: false
+  command: roslaunch summit_xl_localization slam_gmapping.launch
+  killwith: ''
+  params: prefix:=robot_
+  process: ''
+navigation:
+  args: ''
+  autorun: false
+  command: roslaunch summit_xl_navigation move_base.launch
+  killwith: ''
+  params: prefix:=robot_
+  process: ''

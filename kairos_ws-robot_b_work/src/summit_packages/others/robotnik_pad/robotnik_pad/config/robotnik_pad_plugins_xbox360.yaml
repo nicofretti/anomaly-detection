@@ -1,0 +1,30 @@
+plugins:
+  - Movement
+  - Elevator
+
+pad:
+  type: xbox360
+  num_of_buttons: 17
+  num_of_axes: 4
+  joy_topic: joy
+
+Movement:
+  type: robotnik_pad_plugins/Movement
+  max_linear_speed: 1.5
+  max_angular_speed: 3
+  cmd_topic_vel: pad_teleop/cmd_vel
+  config:
+    button_deadman: 9
+    axis_linear_x: 1
+    axis_linear_y: 0
+    axis_angular_z: 2
+    button_speed_up: 7
+    button_speed_down: 4
+    button_kinematic_mode: 11
+
+Elevator:
+  type: robotnik_pad_plugins/Elevator
+  elevator_service_name: robotnik_base_control/set_elevator
+  config:
+    deadman: 9
+    axis_elevator: 3

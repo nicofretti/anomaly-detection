@@ -1,0 +1,39 @@
+{
+  "name": "tui-date-picker",
+  "authors": [
+    "NHN. FE Development Lab <dl_javascript@nhn.com>"
+  ],
+  "main": [
+    "dist/tui-date-picker.js",
+    "dist/tui-date-picker.css"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "examples",
+    "src",
+    "test",
+    "tui-note.config.js",
+    "tuidoc.config.json",
+    "karma.conf.js",
+    "webpack.config.js",
+    "package.json",
+    "package-lock.json"
+  ],
+  "dependencies": {
+    "tui-time-picker": "^2.0.3"
+  },
+  "homepage": "https://github.com/nhnent/tui.date-picker",
+  "version": "4.2.0",
+  "_release": "4.2.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v4.2.0",
+    "commit": "428c6aab533a99208164dc4123cea38a50f5d63e"
+  },
+  "_source": "https://github.com/nhnent/tui.date-picker.git",
+  "_target": "^4.0.2",
+  "_originalSource": "tui-date-picker"
+}

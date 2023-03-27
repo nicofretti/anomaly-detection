@@ -1,0 +1,135 @@
+command_handlers:
+  - GOTO
+  - MOVE
+  - TURN
+  - DOCK
+  - RLC_GOTO
+  - RLC_MOVE
+  - RLC_TURN
+  - RLC_CHARGE
+  - RLC_UNCHARGE
+  - RLC_PICK
+  - RLC_PLACE
+  - RLC_GOTO_GPS
+  - WAIT
+  - WAIT_BOOL
+  - SET_BOOL
+  - CUSTOM_WAIT
+  - LOCALIZATION_STOP_MODULE
+  - LOCALIZATION_START_MODULE
+  - LOCALIZATION_SET_POSE
+  - SAVE_MAP
+  - AMCL_SWITCH_ENVIRONMENT
+  - AMCL_SAVE_FRAME
+
+
+
+# ACTIONS
+
+GOTO:
+  type: move_base_action_interface/MoveBaseActionInterface
+  namespace: move_base
+  frame_id: $(arg fixed_frame)
+
+MOVE:
+  type: move_action_interface/MoveActionInterface
+  namespace: move
+
+TURN:
+  type: move_action_interface/TurnActionInterface
+  namespace: move
+
+DOCK:
+  type: dock_action_interface/DockActionInterface
+  namespace: pp_docker
+
+WAIT:
+  type: wait_action_interface/WaitActionInterface
+  namespace: any
+
+# SERVICES
+
+ELEVATOR:
+  type: elevator_service_interface/ElevatorServiceInterface
+  namespace: robotnik_base_control/set_elevator
+
+SET_BOOL:
+  type: std_setbool_service_interface/StdSetBoolServiceInterface
+  namespace: fake_capture/set_lights
+
+# SERVICES > RLC
+
+LOCALIZATION_STOP_MODULE:
+  type: std_trigger_service_interface/StdTriggerServiceInterface
+  namespace: robot_local_control/LocalizationComponent/stop_running_module
+
+LOCALIZATION_START_MODULE:
+  type: switch_module_service_interface/SwitchModuleServiceInterface
+  namespace: robot_local_control/LocalizationComponent/start_module
+
+LOCALIZATION_SET_POSE:
+  type: set_pose_2d_stamped_service_interface/SetPose2dStampedServiceInterface
+  namespace: robot_local_control/LocalizationComponent/set_pose
+
+SAVE_MAP:
+  type: save_map_service_interface/SaveMapServiceInterface
+  namespace: robot_local_control/LocalizationComponent/save_map
+
+AMCL_SWITCH_ENVIRONMENT:
+  type: set_environment_service_interface/SetEnvironmentServiceInterface
+  namespace: robot_local_control/LocalizationComponent/Amcl/switch_environment
+
+AMCL_SAVE_FRAME:
+  type: save_frame_service_interface/SaveFrameServiceInterface
+  namespace: robot_local_control/LocalizationComponent/Amcl/save_frame
+
+# PROCEDURES
+
+RLC_GOTO:
+  type: goto_procedure_interface/GoToProcedureInterface
+  namespace: GoToComponent
+  frame_id: robot_map
+
+RLC_MOVE:
+  type: move_linear_procedure_interface/MoveLinearProcedureInterface
+  namespace: MoveComponent
+
+RLC_TURN:
+  type: move_angular_procedure_interface/MoveAngularProcedureInterface
+  namespace: MoveComponent
+
+RLC_CHARGE:
+  type: charge_procedure_interface/ChargeProcedureInterface
+  namespace: ChargeComponent
+
+RLC_UNCHARGE:
+  type: uncharge_procedure_interface/UnchargeProcedureInterface
+  namespace: UnchargeComponent
+
+RLC_PICK:
+  type: pick_procedure_interface/PickProcedureInterface
+  namespace: PickComponent
+
+RLC_PLACE:
+  type: place_procedure_interface/PlaceProcedureInterface
+  namespace: PlaceComponent
+
+RLC_GOTO_GPS:
+  type: goto_gps_procedure_interface/GoToGPSProcedureInterface
+  namespace: GoToGPSComponent
+
+# SUBSCRIBERS
+WAIT_BOOL:
+  type: bool_subscriber_interface/BoolSubscriberInterface
+  namespace: robotnik_base_hw/emergency_stop
+
+GOTO_TAG_MAP:
+  type: goto_tag_map_procedure_interface/GoToTagMapProcedureInterface
+  namespace: GoToComponent
+  get_poi_params: poi_manager/get_poi_params
+
+
+## HANDLER FROM CUSTOM PACKAGE
+CUSTOM_WAIT:
+  type: my_custom_commands_handlers/wait_action_interface/WaitActionInterface
+  namespace: any

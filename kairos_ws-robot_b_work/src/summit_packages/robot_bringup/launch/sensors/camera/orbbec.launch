@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- "node_name" should uniquely identify the device. All topics are pushed down
+       into the "node_name" namespace, and it is prepended to tf frame ids. -->
+  <arg name="node_name" default="orbbec_astra" />
+  <arg name="prefix" default="orbbec_astra" />
+  <arg name="calibration" default="astra_s"/>
+
+  <!-- Hardware depth registration -->
+  <arg name="depth_registration" default="false" />
+  
+  <arg name="num_worker_threads" default="4" />
+
+  <arg name="depth_camera_info_url" default="package://robot_bringup/config/sensors/camera/orbbec/orbbec_$(arg calibration)_depth_camera_info.yaml" />
+  <arg name="rgb_camera_info_url" default="package://robot_bringup/config/sensors/camera/orbbec/orbbec_$(arg calibration)_rgb_camera_info.yaml" />
+  <!-- device_id can have the following formats:
+         "#1"  : the first device found
+         "2@X" : the Xth device on USB bus 2 -->
+  <arg name="device_id" default="#1" />
+
+
+  <include file="$(find astra_launch)/launch/astra.launch">
+     <arg name="camera" value="$(arg node_name)" />
+     <arg name="device_id" value="$(arg device_id)" />
+     <arg name="publish_tf" value="false" />
+     <arg name="rgb_frame_id" value="$(arg prefix)rgb_optical_frame" />
+     <arg name="depth_frame_id" value="$(arg prefix)depth_optical_frame" />
+     <arg name="depth_registration" value="$(arg depth_registration)" />
+     <arg name="num_worker_threads" value="$(arg num_worker_threads)" />
+     <arg name="depth_camera_info_url" value="$(arg depth_camera_info_url)" />
+     <arg name="rgb_camera_info_url" value="$(arg rgb_camera_info_url)" />
+  </include>
+
+</launch>

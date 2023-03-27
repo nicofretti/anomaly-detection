@@ -1,0 +1,140 @@
+type: robot_local_control_components/LocalizationComponent
+
+desired_freq: 2.0
+
+components:
+ - Gps
+ - Gmapping
+ - Amcl
+
+Gps:
+  type: robot_local_control_components/GpsLocalizationModule
+  desired_freq: 2.0
+  auto_start: false
+
+  gps_fix_topic: gps/fix
+  global_frame: $(arg global_frame)
+  base_frame: $(arg base_frame)
+  # Mandatory nodes to start/stop when the component loaded / unloaded
+  required_nodes:
+    - navsat_transform_node
+    - ekf_loc_world
+    - multimap_server
+    - move_base_flex
+    - mbf_state_machine
+    - robotnik_move_base_flex
+  # nodes to toggle after setting the params dynamically
+  toggle_nodes:
+    - move_base_flex
+  # ros params where the global frames needs to be changed
+  global_frame_params:
+    - move_base_flex/global_costmap/global_frame
+    - move_base_flex/teb/map_frame
+    - robot_local_control/global_frame
+    - robot_local_control/NavigationComponent/GoToComponent/global_frame
+
+  multimap_server:
+    # root namespace for multimap_server
+    multimap_server_ns: multimap_server
+    # environment to load together with multimap_server
+    initial_environment: empty
+    # package where the environment configuration files are saved
+    config_package: $(arg config_package)
+    # config folder inside the config package
+    config_folder: $(arg multimap_config_folder)
+
+  # namespace for move_base instance
+  move_base_ns: move_base_flex
+
+# requires amcl param -> use_map_topic: true
+Amcl:
+  type: robot_local_control_components/AmclLocalizationModule
+  auto_start: true
+  desired_freq: 2.0
+
+  # optional params
+  # use_nomotion_update: true
+  # nomotion_update_timeout: 30
+  # nomotion_update_service: request_nomotion_update
+  # amcl_topic: amcl_pose
+  # amcl_initialpose_topic: initialpose
+
+  frame_mapping:
+    frame_mapping_ns: frame_mapping
+    use_frame_mapping: true
+    # optional params (relative namespace)
+    # init_pose_service: init_pose
+    # frame_mapping_save_frame_service_name: save_frame
+    # frame_mapping_set_frame_service: set_frame_id
+
+  multimap_server:
+    # root namespace for multimap_server
+    multimap_server_ns: multimap_server
+    # package where the environment configuration files are saved
+    config_package: $(arg config_package)
+    # config folder inside the config package
+    config_folder: $(arg multimap_config_folder)
+    # initial environment to load
+    initial_environment: $(arg initial_environment)
+    # optional params (relative namespace)
+    # environments_topic_name: environments
+      # service to load a new environment from yaml
+    # load_environments_service: load_environments
+    # localization_map_ns: localization
+    # navigation_map_ns: routes
+
+  move_base_ns: move_base
+  # nodes to start and stop
+  required_nodes:
+    - amcl
+    - multimap_server
+    - move_base
+    - frame_mapping
+  # nodes to toggle after setting the params dynamically
+  toggle_nodes:
+    - amcl
+    - move_base
+    - poi_interactive_marker_proxy
+  # ros params where the global frames needs to be changed
+  global_frame_params:
+    - move_base/global_costmap/global_frame
+    - move_base/TebLocalPlannerROS/map_frame
+    - robot_local_control/global_frame
+    - robot_local_control/NavigationComponent/GoToComponent/global_frame
+    - amcl/global_frame_id
+    - poi_interactive_marker_proxy/target_frame
+
+Gmapping:
+  type: robot_local_control_components/GmappingLocalizationModule
+  auto_start: false
+  desired_freq: 2.0
+  #  required_nodes: []
+  required_nodes:
+    - slam_gmapping
+    - online_map_saver
+    - move_base
+  # nodes to toggle after setting the params dynamically
+  toggle_nodes:
+    - slam_gmapping
+    - move_base
+  global_frame_params:
+    - slam_gmapping/map_frame
+    - move_base/global_costmap/global_frame
+    - move_base/TebLocalPlannerROS/map_frame
+    - robot_local_control/global_frame
+    - robot_local_control/NavigationComponent/GoToComponent/global_frame
+  # frames used during the map creation
+  global_frame: $(arg map_frame)
+
+  move_base_ns: move_base
+  gmapping_ns: slam_gmapping
+  # service name to retrieve the current map
+  retrieve_map_service: dynamic_map
+  # map topic published by gmapping
+  map_topic: map
+  # package to save the maps and the folder
+  config_package: $(arg config_package)
+  maps_folder: maps
+  # config file to save the environment config information
+  config_folder: $(arg multimap_config_folder)
+  save_map_service: save_map

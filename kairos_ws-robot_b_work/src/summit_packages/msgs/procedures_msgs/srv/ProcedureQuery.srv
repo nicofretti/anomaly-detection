@@ -1,0 +1,5 @@
+ProcedureHeader header
+---
+ProcedureState state
+ProcedureResult result
+std_msgs/String last_message

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<launch>
+
+	<!-- Set namespace -->
+	<!--arg name="id_robot" default="robot"/-->
+
+	<!-- Desired frequency -->
+	<arg name="desired_freq" default="1.0" />
+	<!-- Name of the example of a subscriber -->
+	<arg name="example_subscriber_name" default="example" />
+
+	<!-- Load .yaml example -->
+	<rosparam file="$(find ?rc_package)/config/example.yaml" command="load" />
+
+	<!--group ns="$(arg id_robot)"-->
+
+		<!-- start ?RCNode node -->
+		<node name="?rc_node" pkg="?rc_package" type="?rc_node_node.py" output="screen" respawn="false">
+			<param name="desired_freq" value="$(arg desired_freq)"/>
+			<param name="example_subscriber_name" value="$(arg example_subscriber_name)"/>
+		</node>
+
+	<!--/group-->
+
+</launch>

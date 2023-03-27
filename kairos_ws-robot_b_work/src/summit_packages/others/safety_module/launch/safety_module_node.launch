@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- start modbus_io node -->
+  <node pkg="safety_module" type="safety_module_node.py" name="safety_module" output="screen">
+      <rosparam file="$(find safety_module)/config/defaults.yaml" command="load"/>
+  </node>
+
+</launch>

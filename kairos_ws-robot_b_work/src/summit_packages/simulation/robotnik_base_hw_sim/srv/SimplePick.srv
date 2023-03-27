@@ -1,0 +1,5 @@
+# Picks closes object
+string robot_model
+---
+bool success
+string msg

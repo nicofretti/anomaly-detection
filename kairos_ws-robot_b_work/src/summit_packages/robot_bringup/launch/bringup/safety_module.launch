@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="laser_model" default="$(optenv ROBOT_SAFETY_LASER_MODEL sick_microscan3)"/>
+  <!-- start modbus_io node -->
+  <node pkg="safety_module" type="safety_module_node.py" name="safety_module" output="screen">
+    <rosparam file="$(find summit_xl_bringup)/config/safety_module/$(arg laser_model).yaml" command="load"/>
+  </node>
+
+</launch>
+

@@ -1,0 +1,28 @@
+#rbares: real led zone
+
+leds_config:
+  
+  - led_label: "left_leds"
+    leds_zone: [1, 23]
+    channel: 0
+    type: "RGBW"
+
+
+  - led_label: "front_leds"
+    leds_zone: [24, 46]
+    channel: 0
+    type: "RGBW"
+
+
+  - led_label: "right_leds"
+    leds_zone: [47, 69]
+    channel: 0
+    type: "RGBW"
+
+
+  - led_label: "all_leds"
+    leds_zone: [1, 69]
+    channel: 0
+    type: "RGBW"
+
+  

@@ -1,0 +1,29 @@
+<launch>
+  <arg name="node_name"  default="ydlidar_node"/>
+  <arg name="port"       default="/dev/ydlidar"/>
+  <arg name="ip_address" default=""/>
+  <arg name="frame_id"   default="laser_frame"/>
+  <arg name="scan_topic" default="~scan"/>
+  <arg name="angle_min"  default="-180"/>
+  <arg name="angle_max"  default="180"/>
+  <arg name="intensity"  default="false"/>
+  
+  <node name="$(arg node_name)"  pkg="ydlidar"  type="ydlidar_node" output="screen" respawn="false" >
+    <param name="port"             value="$(arg port)"/>  
+    <param name="baudrate"         value="115200"/>
+    <param name="frame_id"         value="$(arg frame_id)"/>
+    <param name="low_exposure"     value="false"/>
+    <param name="resolution_fixed" value="true"/>
+    <param name="auto_reconnect"   value="true"/>
+    <param name="reversion"        value="false"/>
+    <param name="angle_min"        value="$(arg angle_min)"/>
+    <param name="angle_max"        value="$(arg angle_max)"/>
+    <param name="range_min"        value="0.1"/>
+    <param name="range_max"        value="16.0"/>
+    <param name="ignore_array"     value=""/>
+    <param name="samp_rate"        value="9"/>
+    <param name="frequency"        value="7"/>
+
+    <remap from="scan" to="$(arg scan_topic)"/>
+  </node>
+</launch>

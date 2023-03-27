@@ -1,0 +1,72 @@
+desired_freq: 5.0
+
+address_registers:
+  laser_mode_output: 2001
+  current_speed: 2002
+
+outputs:
+  standby: 13
+  watchdog_signals: [25, 26] # two outputs needed
+  emergency_stop_sw: 1 # Causes E-Stop equivalent via Modbus
+
+custom_outputs:
+  buzzer_mode_1: 18
+  buzzer_mode_3: 19 
+  buzzer_cont: 11
+  buzzer_inter: 12
+
+laser_modes:    # custom laser modes
+  standard:     #  custom name of the mode
+    input: 237  # input to read the mode
+    output: 0   # value of the register when writing in the modbus address
+  docking_station:
+    input: 239
+    output: 771
+
+inputs:
+  emergency_stop: 228
+  laser_enabled: 230
+  laser_mute: 231
+  safety_stop: 225 # !ROV ENABLED
+  standby: 238
+  wheels_power_enabled: 225
+  laser_ok: 226
+  edm_ok: 227 
+  emergency_stop_fault: 229
+  motion_enabled: 235
+  emergency_stop_sw: 246
+  watchdog_ok: 248
+  selector_ok: 236 
+  lasers:
+    front:
+      detecting_obstacles: 249
+      contamination_led: 255
+      reset_pressed: 264
+      free_warning: 251
+    rear:
+      detecting_obstacles: 250
+      contamination_led: 256
+      reset_pressed: 296
+      free_warning: 252
+
+custom_inputs:
+  arm_moving: 241 
+  arm_not_stopping: 242 
+  arm_enabled: 243
+  arm_safe_position: 244
+  arm_ready: 245
+  warning_field_free: 232 
+  mechanic_break_enabled: 234
+  platform_moving: 247 
+  front_laser_status: 253
+  rear_laser_status: 254
+  
+  
+# 
+
+
+watchdog_signals_frequency: 2.0
+watchdog_write_mode: full_register
+# sets the current speed to the safety module
+set_speed_feedback_to_safety_module: true
+set_modbus_registers_service_name:  robotnik_modbus_io/set_modbus_registers

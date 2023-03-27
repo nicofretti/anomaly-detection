@@ -1,0 +1,4 @@
+robotnik_rms_msgs/mission mission
+---
+bool success
+string message

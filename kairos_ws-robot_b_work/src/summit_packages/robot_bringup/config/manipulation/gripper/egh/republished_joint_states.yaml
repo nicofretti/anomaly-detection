@@ -1,0 +1,3 @@
+source_list:
+  - joint_states
+  - gripper_joints_updater/joint_states

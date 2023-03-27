@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+    <arg name="prefix" default="$(arg id_robot)_"/>
+
+    <!-- GDB functionality -->
+    <arg name="debug" default="false" />
+    <arg unless="$(arg debug)" name="launch_prefix" value="" />
+    <arg     if="$(arg debug)" name="launch_prefix" value="terminator -m -x gdb --args" /> <!-- local debug -->
+    <!--arg     if="$(arg debug)" name="launch_prefix" value="screen -d -m gdb - -args" / --> <!-- ssh/screen debug -->
+    
+    <!-- Values to multiply on IO raw data received -->
+    <!--[6.978947368, -12.5, 1.0, 1.0]-->
+    <arg name="k_analog_inputs_multipliers" value="$(optenv ROBOT_K_ANALOG_INPUTS_MULTIPLIERS [1.0, 1.0, 1.0, 1.0])" />
+    <arg name="robot_gearbox" default="$(optenv ROBOT_GEARBOX 12.52)"/>
+    <arg name="has_encoder" default="$(optenv ROBOT_HAS_ENCODER false)"/>
+    <arg name="battery_voltage_offset" default="$(optenv ROBOT_BASE_HW_BATTERY_VOLTAGE_OFFSET 0.0)"/>
+   
+    <rosparam file="$(find summit_xl_bringup)/config/robotnik_base_hw/robotnik_base_hw_limits.yaml" command="load" subst_value="true"/>
+    <rosparam file="$(find summit_xl_bringup)/config/robotnik_base_hw/robotnik_base_hw.yaml" command="load" subst_value="true"/>
+
+    <node name="robotnik_base_hw" pkg="robotnik_base_hw" type="robotnik_base_hw_node" output="screen" launch-prefix="$(arg launch_prefix)"/>
+    
+
+</launch>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="node_name" default="sick_s300"/>
+  <arg name="port" default="/dev/ttyACM0"/>
+  <arg name="ip_address"  default="192.168.0.10"/> <!-- not used for this node -->
+  <arg name="frame_id"  default="laser_link"/>
+  <arg name="scan_topic"  default="~scan"/>
+  <arg name="angle_min"  default="-2.35619"/>
+  <arg name="angle_max"  default="2.35619"/>
+  <arg name="intensity"  default="false"/>
+  
+  <node name="$(arg node_name)" pkg="sick_s300_laser" type="sick_s300_laser" respawn="false" output="screen">
+    <rosparam command="load" file="$(find summit_xl_bringup)/config/sick_s300.yaml"/>
+    <param name="frame_id" value="$(arg frame_id)"/>
+    <remap from="~scan" to="$(arg scan_topic)"/>
+    <param name="port" value="$(arg port)"/>
+  </node>
+
+</launch>
+

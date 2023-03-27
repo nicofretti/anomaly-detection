@@ -1,0 +1,3 @@
+# Scheduler params:
+action_client_namespace: complex_sequencer/action
+schedules_file: $(arg schedules_file)

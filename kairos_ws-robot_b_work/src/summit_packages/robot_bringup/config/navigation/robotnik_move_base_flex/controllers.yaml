@@ -1,0 +1,200 @@
+controllers:
+   - name: 'teb'
+     type: 'teb_local_planner/TebLocalPlannerROS'
+   - name: 'eband'
+     type: 'eband_local_planner/EBandPlannerROS'
+   - name: 'dwa'
+     type: 'dwa_local_planner/DWAPlannerROS'
+
+
+teb:
+  odom_topic: robotnik_base_controller/odom
+  map_frame: robot_odom   
+  # Trajectory
+   
+  teb_autosize: True
+  dt_ref: 0.3
+  dt_hysteresis: 0.1
+  global_plan_overwrite_orientation: False
+  max_global_plan_lookahead_dist: 1         
+  feasibility_check_no_poses: 10#5
+     
+  # Robot
+          
+  max_vel_x: 1.0 #0.4
+  max_vel_x_backwards: 0.0
+  max_vel_y: 0.4
+  max_vel_theta: 0.3 #0.4
+  acc_lim_x: 0.3
+  acc_lim_y: 0.2
+  acc_lim_theta: 0.2
+  min_turning_radius: 1.5 #1.5
+  wheelbase: 1.63
+  cmd_angle_instead_rotvel: true # set true in ackermann mode
+  footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
+    #type: "point"
+    #type: "circular"
+    #radius: 0.25 
+    #type: "line"
+    #line_start: [-0.6, 0.0] 
+    #line_end: [0.6, 0.0] 
+    #type: "two_circles"
+    #front_offset: 0.2 
+    #front_radius: 0.2 
+    #rear_offset: 0.2 
+    #rear_radius: 0.2 
+    type: "polygon"
+    vertices: [[-0.85,-0.60],[1.55,-0.60],[1.55,0.60],[-0.85,0.60]]
+ 
+  # GoalTolerance
+     
+  xy_goal_tolerance: 0.5#0.2
+  yaw_goal_tolerance: 0.25
+  free_goal_vel: False
+     
+  # Obstacles
+     
+  min_obstacle_dist: 0.5
+  include_costmap_obstacles: True
+  costmap_obstacles_behind_robot_dist: 1.0
+  obstacle_poses_affected: 30
+  costmap_converter_plugin: "costmap_converter::CostmapToPolygonsDBSMCCH"
+  #costmap_converter_plugin: "costmap_converter::CostmapToLinesDBSRANSAC"
+  #costmap_converter_plugin: "costmap_converter::CostmapToLinesDBSMCCH"
+  #costmap_converter_plugin: "costmap_converter::CostmapToPolygonsDBSConcaveHull"
+  #costmap_converter_plugin: "" # deactivate plugin
+  costmap_converter_spin_thread: True
+  costmap_converter_rate: 5
+  # costmap_converter/CostmapToLinesDBSRANSAC:
+  #    cluster_max_distance: 0.4
+ 
+  # Optimization
+     
+  no_inner_iterations: 5
+  no_outer_iterations: 4
+  optimization_activate: True
+  optimization_verbose: False
+  penalty_epsilon: 0.1
+  weight_max_vel_x: 1
+  weight_max_vel_y: 0.5#1
+  weight_max_vel_theta: 0.5#1
+  weight_acc_lim_x: 1
+  weight_acc_lim_y: 0.75#1
+  weight_acc_lim_theta: 0.75#1
+  weight_kinematics_nh: 1000
+  weight_kinematics_forward_drive: 100
+  weight_kinematics_turning_radius: 1
+  weight_optimaltime: 1
+  weight_obstacle: 50
+  weight_dynamic_obstacle: 10 # not in use yet
+  selection_alternative_time_cost: False 
+ 
+  # Homotopy Class Planner
+ 
+  enable_homotopy_class_planning: False
+  enable_multithreading: True
+  selection_cost_hysteresis: 1.0
+  selection_obst_cost_scale: 100.0
+  selection_prefer_initial_plan: 0.95
+  selection_viapoint_cost_scale: 1.0
+  simple_exploration: False
+  max_number_classes: 4
+  roadmap_graph_no_samples: 15
+  roadmap_graph_area_width: 5
+  h_signature_prescaler: 0.5
+  h_signature_threshold: 0.1
+  obstacle_keypoint_offset: 0.1
+  obstacle_heading_threshold: 0.45
+  visualize_hc_graph: False
+
+eband:
+  Ctrl_Rate: 20.0
+  bubble_velocity_multiplier: 2.0
+  costmap_weight: 300.0
+  differential_drive: true
+  disallow_hysteresis: false
+  eband_equilibrium_approx_max_recursion_depth: 3
+  eband_equilibrium_relative_overshoot: 0.75
+  eband_external_force_gain: 3.0
+  eband_internal_force_gain: 2.0
+  eband_min_relative_overlap: 0.7
+  eband_significant_force_lower_bound: 0.15
+  eband_tiny_bubble_distance: 0.01
+  eband_tiny_bubble_expansion: 0.01
+  in_place_trans_vel: 0.0
+  k_damp: 3.5
+  k_prop: 4.0
+  marker_lifetime: 0.5
+  max_acceleration: 0.2
+  max_rotational_acceleration: 0.3
+  max_translational_acceleration: 0.4
+  # Lower values for testing with the actual robot.
+  max_vel_lin: 1.1 #0.5 #1.45
+  max_vel_th: 1.2 #0.5 #2.0
+  min_in_place_vel_th: 0.05
+  min_vel_lin: 0.0
+  min_vel_th: 0.0
+  num_iterations_eband_optimization: 4
+  rot_stopped_vel: 0.01
+  rotation_correction_threshold: 0.5
+  rotation_threshold_multiplier: 1.0
+  trans_stopped_vel: 0.01
+  virtual_mass: 100.0
+  xy_goal_tolerance: 0.2
+  yaw_goal_tolerance: 0.2
+
+dwa:
+  max_vel_x: 2.0
+  min_vel_x: 0.0
+
+  max_vel_y: 0.0
+  min_vel_y: 0.0
+
+  max_trans_vel: 2.12
+  min_trans_vel: 0.1  # this is the min trans velocity when there is negligible rotational velocity
+  trans_stopped_vel: 0.1
+
+  # Warning!
+  #   do not set min_trans_vel to 0.0 otherwise dwa will always think translational velocities
+  #   are non-negligible and small in place rotational velocities will be created.
+
+  max_rot_vel: 2.0  # choose slightly less than the base's capability
+  min_rot_vel: 0.4  # this is the min angular velocity when there is negligible translational velocity
+  rot_stopped_vel: 0.1
+
+  acc_lim_x: 0.7 # maximum is theoretically 2.0, but we
+  acc_lim_theta: 10.0
+  acc_lim_y: 0.1      # diff drive robot
+
+  # Goal Tolerance Parameters
+  yaw_goal_tolerance: 0.4  # 0.05
+  xy_goal_tolerance: 0.2   # 0.10
+  # latch_xy_goal_tolerance: false
+
+  # Forward Simulation Parameters
+  sim_time: 2.0       # 1.7
+  sim_granularity: 0.025
+  angular_sim_granularity: 0.025
+  vx_samples: 20      # 3
+  vy_samples: 1       # diff drive robot, there is only one sample
+  vtheta_samples: 20  # 20
+
+  # Trajectory Scoring Parameters
+  path_distance_bias: 0.1      # 32.0   - weighting for how much it should stick to the global path plan -- if this value is too high, won't avoid dynamic obstacles
+  goal_distance_bias: 40.0     # 24.0   - wighting for how much it should attempt to reach its goal
+  occdist_scale: 0.2           # 0.01   - weighting for how much the controller should avoid obstacles
+  forward_point_distance: 0.0  # 0.325  - how far along to place an additional scoring point
+  stop_time_buffer: 0.3        # 0.2    - amount of time a robot must stop in before colliding for a valid traj.
+  scaling_speed: 1.0           # 0.25   - absolute velocity at which to start scaling the robot's footprint
+  max_scaling_factor: 0.2      # 0.2    - how much to scale the robot's footprint when at speed.
+
+  # Oscillation Prevention Parameters
+  oscillation_reset_dist: 0.1  # 0.05   - how far to travel before resetting oscillation flags
+
+  holonomic_robot: false
+
+    # Debugging
+  publish_traj_pc: true
+  publish_cost_grid_pc: true
+  global_frame_id: robot_map
+

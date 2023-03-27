@@ -1,0 +1,13 @@
+2018-03-08-18-45-22.bag 1st test 
+
+2018-03-09-17-25-48.bag ~50% float / ~50% fix
+2018-03-09-17-33-37.bag 100% fix
+2018-03-09-17-41-47.bag 100% fix 
+2018-03-09-17-46-01.bag 100% fix 
+
+2018-04-17-17-27-24.bag ~25% fix / ~75% float
+2018-04-17-17-56-54.bag 100% fix (34s)
+2018-04-17-18-12-04.bag ~50% float / ~50% fix (415s)
+2018-04-17-18-23-52.bag - error in device - connected and ROS driver running, but no messages published - but was working in fix according to leds.
+2018-04-17-18-27-09.bag 100% fix (267s) 
+

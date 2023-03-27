@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+  <launch>
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="prefix" default="$(arg id_robot)_"/>
+
+  <!-- 1 GRIPPER -->
+  <arg name="gripper_1_model" default="$(optenv ROBOT_GRIPPER_1_MODEL none)"/>
+  <arg name="gripper_1_manufacturer" default="$(optenv ROBOT_GRIPPER_1_MANUFACTURER schunk)"/>
+  <arg name="gripper_1_id" default="$(optenv ROBOT_GRIPPER_1_ID gripper)"/>
+  <arg name="gripper_1_ip" default="$(optenv ROBOT_GRIPPER_1_IP 192.168.0.200)"/>
+  <arg name="gripper_1_port" default="$(optenv ROBOT_GRIPPER_1_PORT 50004)"/>
+  <arg name="gripper_1_min_pos" default="$(optenv ROBOT_GRIPPER_1_MIN_POS 1)"/>
+  <arg name="gripper_1_max_pos" default="$(optenv ROBOT_GRIPPER_1_MAX_POS 39)"/>
+  
+
+  <!-- 2 GRIPPER -->
+  <arg name="gripper_2_model" default="$(optenv ROBOT_GRIPPER_2_MODEL none)"/>
+  <arg name="gripper_2_manufacturer" default="$(optenv ROBOT_GRIPPER_2_MANUFACTURER schunk)"/>
+  <arg name="gripper_2_id" default="$(optenv ROBOT_GRIPPER_2_ID second_gripper)"/>
+  <arg name="gripper_2_ip" default="$(optenv ROBOT_GRIPPER_2_IP 192.168.0.200)"/>
+  <arg name="gripper_2_port" default="$(optenv ROBOT_GRIPPER_2_PORT 50005)"/>
+  <arg name="gripper_2_min_pos" default="$(optenv ROBOT_GRIPPER_2_MIN_POS 1)"/>
+  <arg name="gripper_2_max_pos" default="$(optenv ROBOT_GRIPPER_2_MAX_POS 39)"/>
+
+
+  <!-- 1 -->
+  <include if="$(eval gripper_1_model != 'none')" file="$(find robot_bringup)/launch/manipulation/gripper/$(arg gripper_1_manufacturer)/$(arg gripper_1_model).launch">
+    <!-- <arg name="namespace" value="$(arg gripper_1_id)"/> -->
+    <arg name="ip_address" value="$(arg gripper_1_ip)"/>
+    <arg name="gripper_port" value="$(arg gripper_1_port)"/>
+    <!-- <arg name="min_pos" value="$(arg gripper_1_min_pos)"/> -->
+    <!-- <arg name="max_pos" value="$(arg gripper_1_max_pos)"/> -->
+  </include>
+
+  <!-- 2 -->
+  <include if="$(eval gripper_2_model != 'none')" file="$(find robot_bringup)/launch/manipulation/gripper/$(arg gripper_2_manufacturer)/$(arg gripper_2_model).launch">
+    <arg name="namespace" value="$(arg gripper_1_id)"/>
+    <arg name="ip_address" value="$(arg gripper_2_ip)"/>
+    <arg name="port" value="$(arg gripper_2_port)"/>
+    <arg name="min_pos" value="$(arg gripper_2_min_pos)"/>
+    <arg name="max_pos" value="$(arg gripper_2_max_pos)"/>
+  </include>
+
+</launch>

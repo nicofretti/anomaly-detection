@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+
+	<arg name="config_yaml" default="summit_xls"/>
+	<arg name="prefix" default="robot_"/> 
+	<arg name="back_left_joint" default="$(arg prefix)back_left_joint"/>
+	<arg name="back_right_joint" default="$(arg prefix)back_right_joint"/>
+	<arg name="front_left_joint" default="$(arg prefix)front_left_joint"/>
+	<arg name="front_right_joint" default="$(arg prefix)front_right_joint"/>
+
+	<node pkg="robotnik_base_hw_sim" type="robotnik_base_hw_sim_node.py" name="robotnik_base_hw">
+		<rosparam command="load" file="$(find robotnik_base_hw_sim)/config/$(arg config_yaml).yaml" />
+		<param name="motors/m1/joint" value="$(arg back_left_joint)"/>
+		<param name="motors/m2/joint" value="$(arg back_right_joint)"/>
+		<param name="motors/m3/joint" value="$(arg front_left_joint)"/>
+		<param name="motors/m4/joint" value="$(arg front_right_joint)"/>
+	</node>
+
+</launch>

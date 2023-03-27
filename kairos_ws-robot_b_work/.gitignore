@@ -1,0 +1,9 @@
+*.pyc
+.catkin_tools
+build
+devel
+logs
+src/cheng
+src/ice_mqtt_bridge
+src/rbkairos-demo-v2
+src/rbkairos-demo-package

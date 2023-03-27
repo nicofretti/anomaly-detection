@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+    <arg name="prefix" default="$(arg id_robot)_" />
+    <arg name="config_package" default="$(optenv ROBOT_RLC_CONFIG_PACKAGE robot_bringup)"/>
+    <arg name="config_folder" default="config/robot_local_control"/>
+    <arg name="config_path" default="$(eval find(config_package) + '/' + config_folder)"/>
+
+    <arg name="multimap_config_folder" default="config/localization/environments"/>
+    <arg name="initial_environment" default="$(optenv ROBOT_RLC_LOC_INIT_ENV willow_garage"/>
+
+    <arg name="global_frame" default="world" />
+    <arg name="map_frame" default="$(arg prefix)map" />
+    <arg name="base_frame" default="$(arg prefix)base_footprint" />
+    <arg name="odom_frame" default="$(arg prefix)odom" />
+
+    <arg name="has_elevator" default="$(optenv ROBOT_HAS_ELEVATOR false)" />
+    <arg name="has_safety_laser" default="$(optenv ROBOT_HAS_SAFETY_MODULE false)" />
+    <arg name="has_safety_module" default="$(optenv ROBOT_HAS_SAFETY_MODULE false)" />
+    <arg name="charge_docker_namespace" default="$(optenv ROBOT_RLC_CHARGE_DOCKER_NAMESPACE pp_docker)"/>
+    <arg name="pick_docker_namespace" default="$(optenv ROBOT_RLC_PICK_DOCKER_NAMESPACE pp_docker)"/>
+    <arg name="charge_dock_offset_x" default="$(optenv ROBOT_RLC_CHARGE_DOCK_OFFSET_X -0.49)"/>
+    <arg name="pick_dock_offset_x" default="$(optenv ROBOT_RLC_PICK_DOCK_OFFSET_X 0)"/>
+    <arg name="pick_step_in_distance" default="$(optenv ROBOT_RLC_PICK_STEP_IN_DISTANCE 0)"/>
+    <arg name="place_step_in_distance" default="$(optenv ROBOT_RLC_PLACE_STEP_IN_DISTANCE 0)"/>
+    <arg name="place_step_out_distance" default="$(optenv ROBOT_RLC_PLACE_STEP_OUT_DISTANCE 0)"/>
+    <arg name="uncharge_step_out_distance" default="$(optenv ROBOT_RLC_UNCHARGE_STEP_OUT_DISTANCE 0.35)"/>
+
+    <arg name="laser_1_id" default="$(optenv ROBOT_LASER_1_ID laser_1)"/>
+    <arg name="camera_1_id" default="$(optenv ROBOT_CAMERA_1_ID camera_1)"/>
+
+
+    <arg name="debug" default="false" />
+    <arg unless="$(arg debug)" name="launch_prefix" value="" />
+    <arg     if="$(arg debug)" name="launch_prefix" value="terminator -m -x gdb --args" /> <!-- para depurar en la misma maquina -->
+
+    <group ns="$(arg id_robot)">
+        <node name="robot_local_control" pkg="robot_local_control" type="robot_local_control_node" output="screen" launch-prefix="$(arg launch_prefix)">
+
+            <rosparam file="$(find robot_bringup)/config/robot_local_control/base_configuration.yaml" command="load" subst_value="true"/>
+
+            <rosparam file="$(find robot_bringup)/config/robot_local_control/robot_status.yaml" command="load" ns="RobotStatusComponent" subst_value="true"/>
+
+            <rosparam file="$(find robot_bringup)/config/robot_local_control/signal_manager.yaml" command="load" ns="SignalManagerComponent" subst_value="true"/>
+
+            <rosparam file="$(find robot_bringup)/config/robot_local_control/navigation.yaml" command="load" ns="NavigationComponent" subst_value="true"/>
+
+            <rosparam file="$(find robot_bringup)/config/robot_local_control/localization.yaml" command="load" ns="LocalizationComponent" subst_value="true"/>
+
+            <rosparam file="$(find robot_bringup)/config/robot_local_control/operation.yaml" command="load" ns="OperationComponent" subst_value="true"/>
+
+            <rosparam file="$(find robot_bringup)/config/robot_local_control/control.yaml" command="load" ns="ControlComponent" subst_value="true"/>
+
+            <rosparam file="$(arg config_path)/process_manager.yaml" command="load" ns="ProcessManagerComponent" subst_value="true"/>
+
+        </node>
+    </group>
+
+</launch>

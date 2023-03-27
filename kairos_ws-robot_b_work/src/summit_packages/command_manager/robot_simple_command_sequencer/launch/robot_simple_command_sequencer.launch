@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="simple_command_sequencer_file_path" default="$(find robot_simple_command_sequencer)/config/sequencer.yaml"/>
+  <arg name="sequences_file" default="$(find robot_simple_command_sequencer)/config/sequences.yaml"/>
+  <arg name="prefix" default="$(optenv ROBOT_ID robot)"/>
+
+  <group ns="$(arg prefix)">
+      <!--arg name="command_input_name" default="command"/-->
+      <arg name="clear_params" default="true"/>
+      <arg name="allow_queuing" default="true"/>
+      <arg name="action_client_namespace" default="command_manager/action"/>
+
+      <node name="command_sequencer" pkg="robot_simple_command_sequencer" type="simple_command_sequencer_node.py" output="screen" clear_params="$(arg clear_params)">
+    	<rosparam command="load" file="$(arg simple_command_sequencer_file_path)" subst_value="True"/>
+      </node>
+  </group>
+
+</launch>

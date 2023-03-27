@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="id_robot" default="$(optenv ROBOT_ID )"/>
+  <arg name="prefix" default="$(arg id_robot)_"/>
+
+  <arg name="scan_topic" default="laser/scan"/>
+  <arg name="map_topic" default="map"/>
+  <arg name="global_frame" default="$(arg prefix)map"/> 
+  <arg name="odom_frame" default="$(arg prefix)odom"/> 
+  <arg name="base_frame" default="$(arg prefix)base_footprint"/>
+  
+  <!-- These are from amcl -->
+  <arg name="input_pose_topic" default="amcl_pose" /> 
+  <arg name="output_pose_topic" default="initialpose" />
+ 
+  <node pkg="icp_pose_corrector" type="icp_pose_corrector_node" name="icp_pose_corrector" output="screen">
+  
+    <param name="base_frame" value="$(arg base_frame)" />
+    <param name="odom_frame" value="$(arg odom_frame)" />
+    <param name="global_frame"  value="$(arg global_frame)" />
+    
+    <param name="scan_topic" value="$(arg scan_topic)" />
+    <param name="map_topic" value="$(arg map_topic)"/>
+
+    <param name="input_pose_topic" value="$(arg input_pose_topic)" />
+    <param name="output_pose_topic" value="$(arg output_pose_topic)" />
+
+  </node>
+
+</launch>

@@ -1,0 +1,8 @@
+#goal definition
+int32 seconds
+---
+#result definition
+bool ret
+---
+#feedback
+int32 remaining_seconds

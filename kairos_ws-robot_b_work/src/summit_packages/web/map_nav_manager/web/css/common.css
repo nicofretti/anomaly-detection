@@ -1,0 +1,81 @@
+* {margin:0; padding:0;}
+
+body{background:#ffffff;}
+
+#header {
+    height: 100px;
+    background:#BA122B;
+}
+.page-header{
+	background:#BA122B;
+	height:100px;
+}
+.header {
+	width:100%;
+	background:#BA122B;
+	position: fixed;
+	height:100px;
+	margin-bottom:20px;
+}
+#occupancygrid{
+	float: left;
+}
+
+#nav{
+	float: left;
+}
+
+#buttonpanel {
+	float: left;
+	padding: 20px;
+
+}
+
+.wrapper {
+	width:100%;
+	max-width:1000px;
+	margin:auto;
+	overflow:hidden;
+}	
+
+.logo {
+	line-height:100px;
+	padding-left:100px;
+	padding-top:0px;
+	float:none;
+	overflow:hidden;
+}
+
+
+.contenido div {
+	float:relative;
+	margin-top:15em;
+	margin-bottom:1em;
+	text-align: center;
+}
+
+.navh1 {
+	display:block;
+	padding:20px;
+	color:#fff;
+	font-family:"Arial";
+	text-align:center;
+	background:#BA122B;
+	margin-bottom:1em;
+}
+
+.mapbutton {
+	float:left;
+	padding: 5em;
+}
+
+.navbutton {
+	float:left;
+	padding: 5em;
+}
+
+.statusbutton {
+	float:left;
+	padding: 5em;
+}
+

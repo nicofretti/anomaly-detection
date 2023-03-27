@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Launch nodes related to the base and sensors -->
+  <include file="$(find summit_xl_bringup)/launch/summit_xl_complete.launch"/>
+
+  <!-- The arm usually is run in another screen/terminal independently -->
+
+</launch>

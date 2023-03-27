@@ -1,0 +1,39 @@
+environments:
+  almacen:
+    points:
+      P1:
+        frame_id: map
+        orientation:
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        params: ''
+        position:
+        - 0.0
+        - 0.0
+        - 0.0
+      P2:
+        frame_id: map
+        orientation:
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        params: ''
+        position:
+        - 0.0
+        - 0.0
+        - 0.0
+      P3:
+        frame_id: map
+        orientation:
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        params: ''
+        position:
+        - 0.0
+        - 0.0
+        - 0.0

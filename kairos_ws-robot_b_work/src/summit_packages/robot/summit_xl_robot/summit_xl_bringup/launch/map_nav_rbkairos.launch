@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<launch>
+
+	<arg name="prefix" default="rbkairos_"/>
+	<arg name="map_nav_config" default="$(find summit_xl_bringup)/config/rbkairos/map_nav_manager.yaml"/>
+	<!--arg name="maps_folder" default="$(find summit_xl_localization)/maps"/-->
+	<arg name="global_frame_id" default="$(arg prefix)map"/>
+	
+
+		<include file="$(find poi_manager)/launch/poi_manager.launch">
+		<arg name="id_robot" value="rbkairos"/>
+		<arg name="frame_id" value="$(arg global_frame_id)"/>
+		</include>
+		<include file="$(find map_nav_manager)/launch/servers.launch"/>
+		
+		<include file="$(find map_nav_manager)/launch/map_nav_manager.launch">
+			<arg name="global_frame_id" value="$(arg global_frame_id)"/>
+			<arg name="map_nav_config" value="$(arg map_nav_config)"/>
+		</include>
+
+		<include file="$(find system_monitor)/launch/system_monitor.launch"/>
+
+</launch>

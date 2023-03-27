@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="frame_id" default="gps_link"/>
+
+  <node name="nmea_serial_driver" pkg="nmea_navsat_driver" type="nmea_serial_driver" respawn="false" output="screen">
+    <param name="port" type="string" value="/dev/ttyACM_GPS"/>     
+    <param name="baud" type="string" value="115200"/>
+    <param name="frame_id" type="string" value="$(arg frame_id)"/>
+  </node> 
+
+</launch>

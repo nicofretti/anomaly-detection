@@ -1,0 +1,36 @@
+plugin_blacklist:
+- safety_area 
+- image_pub 
+- vibration 
+- distance_sensor 
+- vision_speed 
+- vision_pose 
+- px4flow 
+- mocap 
+- image 
+- setpoint_position 
+- setpoint_attitude 
+- setpoint_accel 
+- safety_area 
+- local_position 
+- 3dr_radio
+- home_position 
+- hil_controls
+- ftp
+- global_position
+- local_position
+- manual_control
+- rc_io
+- vfr_hud
+- waypoint
+- setpoint_raw
+- setpoint_trajectory
+- setpoint_velocity
+- hil
+- actuator_control
+- landing_target
+- odometry
+- wheel_odometry
+
+plugin_whitelist: []
+#- 'sys_*'

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="prefix" default="$(arg id_robot)_"/>
+
+  <arg name="model" default="$(optenv ROBOT_ARM_MODEL iiwa7)"/>
+  <arg name="ip_address"  default="$(optenv ROBOT_ARM_IP 192.168.0.210)"/>
+  <arg name="reverse_port" default="50001" doc="Port that will be opened by the driver to allow direct communication between the driver and the robot controller."/>
+  <arg name="script_sender_port" default="50002" doc="The driver will offer an interface to receive the program's URScript on this port. If the robot cannot connect to this port, `External Control` will stop immediately."/>
+  <arg name="namespace"  default="arm"/>	
+
+	
+  <!-- It is necessary to republish the arm/joint_states to joint_states for using MoveIt -->
+  <node name="joint_state_publisher_arm" pkg="joint_state_publisher" type="joint_state_publisher" >
+    <rosparam command="load" file="$(find robot_bringup)/config/manipulation/arm/kuka/republished_joint_states.yaml" subst_value="true"/>   
+  </node>
+
+  
+</launch>

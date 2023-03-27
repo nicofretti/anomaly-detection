@@ -1,0 +1,32 @@
+#rbrobout: real led zone
+
+leds_config:
+  
+  - led_label: "front_left_leds"
+    leds_zone: [31, 60]
+    channel: 0
+    type: "RGB"
+
+
+  - led_label: "front_right_leds"
+    leds_zone: [72, 101]
+    channel: 0
+    type: "RGB"
+
+
+  - led_label: "rear_right_leds"
+    leds_zone: [168, 196]
+    channel: 0
+    type: "RGB"
+
+
+  - led_label: "rear_left_leds"
+    leds_zone: [207, 236]
+    channel: 0
+    type: "RGB"
+
+
+  - led_label: "all_leds"
+    leds_zone: [1, 270]
+    channel: 0
+    type: "RGB"

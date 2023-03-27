@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <arg name="robot_model"                       default="vx300s"/>
+  <arg name="robot_name"                        default="robot"/>
+  <arg name="base_link_frame"                   default="base_link"/>
+  <arg name="show_ar_tag"                       default="false"/>
+  <arg name="use_world_frame"                   default="true"/>
+  <arg name="external_urdf_loc"                 default=""/>
+  <arg name="use_rviz"                          default="false"/>
+  <arg name="dof"                               default="6"/>
+
+
+  <rosparam file="$(find robot_bringup)/config/manipulation/arm/trossen/$(arg dof)dof_controllers.yaml" command="load" ns="$(arg robot_name)"/>
+  <rosparam file="$(find robot_bringup)/config/manipulation/arm/trossen/hardware.yaml" command="load" ns="$(arg robot_name)"/>
+
+
+  <arg name="show_gripper_bar"                  default="true"/>
+  <arg name="show_gripper_fingers"              default="true"/>
+
+
+
+  <arg name="motor_configs"                     default="$(find robot_bringup)/config/manipulation/arm/trossen/$(arg robot_model).yaml"/>
+  <arg name="mode_configs"                      default="$(find robot_bringup)/config/manipulation/arm/trossen/modes.yaml"/> 
+
+
+  <arg name="load_configs"                      default="true"/>
+  <arg name="use_sim"                           default="false"/>
+  <arg name="xs_sdk_type" value="xs_sdk" unless="$(arg use_sim)"/>
+  <arg name="xs_sdk_type" value="xs_sdk_sim" if="$(arg use_sim)"/>
+
+
+  <node
+    name="xs_sdk"
+    pkg="interbotix_xs_sdk"
+    type="$(arg xs_sdk_type)"
+    output="screen"
+    ns="$(arg robot_name)">
+    <param name="motor_configs"                   value="$(arg motor_configs)"/>
+    <param name="mode_configs"                    value="$(arg mode_configs)"/>
+    <param name="load_configs"                    value="$(arg load_configs)"/>
+  </node>
+
+
+  <node
+    name="arm_controller_spawner"
+    pkg="controller_manager"
+    type="controller_manager"
+    respawn="false"
+    output="screen"
+    ns="$(arg robot_name)"
+    args="spawn arm_controller gripper_controller">
+  </node>
+
+  <node
+    name="xs_hardware_interface"
+    pkg="interbotix_xs_ros_control"
+    type="xs_hardware_interface"
+    output="screen"
+    ns="$(arg robot_name)">
+  </node>
+
+</launch>

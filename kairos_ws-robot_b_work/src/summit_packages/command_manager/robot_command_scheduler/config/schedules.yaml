@@ -1,0 +1,22 @@
+# Sample of Schedule
+#
+#  ID: A/[0..6] H M RHN E/D Mission
+#
+#  ID -> Schedule Identifier
+#  A/[0..6] A -> Every Day, 0..6 Day of Week
+#  H -> start Hour
+#  M -> start Minute
+#  RHN -> repeat every N Hours 0 no repeat
+#  E/D -> E Enabled or D Disabled
+#  Mission Name of mission to launch
+#
+# 
+# Launch mission M1 every day from 12:46 every 2 hours 
+# 
+# S1: A 12 46 RH2 E M1
+#
+# Launch M2 every Wednesday at 16:51 repeat every 4 hours but disabled
+# 
+# S2: 2 16 51 RH4 D M2
+
+schedules: {S1: ' A 12 46 RH4 E GP1_2', S2: 2 16 51 RH4 D M2}

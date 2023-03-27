@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="port" default="/dev/ttyUSB_RPLIDAR"/>
+  <arg name="frame_id" default="base_front_laser_link"/>
+  <arg name="node_name" default="rplidar"/>
+  <arg name="scan_topic" default="front_laser/scan"/>
+  <arg name="ip_address" default=""/>
+
+  <!-- A3: serial_baudrate 256000 -->
+  <node name="$(arg node_name)"  pkg="rplidar_ros"  type="rplidarNode" output="screen">
+   <param name="serial_port"         type="string" value="$(arg port)"/>
+   <!--param name="serial_baudrate"     type="int"    value="115200"/-->
+   <param name="serial_baudrate"     type="int"    value="256000"/>
+   <param name="frame_id"            type="string" value="$(arg frame_id)"/>
+   <param name="inverted"            type="bool"   value="false"/>
+   <param name="angle_compensate"    type="bool"   value="true"/>
+   <remap from="scan" to="$(arg scan_topic)"/>
+   <param name="scan_mode" type="string" value="Sensitivity"/>
+  </node>
+</launch>

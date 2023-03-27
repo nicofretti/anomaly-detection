@@ -1,0 +1,6 @@
+ICE_lab:
+  global_frame: robot_map
+  maps_package: robot_bringup
+  maps:
+    localization: maps/ICE_lab/ICE_lab.yaml
+    routes: maps/ICE_lab/ICE_lab.yaml

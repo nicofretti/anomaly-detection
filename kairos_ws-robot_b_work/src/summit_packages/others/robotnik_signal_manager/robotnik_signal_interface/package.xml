@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>robotnik_signal_interface</name>
+  <version>0.0.0</version>
+  <description>The robotnik_signal_interface package</description>
+
+  <maintainer email="jgomez@robotnik.es">Jose Gómez</maintainer>
+
+  <license>BSD</license>
+
+  <author email="jgomez@robotnik.es">Jose Gómez</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>rcomponent</build_depend>
+  <build_depend>robotnik_signal_msgs</build_depend>
+  <build_export_depend>rospy</build_export_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>rcomponent</exec_depend>
+  <exec_depend>robotnik_signal_msgs</exec_depend>
+
+
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+  </export>
+
+</package>

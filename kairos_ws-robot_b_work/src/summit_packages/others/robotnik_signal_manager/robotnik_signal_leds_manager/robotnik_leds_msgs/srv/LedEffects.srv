@@ -1,0 +1,26 @@
+string  id
+string  mode
+uint8   channel
+string  type
+uint8   color_R
+uint8   color_G
+uint8   color_B
+uint8   color_W 
+uint16  start_led
+uint16  end_led
+uint16  ms_on
+uint16  ms_off
+uint16  fade_in
+uint16  fade_out
+uint8   background_R
+uint8   background_G
+uint8   background_B
+uint8   background_W
+string  direction
+uint16  speed
+uint16  sleep
+uint16  led_increment
+uint8   layer
+bool    enabled
+---
+uint8  state

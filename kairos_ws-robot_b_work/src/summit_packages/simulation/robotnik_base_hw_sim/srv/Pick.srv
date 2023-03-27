@@ -1,0 +1,11 @@
+# attach object link into robot link
+# Links and models are refered to Gazebo
+string object_model
+string object_link
+string robot_model
+string robot_link
+# pose related to the robot link
+geometry_msgs/Pose pose
+---
+bool success
+string msg

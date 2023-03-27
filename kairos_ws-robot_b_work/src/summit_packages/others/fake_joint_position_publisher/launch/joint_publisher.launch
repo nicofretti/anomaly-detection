@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="joints_updater" pkg="fake_joint_position_publisher" type="joint_publisher.py" output="screen">
+        <rosparam command="load" file="$(find fake_joint_position_publisher)/config/joints.yaml"/>
+    </node>
+
+
+    <!-- It is necessary to republish the arm/joint_states to joint_states for using MoveIt -->
+    <node name="joint_state_publisher_gripper" pkg="joint_state_publisher" type="joint_state_publisher" >
+      <rosparam command="load" file="$(find fake_joint_position_publisher)/config/republished_joints.yaml" subst_value="true"/>   
+    </node>
+  
+</launch>

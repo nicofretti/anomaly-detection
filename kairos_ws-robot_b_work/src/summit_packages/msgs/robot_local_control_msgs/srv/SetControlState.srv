@@ -1,0 +1,10 @@
+# CONTROL STATES OF THE ROBOT
+# autonomous: the robot is moving autonomously
+# manual: the robot is being tele-operated by an operator
+# follow: the robot is following a person 
+
+# see robot_local_control_msgs/State for the CONTROL_STATE options/commands
+string command
+---
+bool success   # indicate successful run of triggered service
+string message # informational, e.g. for error messages

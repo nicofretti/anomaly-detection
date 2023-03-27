@@ -1,0 +1,4 @@
+string signal_id
+bool enable
+---
+robotnik_msgs/ReturnMessage ret

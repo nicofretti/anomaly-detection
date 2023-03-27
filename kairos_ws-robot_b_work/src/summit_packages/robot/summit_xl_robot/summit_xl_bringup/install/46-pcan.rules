@@ -1,0 +1,2 @@
+KERNEL=="pcanusb*", SYMLINK+="pcan_base", MODE="0666"
+

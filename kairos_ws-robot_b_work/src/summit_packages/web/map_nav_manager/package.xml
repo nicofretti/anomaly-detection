@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<package>
+  <name>map_nav_manager</name>
+  <version>0.0.0</version>
+  <description>The map_nav_manager package</description>
+
+  <maintainer email="jmrapado@robotnik.es">Jose Rapado</maintainer>
+  <maintainer email="rnavarro@robotnik.es">Román Navarro</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>std_srvs</build_depend>
+  <build_depend>robotnik_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>tf2_web_republisher</build_depend>
+  <build_depend>rosbridge_server</build_depend>
+  <build_depend>amcl</build_depend>
+  <build_depend>move_base</build_depend>
+  <build_depend>slam_gmapping</build_depend>
+  <build_depend>gmapping</build_depend>
+  <build_depend>interactive_marker_proxy</build_depend>
+  <build_depend>poi_manager</build_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>tf2_web_republisher</run_depend>
+  <run_depend>rosbridge_server</run_depend>
+  <run_depend>map_server</run_depend>
+  <run_depend>rosbridge_server</run_depend>
+  <run_depend>amcl</run_depend>
+  <run_depend>move_base</run_depend>
+  <run_depend>slam_gmapping</run_depend>
+  <run_depend>gmapping</run_depend>
+  <run_depend>interactive_marker_proxy</run_depend>
+  <run_depend>poi_manager</run_depend>
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="id_robot" default="$(optenv ROBOT_ID summit_xl)"/>
+  <arg name="xacro_robot_a" default="$(optenv ROBOT_XACRO summit_xl.urdf.xacro)"/>
+  <arg name="laser_model" default="$(optenv ROBOT_LASER_MODE ug01_laser)"/>
+  <arg name="has_laser" default="$(optenv ROBOT_HAS_LASER false)"/>
+  <arg name="has_axis_camera" default="$(optenv ROBOT_HAS_AXIS_CAMERA false)"/>
+  <arg name="has_gps" default="$(optenv ROBOT_HAS_GPS false)"/>
+  <arg name="has_rgbd_camera" default="$(optenv ROBOT_HAS_RGBD_CAMERA false)"/>
+  <arg name="ptz_camera_node" default="front_ptz_camera"/>
+  <arg name="rgbd_camera_node" default="front_rgbd_camera"/>
+
+  <group ns="$(arg id_robot)">
+	  
+	  <arg name="prefix" value="$(arg id_robot)_"/> 
+
+	
+	  <!-- start summit_xl_pad nodes -->
+	  <include file="$(find summit_xl_bringup)/launch/summit_xl_pad_ps4.launch" />
+
+	  
+
+	  <!-- start axis camera -->
+	  <include if="$(arg has_axis_camera)" file="$(find summit_xl_bringup)/launch/axis.launch"> 
+		  <arg name="prefix" value="$(arg prefix)"/>
+		  <arg name="node_name" value="$(arg ptz_camera_node)"/>
+		  <arg name="id_robot" value="$(arg id_robot)"/>
+	  </include>
+ 
+  </group>
+
+</launch>
+

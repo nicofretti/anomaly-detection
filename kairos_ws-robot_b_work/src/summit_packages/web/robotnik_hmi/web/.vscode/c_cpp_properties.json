@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/juanma/catkin_ws/devel/include",
+                "/home/juanma/catkin_astrobot/devel/include",
+                "/home/juanma/catkin_iav/devel/include",
+                "/opt/ros/kinetic/include",
+                "/home/juanma/catkin_ws/src/robotnik_project_summit/robotnik_project_summit/robot_common/include",
+                "/usr/include"
+            ],
+            "name": "Linux",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

@@ -1,0 +1,132 @@
+type: robot_local_control_components/NavigationComponent
+desired_freq: 1.0
+
+check_sensors_state: true
+check_localization_state: true
+has_safety_laser: $(arg has_safety_laser)
+safety_laser_mode_allowed: safe
+charge_disable_procedures: true
+uncharge_procedure_name: UnchargeComponent
+goto_procedure_name: GoToComponent
+
+components:
+# - GoToGPSComponent
+ - GoToComponent
+ - MoveComponent
+ - ChargeComponent
+ - UnchargeComponent
+# - PickComponent
+# - PlaceComponent
+
+GoToComponent:
+  type: robot_local_control_procedures/GoToMoveBase
+  desired_freq: 5.0
+  action_namespace: move_base
+  global_frame: $(arg map_frame)
+  base_frame: $(arg base_frame)
+  default_yaw_tolerance: 0.1 # when goal has orientation. if orientation is invalid, goal tolerance is changed to 3.14
+  has_safety_laser:  $(arg has_safety_laser)
+  yaw_tolerance: 0.1
+  xy_tolerance: 0.15
+  preemptable: false
+  clear_costmaps_before_send_goal: true
+  local_planner_namespace: TebLocalPlannerROS
+
+GoToGPSComponent:
+  type: robot_local_control_procedures/GoToGPS
+  desired_freq: 5.0
+  action_namespace: robotnik_move_base_flex
+  global_frame: $(arg global_frame)
+  base_frame: $(arg base_frame)
+  local_planner_namespace: move_base_flex/teb
+  first_point_planner: GlobalPlanner
+  planner: none
+  controller: teb
+  set_max_velocity_param_name: max_vel_x # for dynamic_reconfigure
+  max_velocity_minimum_value: 0.5 # minimum max velocity accepted
+  max_velocity_maximum_value: 7.0 # maximum max velocity accepted
+
+MoveComponent:
+  type: robot_local_control_procedures/Move
+  desired_freq: 5.0
+  action_namespace: move
+  move_state_topic: move/state
+  preemptable: false
+
+ChargeComponent:
+  type: robot_local_control_procedures/Charge
+  has_safety_laser:  $(arg has_safety_laser)
+  desired_freq: 5.0
+  has_laser_safety: $(arg has_safety_laser) # determines if the robot has safety_lasers and the safety zone must be changed
+  docker_namespace: $(arg charge_docker_namespace)
+  dock_frame: robot_docking_station_laser
+  generic_dock_frame: .*docking_station.*
+  laser_mode_at_begining: docking_station
+  robot_dock_frame: $(arg base_frame)
+  dock_offset_x: $(arg charge_dock_offset_x) # 0.25 robot radius + 0.25 docking station reflector to contacts - 0.05 to mimic previous working config
+  move_namespace: move
+  step_in_distance: 0.05 # Indicates the distance that the robot is going to move in x-axis after the docking. If 0.0 then no move action is done
+  set_laser_to_standby: false # If 'true' then the lasers will be in standby after the docking
+  move:
+    max_velocity:
+      linear_x: 0.015
+      linear_y: 0.015
+      angular_z: 0.1
+  dock:
+    max_velocity:
+      linear_x: 0.1
+      linear_y: 0.1
+      angular_z: 0.1
+  preemptable: false
+
+UnchargeComponent:
+  type: robot_local_control_procedures/Uncharge
+  desired_freq: 5.0
+  has_laser_safety: $(arg has_safety_laser) # determines if the robot has safety_lasers and the safety zone must be changed
+  move_namespace: move
+  laser_mode_at_finish: standard
+  step_back_distance: $(arg uncharge_step_out_distance) # Indicates the distance that the robot is going to move backwards. If 0.0 then no rotation action is done
+  rotation: 0.0 # Indicates the rotation that the robot is going to move after moving backwards. If 0.0 then no rotation action is done
+  move:
+    max_velocity:
+      linear_x: 0.1
+      linear_y: 0.025
+      angular_z: 0.1
+  preemptable: false
+
+PickComponent:
+  type: robot_local_control_procedures/Pick
+  desired_freq: 5.0
+  has_safety_laser: $(arg has_safety_laser)
+  step_in_distance: $(arg pick_step_in_distance)
+  final_turn: 0.0
+  dock_offset_x: $(arg pick_dock_offset_x)
+  dock_frame: robot_cart_laser
+  generic_dock_frame: robot_cart_([0-9]+)
+  robot_dock_frame: robot_base_footprint
+  docker_namespace: $(arg pick_docker_namespace)
+  docker_state_topic: $(arg pick_docker_namespace)/state
+  move_namespace: move
+  move_state_topic: move/state
+  elevator_namespace: robotnik_base_control/set_elevator
+  elevator_status_topic: robotnik_base_control/elevator_status
+  elevator_up_footprint: '[[0.35,-0.35],[0.35,0.35],[-0.35,0.35],[-0.35,-0.35]]' # elevator_up_footprint: 0.3 to set radius
+  laser_safety_mode_dock: docking_cart
+  laser_safety_mode_raised: cart
+  set_dynamic_footprint: true
+
+PlaceComponent:
+  type: robot_local_control_procedures/Place
+  desired_freq: 5.0
+  has_safety_laser: $(arg has_safety_laser)
+  step_out_distance: $(arg place_step_out_distance)
+  move_namespace: move
+  move_state_topic: move/state
+  elevator_namespace: robotnik_base_control/set_elevator
+  elevator_status_topic: robotnik_base_control/elevator_status
+  elevator_down_footprint:  '[[0.35,-0.35],[0.35,0.35],[-0.35,0.35],[-0.35,-0.35]]' # 0.3 to set radius
+  set_dynamic_footprint: true
+  laser_safety_mode_dock: docking_cart
+  laser_safety_mode_standard: standard
+  turnabout_under_trolley: false
+  # rotation: 3.14

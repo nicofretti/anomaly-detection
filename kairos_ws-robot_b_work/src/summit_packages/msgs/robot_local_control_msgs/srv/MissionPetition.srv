@@ -1,0 +1,12 @@
+# Actions to tell mission component what to do
+# START, starts a mission
+# STOP, stops a mission
+
+string START=start
+string STOP=stop
+
+MissionStatus mission
+string action
+---
+bool success
+string message

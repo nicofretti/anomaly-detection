@@ -1,0 +1,5 @@
+# gazebo robot model 
+string robot_model
+---
+bool success
+string msg

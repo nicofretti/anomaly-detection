@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="config_package" default="$(optenv ROBOT_LOCALIZATION_CONFIG_PACKAGE robot_bringup)"/>
+  <arg name="config_folder" default="maps/empty"/>
+  <arg name="config_path" default="$(eval find(config_package) + '/' + config_folder)"/>
+	<arg name="config_file" default="navigation.yaml"/>
+
+  <arg name="map_file" default="$(arg config_path)/$(arg config_file)"/>
+  <arg name="prefix" default="robot_"/>
+  <arg name="frame_id" default="$(arg prefix)map"/>
+
+  <!-- Run the map server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
+    <param name="frame_id" value="$(arg frame_id)"/>
+  </node>
+
+</launch>

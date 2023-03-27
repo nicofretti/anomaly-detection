@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="config_file" default="bags_config"/>
+  <arg name="config_folder" default="$(find rosbag_manager)/config" />
+  <arg name="config_file_path" default="$(arg config_folder)/$(arg config_file).yaml"/>
+
+  <node pkg="rosbag_manager" type="rosbag_node.py" name="rosbag_manager" output="screen">
+	<rosparam file="$(arg config_file_path)" command="load"/>
+  </node>
+
+</launch>

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="complex_command_sequencer_file_path" default="$(find robot_complex_command_sequencer)/config/sequencer.yaml"/>
+  <arg name="complex_command_sequences_file_path" default="$(find robot_complex_command_sequencer)/config/sequences.yaml"/>
+  <group ns="robot">
+    <!--arg name="command_input_name" default="command"/-->
+    <node name="complex_sequencer" pkg="robot_complex_command_sequencer" type="complex_command_sequencer_node.py" output="screen">
+      <rosparam command="load" file="$(arg complex_command_sequencer_file_path)"/>
+      <rosparam param="sequences_file"  subst_value="True">$(arg complex_command_sequences_file_path)</rosparam>
+    </node>
+  </group>
+</launch>

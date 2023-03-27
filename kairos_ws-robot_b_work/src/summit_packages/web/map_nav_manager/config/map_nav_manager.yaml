@@ -1,0 +1,33 @@
+localization:
+  args: ''
+  autorun: false
+  command: roslaunch summit_xl_localization amcl.launch
+  params: prefix:=summit_xl_a_
+  process: ''
+map_saver:
+  args: ''
+  command: rosrun map_server map_saver
+  default_map: treshabitaciones
+  maps_folder: /home/asoriano/workspaces/multi_summitxl/src/map_nav_manager/map
+  params: ''
+  process: ''
+map_server:
+  args: ''
+  autorun: false
+  command: rosrun map_server map_server
+  default_map: treshabitaciones
+  maps_folder: /home/asoriano/workspaces/multi_summitxl/src/map_nav_manager/map
+  params: _frame_id:=summit_xl_a_map
+  process: ''
+mapping:
+  args: ''
+  autorun: false
+  command: roslaunch summit_xl_localization slam_gmapping.launch
+  params: prefix:=summit_xl_a_
+  process: ''
+navigation:
+  args: ''
+  autorun: false
+  command: roslaunch summit_xl_navigation move_base.launch
+  params: prefix:=summit_xl_a_
+  process: ''

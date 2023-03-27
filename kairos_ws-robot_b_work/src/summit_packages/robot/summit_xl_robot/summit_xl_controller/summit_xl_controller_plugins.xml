@@ -1,0 +1,9 @@
+<library path="lib/libsummit_xl_controller">
+
+  <class name="summit_xl_controller/SummitXLController" type="summit_xl_controller::SummitXLController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      The Summit XL Controller controls 4 wheel mobile platforms both in skid and omnidirectional drive. It expects 4 VelocityJointInterface type of hardware interfaces.
+    </description>
+  </class>
+
+</library>

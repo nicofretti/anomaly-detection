@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<launch>
+<include file="$(find robotnik_hmi)/launch/robotnik_hmi.launch"/>
+<include file="$(find robotnik_gps_waypoints)/launch/robotnik_gps_waypoints.launch"/>
+<include file="$(find robotnik_rms)/launch/robotnik_rms.launch"/>
+</launch>

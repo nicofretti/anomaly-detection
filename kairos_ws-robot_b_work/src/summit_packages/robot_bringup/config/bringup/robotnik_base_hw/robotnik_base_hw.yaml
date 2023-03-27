@@ -1,0 +1,43 @@
+robotnik_base_hw:
+  port: /dev/pcan_base
+  
+  # to recover automatically from motordrive state errors
+  auto_recovery: true
+  recovery_period: 30
+
+  calculate_vel_using_pose: $(arg has_encoder)
+  # 24V motors: 12.52, 48V motors: 9.56
+  gearbox_ratio: $(arg robot_gearbox)
+  # Be carefull if motors don't have enconders and you put motors_enconder: true speed will increase x 4000
+  motors_encoder: $(arg has_encoder)
+  motors_encoder_factor: 4000
+
+  joint_name: [$(arg prefix)front_left_wheel_joint,$(arg prefix)back_left_wheel_joint,$(arg prefix)front_right_wheel_joint,$(arg prefix)back_right_wheel_joint]
+  joint_can_id: [1,2,3,4]
+  joint_type: [vel,vel,vel,vel]
+  joint_home_offset: [0,0,0,0]
+  joint_spin: [1,1,-1,-1]
+
+  joint_inputs_per_driver: 5
+  joint_outputs_per_driver: 3
+  joint_analog_inputs_per_driver: 1
+
+  # Values to multiply on IO raw data received
+  k_analog_inputs_multipliers: $(arg k_analog_inputs_multipliers)
+  k_battery_voltage_offset: $(arg battery_voltage_offset)
+
+generic_hw_control_loop:
+  loop_hz: 300 
+  cycle_time_error_threshold: 0.01
+
+
+
+# Settings for ros_control hardware interface
+hardware_interface:
+  joints:
+     - $(arg prefix)front_right_wheel_joint
+     - $(arg prefix)front_left_wheel_joint
+     - $(arg prefix)back_right_wheel_joint
+     - $(arg prefix)back_left_wheel_joint
+
+     

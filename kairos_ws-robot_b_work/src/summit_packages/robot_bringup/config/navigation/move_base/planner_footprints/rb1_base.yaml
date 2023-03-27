@@ -1,0 +1,8 @@
+global_costmap:
+  footprint: [[0.25, -0.25], [0.25, 0.25], [-0.25,0.25], [-0.25, -0.25]]
+local_costmap:
+  footprint: [[0.25, -0.25], [0.25, 0.25], [-0.25,0.25], [-0.25, -0.25]]
+TebLocalPlannerROS:
+  footprint_model:
+    type: "circular"
+    radius: 0.25

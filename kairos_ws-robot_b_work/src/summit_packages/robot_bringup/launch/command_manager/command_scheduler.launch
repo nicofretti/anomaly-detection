@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name ="scheduler_file" default="$(find robot_bringup)/config/command_manager/scheduler.yaml" />
+    <arg name ="schedules_file" default="$(find robot_bringup)/config/command_manager/schedules.yaml" />
+    <arg name ="action_client_namespace" default="complex_sequencer/action" />
+
+    <node name="command_scheduler" pkg="robot_command_scheduler" type="command_scheduler_node.py" output="screen">
+        <rosparam command="load" file="$(arg scheduler_file)" subst_value="true"/>
+    </node>
+
+</launch>

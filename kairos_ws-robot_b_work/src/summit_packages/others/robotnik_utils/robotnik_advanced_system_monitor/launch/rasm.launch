@@ -1,0 +1,9 @@
+<launch>
+  
+  <node name= "rasm" pkg="robotnik_advanced_system_monitor" type="rasm.py"
+    output="screen">
+	<rosparam command="load" file="$(find robotnik_advanced_system_monitor)/config/rasm.yaml" />  
+  </node>
+
+</launch>
+

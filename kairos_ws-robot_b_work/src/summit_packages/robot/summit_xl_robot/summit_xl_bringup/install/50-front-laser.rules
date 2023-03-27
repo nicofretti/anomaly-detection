@@ -1,0 +1,2 @@
+KERNEL=="ttyACM[0-9]*", OWNER="summit", GROUP="dialout", MODE="0666"
+KERNEL=="ttyACM[0-9]*", ATTRS{idProduct}=="0000", NAME="%k", SYMLINK="ttyUSB_FRONT_LASER", GROUP="dialout", MODE="0666" 

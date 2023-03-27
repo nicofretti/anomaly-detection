@@ -1,0 +1,27 @@
+environments:
+  willow_garage:
+    points:
+      p0:
+        frame_id: robot_map
+        orientation:
+        - 7.932998382486213e-09
+        - -1.3097467960495983e-06
+        - 0.7151601237080768
+        - 0.6989606551560199
+        params: ''
+        position:
+        - 1.021265865323815
+        - 2.9974638245206524
+        - 0.2
+      p1:
+        frame_id: robot_map
+        orientation:
+        - 0.0
+        - 0.0
+        - 0.0
+        - 1.0
+        params: ''
+        position:
+        - 2.501677742308101
+        - -2.0412498227903786
+        - 0.2

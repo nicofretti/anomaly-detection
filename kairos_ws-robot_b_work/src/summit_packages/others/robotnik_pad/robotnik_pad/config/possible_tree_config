@@ -1,0 +1,16 @@
+plugins: 
+  - Movement
+  - Camera
+
+deadman: R1
+
+Movement:
+  type: robotnik_pad_plugins/Movement
+  config: 
+    forward: J1
+
+Camera:
+  type: robotnik_pad_plugins/Camera
+  config: 
+    deadman: L1
+      forward: UP

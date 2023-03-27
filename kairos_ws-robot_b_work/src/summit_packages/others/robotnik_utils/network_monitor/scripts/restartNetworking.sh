@@ -1,0 +1,1 @@
+service network-manager restart

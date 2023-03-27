@@ -1,0 +1,7 @@
+# Server config
+ip_address: $(arg ip_address)
+port: $(arg port)
+
+# Gripper fingers separation
+min_pos: $(arg min_pos)
+max_pos: $(arg max_pos)

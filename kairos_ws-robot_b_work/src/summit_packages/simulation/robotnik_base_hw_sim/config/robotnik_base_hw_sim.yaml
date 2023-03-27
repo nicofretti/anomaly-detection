@@ -1,0 +1,18 @@
+motors:
+  - joint: robot_left_joint
+    can_id: 1
+  - joint: robot_right_joint
+    can_id: 2
+battery_voltage: 48
+battery_amperes: 15
+battery_alarm_voltage: 48.5
+num_inputs_per_driver: 5
+num_outputs_per_driver: 3
+# A/h (to simulate battery discharge)
+power_consumption: 2
+num_analog_inputs_per_driver: 1
+# Values to multiply on IO raw data received
+k_analog_inputs_multipliers: [6.978947368, -12.5]
+voltage_analog_input_number: 1
+current_analog_input_number: 2
+charge_digital_output_number: 1

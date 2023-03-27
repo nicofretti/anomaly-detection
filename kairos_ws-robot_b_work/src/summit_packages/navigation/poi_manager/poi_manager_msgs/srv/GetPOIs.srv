@@ -1,0 +1,5 @@
+string environment
+---
+bool success
+string message
+poi_manager_msgs/LabeledPose[] p_list

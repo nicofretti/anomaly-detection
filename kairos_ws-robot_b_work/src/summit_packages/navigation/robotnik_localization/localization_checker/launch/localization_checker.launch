@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="id_robot" default="$(optenv ROBOT_ID rb2)"/>
+  <arg unless="$(eval id_robot == '')" name="prefix" default="$(arg id_robot)_"/>
+  <arg if="$(eval id_robot == '')" name="prefix" default=""/>
+
+  <arg name="scan_topic" default="laser/scan"/>
+  <arg name="map_topic" default="localization"/>
+  <arg name="global_frame" default="$(arg prefix)map"/> 
+  <arg name="odom_frame" default="$(arg prefix)odom"/> 
+  <arg name="base_frame" default="$(arg prefix)base_footprint"/>
+  
+  <!-- These are from amcl -->
+  <arg name="input_pose_topic" default="amcl_pose" /> 
+  <arg name="output_pose_topic" default="initialpose" />
+
+  <group ns="$(arg id_robot)">
+    
+    <node pkg="localization_checker" type="localization_checker_node" name="localization_checker" output="screen">
+      <param name="base_frame" value="$(arg base_frame)" />
+      <param name="odom_frame" value="$(arg odom_frame)" />
+      <param name="global_frame"  value="$(arg global_frame)" />
+      <param name="scan_topic" value="$(arg scan_topic)" />
+      <param name="map_topic" value="$(arg map_topic)" />
+  
+      <param name="input_pose_topic" value="$(arg input_pose_topic)" />
+      <param name="output_pose_topic" value="$(arg output_pose_topic)" />
+    </node>
+  
+    <!-- node pkg="tf" type="static_transform_publisher" name="map2odom" args="32 -15 0 0 0 0.690287358306 0.72353532254 $(arg global_frame) $(arg odom_frame) 100" /-->
+    <node pkg="tf" type="static_transform_publisher" name="map2odom" args="32 -15 0 0 0 0 1 $(arg global_frame) $(arg odom_frame) 100" />
+    <node pkg="tf" type="static_transform_publisher" name="odom2base" args="0 0 0 0 0 0 $(arg odom_frame) $(arg base_frame) 100" />
+    <!--<node pkg="fake_localization" type="fake_localization" name="amcl">-->
+      <!--<param name="base_frame" value="$(arg base_frame)" />-->
+      <!--<param name="odom_frame" value="$(arg odom_frame)" />-->
+      <!--<param name="global_frame"  value="$(arg global_frame)" />-->
+      <!--<remap from="base_pose_ground_truth" to="odom" />-->
+    <!--</node>-->
+    <!--<node pkg="fake_localization" type="static_odom_broadcaster.py" name="base">-->
+      <!--<param name="base_frame_id" value="$(arg base_frame)" />-->
+      <!--<param name="odom_frame_id" value="$(arg odom_frame)" />-->
+    <!--</node>-->
+  
+    <!--<include file="$(find fresenius_bringup)/launch/localization/map_server.launch" >-->
+      <!--<arg name="zone" value="fresenius" />-->
+      <!--<arg name="global_frame" value="$(arg prefix)map"/> -->
+    <!--</include>-->
+
+    <node name="light_scan_sim" pkg="light_scan_sim" type="light_scan_sim_node" output="screen">
+      <rosparam file="$(find localization_checker)/launch/light_scan_sim.yaml" command="load" />
+    </node>
+    
+    <node name="localization_server" pkg="map_server" type="map_server" args="$(find localization_checker)/launch/map_laser.yaml">
+    <!--<node name="localization_server" pkg="map_server" type="map_server" args="$(find localization_checker)/launch/map_half.yaml">-->
+        <param name="frame_id" value="$(arg global_frame)" /> 
+        <remap from="map" to="localization" />
+        <remap from="map_metadata" to="localization_metadata" />
+        <remap from="static_map" to="localization_static_map" />
+    </node>
+    
+    <node name="map_laser_server" pkg="map_server" type="map_server" args="$(find localization_checker)/launch/map_laser.yaml">
+    <!--<node name="map_laser_server" pkg="map_server" type="map_server" args="$(find localization_checker)/launch/map_double.yaml">-->
+        <param name="frame_id" value="$(arg global_frame)" /> 
+        <remap from="map" to="map_laser" />
+        <remap from="map_metadata" to="map_laser_metadata" />
+        <remap from="static_map" to="map_laser_static_map" />
+    </node>
+
+    <node pkg="ira_laser_tools" type="laserscan_multi_merger" name="laser_merge" clear_params="true" output="log">
+        <param name="angle_min" value="-3.1415" />
+        <param name="angle_max" value="3.1415" />
+        <param name="range_min" value="0.01" />
+        <param name="angle_increment" value="0.0043633231" />
+        <param name="fixed_frame" value="$(arg prefix)odom"/>
+        <param name="destination_frame" value="$(arg prefix)base_footprint"/>
+        <param name="cloud_destination_topic" value="cloud"/>
+        <param name="scan_destination_topic" value="scan_merge"/>
+        <param name="check_topic_type" value="false" />
+
+        <param name="laserscan_topics" value="laser/scan" /> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
+     </node>
+
+
+
+
+  </group>
+
+</launch>

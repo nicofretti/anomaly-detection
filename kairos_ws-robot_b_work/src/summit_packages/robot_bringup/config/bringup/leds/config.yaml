@@ -1,0 +1,29 @@
+
+leds_config:
+  
+  - led_label: "right"
+    leds_zone: [1, 30]
+    channel: 0
+    type: "RGB"
+
+
+  - led_label: "front"
+    leds_zone: [31, 60]
+    channel: 0
+    type: "RGB"
+
+  - led_label: "left"
+    leds_zone: [61, 90]
+    channel: 0
+    type: "RGB"
+
+  - led_label: "back"
+    leds_zone: [91, 120]
+    channel: 0
+    type: "RGB"
+
+
+  - led_label: "all_leds"
+    leds_zone: [1, 120]
+    channel: 0
+    type: "RGB"

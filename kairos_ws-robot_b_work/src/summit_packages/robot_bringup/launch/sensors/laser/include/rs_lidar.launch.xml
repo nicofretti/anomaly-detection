@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="prefix" default="$(arg id_robot)_" />
+  <arg name="node_name" default="rslidar" />  
+  <arg name="scan_topic" default="points" />  
+  <arg name="frame_id" default="rslidar" />  
+  <arg name="model" default="RS16" />
+  <arg name="ip_address" default="192.168.1.10" />
+  <arg name="msop_port" default="6699" />
+  <arg name="difop_port" default="7788" />
+  <arg name="lidar_param_path" default="$(find rslidar_pointcloud)/data/rs_lidar_16/"/>
+
+  <group ns="$(arg node_name)">
+    <node name="driver" pkg="rslidar_driver" type="rslidar_node" output="screen" >
+      <param name="frame_id" value="$(arg frame_id)"/>
+      <param name="model" value="$(arg model)"/>
+      <param name="device_ip" value="$(arg ip_address)" />
+      <param name="msop_port" value="$(arg msop_port)" />
+      <param name="difop_port" value="$(arg difop_port)"/>
+      <!--param name="pcap" value="path_to_pcap"/-->
+    </node>
+
+    <node name="cloud" pkg="rslidar_pointcloud" type="rscloud_node" output="screen" >
+      <remap from="rslidar_points" to="$(arg scan_topic)"/>
+      <param name="model" value="$(arg model)"/>
+      <param name="curves_path" value="$(arg lidar_param_path)/curves.csv" />
+      <param name="angle_path" value="$(arg lidar_param_path)/angle.csv" />
+      <param name="channel_path" value="$(arg lidar_param_path)/ChannelNum.csv" />
+    </node>
+  </group>
+
+</launch>

@@ -1,0 +1,32 @@
+#rbvogui: real led zone
+
+leds_config:
+  
+  - led_label: "front_left_leds"
+    leds_zone: [1, 10]
+    channel: 0
+    type: "RGB"
+
+
+  - led_label: "front_right_leds"
+    leds_zone: [11, 20]
+    channel: 0
+    type: "RGB"
+
+
+  - led_label: "rear_right_leds"
+    leds_zone: [21, 30]
+    channel: 0
+    type: "RGB"
+
+
+  - led_label: "rear_left_leds"
+    leds_zone: [31, 40]
+    channel: 0
+    type: "RGB"
+
+
+  - led_label: "all_leds"
+    leds_zone: [1, 40]
+    channel: 0
+    type: "RGB"

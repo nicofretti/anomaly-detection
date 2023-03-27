@@ -1,0 +1,15 @@
+output_folder: ~/rosbags/v2
+buffer_size: 2048
+chunk_size: 768
+topics:
+ - robotnik_base_hw/emergency_stop
+ - robotnik_base_hw/io
+ - robotnik_base_hw/voltage
+ - charge_manager/docking_status
+ - battery_estimator/data
+ - robotnik_base_control/odom_throttle
+ - robot_local_control/state
+split: true
+split_size: 1024
+compressed: true
+regex: false

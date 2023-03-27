@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- valid for summitxl - summitxl hl - summitxl hls -->
+  <!-- The environment variables should be set in a file or .bashrc -->
+
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="robot_model" default="$(optenv ROBOT_MODEL summit_xl_gen)"/>
+  <arg name="xacro_robot" default="$(optenv ROBOT_XACRO summit_xl_gen_std.urdf.xacro)"/>
+
+  <!-- Launch nodes related to the base and sensors -->
+  <include file="$(find summit_xl_bringup)/launch/summit_xl_complete.launch">
+      <arg name="id_robot" value="$(arg id_robot)"/>
+      <arg name="robot_model" value="$(arg robot_model)"/>
+      <arg name="xacro_robot" value="$(arg xacro_robot)"/>
+  </include>
+
+
+</launch>
+

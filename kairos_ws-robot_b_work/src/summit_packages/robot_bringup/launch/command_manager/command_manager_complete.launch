@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="prefix" default="$(arg id_robot)_"/>
+
+  <group ns="$(arg id_robot)">
+
+    <include file="$(find robot_bringup)/launch/command_manager/command_manager.launch"/>
+    <include file="$(find robot_bringup)/launch/command_manager/command_sequencer.launch"/>
+    <include file="$(find robot_bringup)/launch/command_manager/complex_command_sequencer.launch"/>
+    <include file="$(find robot_bringup)/launch/command_manager/command_scheduler.launch"/>
+
+  </group>
+
+</launch>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="ip_address" default="192.168.0.200"/>
+  <arg name="port" default="50000"/>
+
+  <!-- start xmlrpc server node -->
+  <node pkg="ur_gripper_controller" type="xmlrpc_controller_node.py" name="gripper_controller" output="screen">
+    <rosparam command="load" file="$(find ur_gripper_controller)/config/xmlrpc.yaml" subst_value="true"/>
+  </node>
+
+</launch>

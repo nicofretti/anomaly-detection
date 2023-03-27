@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  
+  <arg name="robot_model" default="$(optenv ROBOT_MODEL summit_xl)"/>
+
+  <include file="$(find summit_xl_bringup)/launch/$(arg robot_model)_complete.launch"/>
+    
+</launch>

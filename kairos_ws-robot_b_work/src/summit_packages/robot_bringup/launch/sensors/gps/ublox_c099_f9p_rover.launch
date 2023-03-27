@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="prefix" default="$(arg id_robot)_" />
+
+  <arg name="param_file_name"    default="ublox_c099_f9p_rover" />
+  <arg name="node_name"     default="gps" />
+  <arg name="frame_id" 		default="$(arg prefix)gps_base_link"/>
+  <arg name="port" 			default="$(optenv ROBOT_GPS_PORT /dev/ttyUSB_GPS)"/>
+
+  <include file="$(find robot_bringup)/launch/sensors/gps/ublox.launch.xml">
+  	<arg name="param_file_name" value="$(arg param_file_name)" />
+  	<arg name="node_name" value="$(arg node_name)"/>
+  	<arg name="frame_id" value="$(arg frame_id)"/>
+  	<arg name="port" value="$(arg port)"/>
+  </include>
+
+</launch>

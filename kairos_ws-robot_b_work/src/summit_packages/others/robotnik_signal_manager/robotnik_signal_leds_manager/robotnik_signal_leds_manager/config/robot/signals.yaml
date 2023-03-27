@@ -1,0 +1,51 @@
+signals:
+
+  - id: "emergency"
+    enabled: false
+    led_label: ["front_right_leds", "front_left_leds"]
+    mode: "blink"
+    color: [255, 0, 0, 0]
+    ms_on: 1000
+    ms_off: 1000
+
+  - id: "turn_left"
+    enabled: false
+    led_label: ["front_right_leds", "front_left_leds"]
+    mode: "shift"
+    color: [0, 0, 255, 0]
+    direction: "right"
+    led_increment: 1
+    speed: 1000
+    sleep: 500
+  
+  - id: "turn_right"
+    enabled: false
+    led_label: ["rear_left_leds"]
+    mode: "shift"
+    color: [30, 187, 78, 0]
+    direction: "left"
+    speed: 500
+    sleep: 0
+
+  - id: "forward"
+    enabled: false
+    led_label: ["rear_right_leds","front_right_leds"]
+    mode: "paint"
+    color: [0, 20, 20, 0]
+  
+  - id: "stop"
+    enabled: true
+    led_label: ["all_leds"]
+    mode: "paint"
+    color: [102 , 0, 102, 0]
+  
+  - id: "moving"
+    enabled: false
+    led_label: ["all_leds"]
+    background_R: 50
+    fade_in: 500
+    fade_out: 500
+    mode: "blink"
+    color: [0,255,0, 0]
+    ms_on: 1000
+    ms_off: 1000

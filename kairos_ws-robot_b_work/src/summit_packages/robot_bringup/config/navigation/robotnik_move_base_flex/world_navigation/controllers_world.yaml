@@ -1,0 +1,138 @@
+controllers:
+   - name: 'teb'
+     type: 'teb_local_planner/TebLocalPlannerROS'
+   - name: 'eband'
+     type: 'eband_local_planner/EBandPlannerROS'
+   - name: 'pure_pursuit'
+     type: 'pure_pursuit_local_planner/PurePursuitPlanner'   
+#   - name: 'pure_pursuit_aw'
+#     type: 'pure_pursuit_aw_local_planner/PurePursuitPlanner'   
+
+
+teb:
+  odom_topic: robot_odom
+  map_frame: world
+
+  # Trajectory
+  teb_autosize: True
+  dt_ref: 0.1
+  dt_hysteresis: 0.01
+  global_plan_overwrite_orientation: True
+  max_global_plan_lookahead_dist: 7
+  feasibility_check_no_poses: 0
+  #global_plan_viapoint_sep: 1.0
+  #weight_viapoint: 1.0
+
+  # Robot
+  max_vel_x: 10
+  max_vel_x_backwards: 0.2
+  max_vel_theta: 0.5
+  acc_lim_x: 1
+  acc_lim_theta: 0.25
+  min_turning_radius: 3.5 # actual turning radius is approx 2.68, but it is better to set it higher. higher means more restrictive movement
+  wheelbase: 1.63 # only used if publishing an ackermann
+  cmd_angle_instead_rotvel: false #true
+  footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
+    type: "line"
+    line_start: [-0.20, 0.0] # for type "line"
+    line_end: [0.63, 0.0] # for type "line"
+
+  # GoalTolerance
+  xy_goal_tolerance: 0.4
+  yaw_goal_tolerance: 0.5
+  free_goal_vel: False
+
+  # Obstacles
+  min_obstacle_dist: 5 #0.55
+  include_costmap_obstacles: True
+  costmap_obstacles_behind_robot_dist: 1.0
+  obstacle_poses_affected: 30
+  costmap_converter_plugin: "costmap_converter::CostmapToPolygonsDBSMCCH"
+  #costmap_converter_plugin: "" # deactivate plugin
+  costmap_converter_spin_thread: True
+  costmap_converter_rate: 5
+
+  # Optimization
+  no_inner_iterations: 5
+  no_outer_iterations: 4
+  optimization_activate: True
+  optimization_verbose: False
+  penalty_epsilon: 0.1
+  weight_max_vel_x: 1000
+  weight_max_vel_theta: 1
+  weight_acc_lim_x: 1
+  weight_acc_lim_theta: 1
+  weight_kinematics_nh: 10000
+  weight_kinematics_forward_drive: 0.0 # not used when min_turning_radius (not the weight!) is != 0
+  weight_kinematics_turning_radius: 1 # to ensure that the minimum turning radius is respected
+  weight_optimaltime: 1
+  weight_obstacle: 50
+  weight_dynamic_obstacle: 10 # not in use yet
+  selection_alternative_time_cost: False
+
+  # Homotopy Class Planner
+
+  enable_homotopy_class_planning: False
+  enable_multithreading: True
+  simple_exploration: False
+  max_number_classes: 4
+  roadmap_graph_no_samples: 15
+  roadmap_graph_area_width: 5
+  h_signature_prescaler: 0.5
+  h_signature_threshold: 0.1
+  obstacle_keypoint_offset: 0.1
+  obstacle_heading_threshold: 0.45
+  visualize_hc_graph: False
+eband:
+  Ctrl_Rate: 20.0
+  bubble_velocity_multiplier: 2.0
+  costmap_weight: 300.0
+  differential_drive: true
+  disallow_hysteresis: false
+  eband_equilibrium_approx_max_recursion_depth: 3
+  eband_equilibrium_relative_overshoot: 0.75
+  eband_external_force_gain: 3.0
+  eband_internal_force_gain: 2.0
+  eband_min_relative_overlap: 0.7
+  eband_significant_force_lower_bound: 0.15
+  eband_tiny_bubble_distance: 0.01
+  eband_tiny_bubble_expansion: 0.01
+  in_place_trans_vel: 0.0
+  k_damp: 3.5
+  k_prop: 4.0
+  marker_lifetime: 0.5
+  max_acceleration: 0.8
+  max_rotational_acceleration: 0.3
+  max_translational_acceleration: 0.4
+  # Lower values for testing with the actual robot.
+  max_vel_lin: 2.5 #0.5 #1.45
+  max_vel_th: 1.2 #0.5 #2.0
+  min_in_place_vel_th: 0.05
+  min_vel_lin: 0.5
+  min_vel_th: 0.0
+  num_iterations_eband_optimization: 4
+  rot_stopped_vel: 0.01
+  rotation_correction_threshold: 0.5
+  rotation_threshold_multiplier: 1.0
+  trans_stopped_vel: 0.01
+  virtual_mass: 100.0
+  xy_goal_tolerance: 0.5
+  yaw_goal_tolerance: 3.14
+pure_pursuit:
+  maximum_look_ahead: 5
+  minimum_look_ahead: 3
+  maximum_speed: 3
+  minimum_spped: 2.5
+  wheel_base: 1.63
+pure_pursuit_aw:
+  const_lookahead_distance: 4
+  max_lineal_velocity: 5.6
+  min_lineal_velocity: 1
+  lookahead_distance_ratio: 2
+  minimum_lookahead_distance: 4
+  local_planner_frequence: 10
+
+  
+
+
+

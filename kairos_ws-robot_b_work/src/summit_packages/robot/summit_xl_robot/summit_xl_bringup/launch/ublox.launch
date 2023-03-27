@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <arg name="gps_config" default="c099_f9p_base"/>
+    <arg name="node_name" default="gps"/>
+    <arg name="frame_id" default="gps_link"/>
+
+    <include file="$(find ublox_gps)/launch/ublox_device.launch">
+        <arg name="node_name" value="$(arg node_name)"/>
+        <arg name="param_file_name" value="$(arg gps_config)"/>
+        <arg name="frame_id" value="$(arg frame_id)"/>
+    </include>
+</launch>

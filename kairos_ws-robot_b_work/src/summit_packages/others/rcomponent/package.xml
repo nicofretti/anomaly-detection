@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<package>
+  <name>rcomponent</name>
+  <version>1.2.0</version>
+  <description>The rcomponent package. Component used as templates for new ROS nodes</description>
+
+  <!-- One maintainer tag required, multiple allowed, one person per tag -->
+  <maintainer email="rnavarro@robotnik.es">Román Navarro</maintainer>
+  <maintainer email="rguzman@robotnik.es">Roberto Guzmán</maintainer>
+  <maintainer email="mbosch@robotnik.es">March Bosch</maintainer>
+  <maintainer email="aarnal@robotnik.es">Alex Arnal</maintainer>
+  <maintainer email="jgomez@robotnik.es">José Gómez</maintainer>
+
+  <license>BSD</license>
+
+
+  <!-- Url tags are optional, but mutiple are allowed, one per tag -->
+  <!-- Optional attribute type can be: website, bugtracker, or repository -->
+  <!-- Example: -->
+  <!-- <url type="website">http://wiki.ros.org/rcomponent</url> -->
+  <author email="rnavarro@robotnik.es">Román Navarro</author>
+  <author email="rguzman@robotnik.es">Roberto Guzmán</author>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>robotnik_msgs</build_depend>
+  <build_depend>diagnostic_msgs</build_depend>
+  <build_depend>diagnostic_updater</build_depend>
+  <build_depend>self_test</build_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>robotnik_msgs</run_depend>
+
+  <export>
+
+  </export>
+</package>

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<launch>
+	<arg name="ip_address" default="192.168.1.80"/>
+	<arg name="prefix" default="summit_xl_"/>
+	<arg name="node_name" default="benewake_c30"/>
+	<arg name="frame_id" default="$(arg prefix)front_3d_laser_depth_optical_frame"/>
+
+	<node pkg="ce30c" type="ce30_cloud" name="$(arg node_name)" output="screen">
+		<!--remap from="ce30c_output" to="new_topic_name" /-->
+		<param name="IP" type="string" value="$(arg ip_address)" />
+		<param name="frame_id" type="string" value="$(arg frame_id)" />
+
+		<!-- If want to change IP, uncommit the line below and set the value to the ip you like.
+	     	     If succeed, the LiDAR will reboot and you should restart this node with new "IP" parameter WHEN indicator light turn to 
+		     blue again. Please be careful that the ip cannot be reset if you forget the new one! -->
+		<!--param name="newIP" type="string" value="192.168.1.80" /-->
+	</node>
+
+	<include file="$(find summit_xl_bringup)/launch/laser/3d_laser_to_2d.launch">
+        <arg name="target_frame" value="$(arg prefix)front_3d_laser_depth_optical_frame"/>
+        <arg name="max_height" value="2.0"/>
+        <arg name="min_height" value="-0.35"/>
+        <arg name="angle_min" value="-0"/>
+        <arg name="angle_max" value="3.14"/>
+        <arg name="range_min" value="0.05"/>
+        <arg name="range_max" value="10"/>
+    </include>
+</launch>

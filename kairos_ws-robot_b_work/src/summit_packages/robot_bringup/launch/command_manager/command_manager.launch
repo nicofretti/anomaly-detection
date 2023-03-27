@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="prefix" default="$(arg id_robot)_"/>
+
+  <arg name="command_input_name" default="command"/>
+  <arg name="fixed_frame" default="$(arg prefix)map"/>
+  <arg name="handlers_file_path" default="$(find robot_bringup)/config/command_manager/handlers.yaml"/>
+
+  <node name="command_manager" pkg="robot_simple_command_manager" type="simple_command_manager_node.py" output="screen">
+    <param name="command_input_name" value="$(arg command_input_name)"/>
+    <rosparam command="load" file="$(arg handlers_file_path)" subst_value="true"/>
+  </node>
+
+
+</launch>

@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="prefix" default="$(arg id_robot)_"/>
+
+  <!-- Camera locator arguments -->
+  <arg name="run_reflector_locator" default="$(optenv ROBOT_RUN_REFLECTOR_LOCATOR false)"/>
+  <arg name="run_ar_locator" default="$(optenv ROBOT_RUN_AR_LOCATOR false)"/>
+  <arg name="filter_config_file" default="$(optenv ROBOT_LASER_MODEL_INTENSITY_FILTER default)"/>
+  <arg name="scan_topic" default="$(optenv ROBOT_PERCEPTION_SCAN_TOPIC front_laser/scan)"/>
+  <arg name="cloud_topic" default="perception_filtered_points"/>
+  <arg name="camera_topic" default="$(optenv ROBOT_PERCEPTION_CAMERA_TOPIC front_rgbd_camera/rgb/image_raw)" />
+  <arg name="camera_info_topic" default="$(optenv ROBOT_PERCEPTION_CAMERA_INFO_TOPIC front_rgbd_camera/rgb/camera_info)" />
+  <arg name="run_cart_locator" default="$(optenv ROBOT_RUN_CART_LOCATOR true)"/>
+  <arg name="run_docking_station_locator" default="$(optenv ROBOT_RUN_DOCKING_STATION_LOCATOR true)"/>
+
+
+  <group ns="$(arg id_robot)">
+    <!-- Launch AR locator to detect markers -->
+    <include if="$(arg run_ar_locator)" file="$(find robot_bringup)/launch/perception/ar_locator.launch">
+      <arg name="id_robot" value="$(arg id_robot)"/>
+      <arg name="camera_topic_name" value="$(arg camera_topic)" />
+      <arg name="camera_info_topic_name" value="$(arg camera_info_topic)" />
+    </include>
+
+    <!-- Intensity filter from scan to cloud -->
+    <include if="$(arg run_reflector_locator)" file="$(find robot_bringup)/launch/perception/scan_to_cloud.launch">
+      <arg name="id_robot" value="$(arg id_robot)"/>
+      <arg name="source_topic" value="$(arg scan_topic)"/>
+      <arg name="filter_config_file" value="$(arg filter_config_file)"/>
+      <arg name="target_topic" value="$(arg cloud_topic)"/>
+      <arg name="target_frame" value="$(arg prefix)base_link"/>
+    </include>
+
+    <!-- Launch CART locator to detect carts -->
+    <include if="$(arg run_cart_locator)" file="$(find robot_bringup)/launch/perception/locator.launch">
+      <arg name="id_robot" value="$(arg id_robot)"/>
+      <arg name="cloud_topic" value="$(arg cloud_topic)"/>
+      <arg name="two_tag_locator_node_name" value="cart_laser_locator"/>
+    	<arg name="object_frame" value="$(arg prefix)cart_laser"/>
+      <arg name="tag_distance" value="$(optenv ROBOT_CART_TAG_DISTANCE 0.6)"/>
+      <arg name="tag_max_distance_detection" value="$(optenv ROBOT_CART_TAG_MAX_DISTANCE_DETECTION 3.5)"/>
+      <arg name="merged_object_id" value="cart"/>
+      <arg name="run_ar_locator" value="$(arg run_ar_locator)"/>
+      <arg name="run_reflector_locator" value="$(arg run_reflector_locator)"/>
+      <arg name="cluster_tolerance" value="0.2"/>
+    </include>
+    <!-- Launch docking station locator to detect stations -->
+    <include if="$(arg run_docking_station_locator)" file="$(find robot_bringup)/launch/perception/locator.launch">
+      <arg name="id_robot" value="$(arg id_robot)"/>
+      <arg name="cloud_topic" value="$(arg cloud_topic)"/>
+      <arg name="two_tag_locator_node_name" value="docking_station_laser_locator"/>
+    	<arg name="object_frame" value="$(arg prefix)docking_station_laser"/>
+      <arg name="tag_distance" value="$(optenv ROBOT_DOCKING_STATION_TAG_DISTANCE 0.3)"/>
+      <arg name="tag_max_distance_detection" value="$(optenv ROBOT_DOCKING_STATION_TAG_MAX_DISTANCE_DETECTION 3.5)"/>
+      <arg name="merged_object_id" value="docking_station"/>
+      <arg name="run_ar_locator" value="$(arg run_ar_locator)"/>
+      <arg name="run_reflector_locator" value="$(arg run_reflector_locator)"/>
+    </include>
+
+  </group>
+
+</launch>

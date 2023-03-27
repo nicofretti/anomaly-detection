@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+  <launch>
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="prefix" default="$(arg id_robot)_"/>
+
+  <arg name="namespace" default="gripper"/>
+
+  <arg name="ip_address" default="192.168.0.200"/>
+  <arg name="port" default="50000"/>
+
+  <arg name="min_pos" default="1"/>
+  <arg name="max_pos" default="39"/>
+
+  <!-- start xmlrpc server node -->
+  <node pkg="ur_gripper_controller" type="xmlrpc_controller_node.py" name="gripper_controller" output="screen">
+    <rosparam command="load" file="$(find robot_bringup)/config/manipulation/gripper/egh/server.yaml" subst_value="true"/>
+  </node>
+
+  <node name="gripper_joints_updater" pkg="fake_joint_position_publisher" type="joint_publisher.py" output="screen">
+    <rosparam command="load" file="$(find robot_bringup)/config/manipulation/gripper/egh/joints.yaml"/>
+  </node>
+
+  <!-- It is necessary to republish the gripper/joint_states to joint_states for using MoveIt -->
+  <node name="joint_state_publisher_gripper" pkg="joint_state_publisher" type="joint_state_publisher" >
+    <rosparam command="load" file="$(find robot_bringup)/config/manipulation/gripper/egh/republished_joint_states.yaml" subst_value="true"/>   
+  </node>
+
+
+
+
+</launch>

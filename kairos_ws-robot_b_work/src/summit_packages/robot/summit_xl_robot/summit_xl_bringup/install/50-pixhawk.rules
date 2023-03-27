@@ -1,0 +1,2 @@
+KERNEL=="ttyUSB[0-9]*", OWNER="summit", GROUP="dialout", MODE="0666"
+KERNEL=="ttyUSB[0-9]*", ATTRS{idProduct}=="6001", ATTRS{serial}=="FTA3NTXY", NAME="%k", SYMLINK="ttyUSB_PX4", GROUP="dialout", MODE="0666"

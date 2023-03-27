@@ -1,0 +1,6 @@
+empty:
+  global_frame: world
+  maps_package: robot_bringup
+  maps:
+    localization: maps/empty/localization.yaml
+    routes: maps/empty/routes.yaml

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="prefix" default="$(arg id_robot)_" />
+  <arg name="angle_min"  default=""/> <!-- not used -->
+  <arg name="angle_max"  default=""/> <!-- not used -->
+
+  <arg name="port" default="" /> <!-- not used -->
+  <arg name="node_name" default="rslidar" />
+  <arg name="scan_topic" default="points" />
+  <arg name="frame_id" default="$(arg prefix)3d_laser_link" />
+  <arg name="model" default="RS16" />
+  <arg name="ip_address" default="192.168.1.10" />
+  <arg name="msop_port" default="6699" />
+  <arg name="difop_port" default="7788" />
+  <arg name="lidar_param_path" default="$(find rslidar_pointcloud)/data/rs_lidar_16/"/>
+
+  <include file="$(find robot_bringup)/launch/sensors/laser/include/rs_lidar.launch.xml">
+  	<arg name="ip_address" value="$(arg ip_address)"/>
+  	<arg name="node_name" value="$(arg node_name)"/>
+  	<arg name="frame_id" value="$(arg frame_id)"/>
+  	<arg name="model" value="$(arg model)"/>
+  	<arg name="lidar_param_path" value="$(arg lidar_param_path)"/>
+  </include>
+
+</launch>

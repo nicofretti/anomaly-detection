@@ -1,0 +1,13 @@
+joints: 
+  - robot_gripper_finger_left_joint
+  - robot_gripper_finger_right_joint
+
+robot_gripper_finger_left_joint:
+  max_value: 0.039
+  min_value: 0.005
+  velocity: 0.01
+
+robot_gripper_finger_right_joint:
+  max_value: 0.039
+  min_value: 0.005
+  velocity: 0.01

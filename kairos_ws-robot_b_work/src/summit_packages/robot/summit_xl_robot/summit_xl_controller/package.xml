@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package>
+  <name>summit_xl_controller</name>
+  <version>0.0.0</version>
+  <description>
+      The Summit XL Controller controls 4 wheel mobile platforms both in skid and omnidirectional drive. It expects 4 VelocityJointInterface type of hardware interfaces.
+  </description>
+
+  <maintainer email="info@robotnik.es">Robotnik</maintainer>
+
+  <license>BSD</license>
+
+  <!-- <url type="website">http://wiki.ros.org/summit_xl_controller</url> -->
+
+  <author email="info@robotnik.es">Robotnik</author>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>controller_interface</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>urdf</build_depend>
+  <build_depend>robotnik_msgs</build_depend>
+  <run_depend>controller_interface</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>urdf</run_depend>
+  <run_depend>robotnik_msgs</run_depend>
+
+  <export>
+    <controller_interface plugin="${prefix}/summit_xl_controller_plugins.xml"/>
+  </export>
+</package>

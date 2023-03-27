@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>robot_command_scheduler</name>
+  <version>0.2.0</version>
+  <description>The robot_command_scheduler package intended to launch sequences of commands</description>
+
+  <license>BSD</license>
+
+  <author email="jmaparicio@robotnik.es">Jesús Aparicio</author>
+  <maintainer email="jmaparicio@robotnik.es">Jesús Aparicio</maintainer>
+  <maintainer email="rnavarro@robotnik.es">Román Navarro</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <build_export_depend>rospy</build_export_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>robot_simple_command_manager_msgs</exec_depend>
+  <exec_depend>rcomponent</exec_depend>
+  <exec_depend>robotnik_msgs</exec_depend>
+  <exec_depend>actionlib</exec_depend>
+
+  <export>
+  </export>
+</package>

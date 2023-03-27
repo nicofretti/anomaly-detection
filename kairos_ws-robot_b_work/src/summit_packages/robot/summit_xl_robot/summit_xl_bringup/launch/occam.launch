@@ -1,0 +1,9 @@
+<launch>
+
+  <node pkg="tf" type="static_transform_publisher" name="occam_tf_publisher" args="0.384 0.195 0.682 0 0 0 1 base_link occam 50"/>
+
+  <!-- Run Occam  -->
+  <node name="occam_camera" pkg="occam_node" type="ros_indigosdk_node" output="screen">
+  </node>
+
+</launch>

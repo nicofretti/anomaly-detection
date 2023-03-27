@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="debug" default="false"/>
+  <arg     if="$(arg debug)" name="launch_prefix" default="gdb -ex run --args"/>
+  <arg unless="$(arg debug)" name="launch_prefix" default=""/>
+
+  <arg name="battery_voltage" default="24" />
+  <arg name="battery_duration" default="500" />
+  <arg name="desired_freq" default="5.0" />
+
+  <!-- Set analog input number & voltage divider if want to read voltage from analog input -->
+  <arg name="read_voltage_from_analog_input" default="true" />
+  <arg name="voltage_analog_input_number" default="1" />
+  <!-- Same with current (0 if not current sensor) -->
+  <!-- To work without current sensor, we will need a freq of 1 Hz and a buffer of 100 samples -->
+  <arg name="current_analog_input_number" default="2" />
+  
+  <!-- Error of the charger when keeping battery at 100% -->
+  <arg name="charging_current_offset" default="0.65" />
+  <arg name="battery_current_buffer" default="20" />
+  <arg name="battery_voltage_buffer" default="200" />
+  <arg name="charge_time_hysteresis" default="60" />
+  
+  <!-- start battery estimation node -->
+  <node name="battery_estimator" pkg="battery_estimation" type="table_battery_node" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)">
+    <param name="desired_freq" value="$(arg desired_freq)" />
+    <param name="battery_voltage" value="$(arg battery_voltage)" />
+    <param name="battery_duration" value="$(arg battery_duration)"/>
+    <param name="read_voltage_from_analog_input" value="$(arg read_voltage_from_analog_input)" />
+    <param name="voltage_analog_input_number" value="$(arg voltage_analog_input_number)" />
+    <param name="current_analog_input_number" value="$(arg current_analog_input_number)" />
+    <param name="charging_current_offset" value="$(arg charging_current_offset)" />
+    <param name="battery_current_buffer" value="$(arg battery_current_buffer)" />
+    <param name="battery_voltage_buffer" value="$(arg battery_voltage_buffer)" />
+    <param name="table_estimator/charge_time_hysteresis" value="$(arg charge_time_hysteresis)" />
+  </node>
+
+</launch>

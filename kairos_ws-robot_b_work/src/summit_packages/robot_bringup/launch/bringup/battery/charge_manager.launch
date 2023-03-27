@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="debug" default="false"/>
+  <arg     if="$(arg debug)" name="launch_prefix" default="gdb -ex run --args"/>
+  <arg unless="$(arg debug)" name="launch_prefix" default=""/>
+
+  <arg name="desired_freq" default="10" />
+  <arg name="docker_mode" default="automatic_hw" />
+  <arg name="inverted_contact_relay_input" default="true" />
+  <arg name="contact_relay_input_number" default="2" />
+  <arg name="charger_relay_output_number" default="1" />
+  <arg name="max_time_charger_relay_without_charging" default="20" />
+  <arg name="input_hysteresis_time" default="0.6" />
+  <arg name="output_hysteresis_time" default="0.6" />
+
+  <!-- start charge manager node -->
+  <node name="charge_manager" pkg="charge_manager" type="charge_manager_node" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)">
+    <param name="desired_freq" value="$(arg desired_freq)"/>
+    <param name="operation_mode" value="$(arg docker_mode)"/>
+    <param name="inverted_contact_relay_input" value="$(arg inverted_contact_relay_input)"/>
+    <param name="contact_relay_input_number" value="$(arg contact_relay_input_number)"/>
+    <param name="charger_relay_output_number" value="$(arg charger_relay_output_number)"/>
+    <param name="max_time_charger_relay_without_charging" value="$(arg max_time_charger_relay_without_charging)"/>
+    <param name="input_hysteresis_time" value="$(arg input_hysteresis_time)"/>
+    <param name="output_hysteresis_time" value="$(arg output_hysteresis_time)"/>
+  </node>
+
+</launch>

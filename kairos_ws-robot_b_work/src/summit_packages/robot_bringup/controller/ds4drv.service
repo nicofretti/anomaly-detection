@@ -1,0 +1,11 @@
+[Unit]
+Description=Launches ROS software of the robot
+Requires=dbus.socket
+After=multi-user.target
+
+[Service]
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/ds4drv
+
+[Install]
+WantedBy=multi-user.target

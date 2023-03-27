@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+    <arg name="prefix" default="$(arg id_robot)_"/>
+	<arg name="lift_model" default="$(optenv ROBOT_LIFT_MODEL lift_900mm"/>
+	<arg name="lift_port" default="$(optenv ROBOT_LIFT_PORT /dev/ttyUSB_LIFT"/>
+	<arg name="lift_baudrate" default="$(optenv ROBOT_LIFT_BAUDRATE 38400"/>
+
+	<group ns="lift">
+
+        <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+        <include file="$(find summit_xl_bringup)/launch/lift/ewellix/$(arg lift_model).launch">
+            <arg name="prefix" value="$(arg prefix)"/>
+            <arg name="lift_port" value="$(arg lift_port)"/>
+            <arg name="lift_baudrate" value="$(arg lift_baudrate)"/>        
+        </include>
+
+    </group>
+
+    <node name="joint_state_publisher_lift" pkg="joint_state_publisher" type="joint_state_publisher" >   
+        <rosparam param="source_list">["joint_states", "lift/joint_states"]</rosparam> 
+    </node>
+
+</launch>

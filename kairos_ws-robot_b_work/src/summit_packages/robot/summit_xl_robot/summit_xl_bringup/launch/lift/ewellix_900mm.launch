@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="id_robot" default="$(optenv ROBOT_ID robot)"/>
+    <arg name="prefix" default="$(arg id_robot)_"/>
+	<arg name="lift_model" default="lift_900mm"/>
+	<arg name="lift_port" default="/dev/ttyUSB_LIFT"/>
+	<arg name="lift_baudrate" default="38400"/>
+
+    <!-- Load controller -->
+    <rosparam file="$(find ewellix_hw_interface)/config/$(arg lift_model)_control.yaml" command="load" subst_value="True"/>
+
+    <!-- Launch controller manager  -->
+    <node name="lift_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" 
+        output="screen" args="
+                        lift_joint_position_controller
+                        joint_state_controller
+                        "/>
+
+    <!-- Load hardware interface config -->
+    <rosparam file="$(find ewellix_hw_interface)/config/$(arg lift_model)_hardware.yaml" command="load" subst_value="True"/>
+
+    <!-- Start ewellix lift hardware interface node -->
+    <node name="ewellix_lift_hw_interface" pkg="ewellix_hw_interface" type="ewellix_lift_hw_interface_node" output="screen"/>
+
+    <!-- Launch real lift driver -->
+    <include file="$(find ewellix_driver)/launch/ewellix_driver.launch">
+        <arg name="port" value="$(arg lift_port)"/>
+        <arg name="baudrate" value="$(arg lift_baudrate)"/>
+   </include>
+
+</launch>

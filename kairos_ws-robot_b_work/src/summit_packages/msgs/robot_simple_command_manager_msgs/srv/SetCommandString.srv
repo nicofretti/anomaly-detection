@@ -1,0 +1,3 @@
+string command
+---
+robot_simple_command_manager_msgs/ReturnMessage ret

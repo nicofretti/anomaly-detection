@@ -1,0 +1,3 @@
+string id
+robot_simple_command_manager_msgs/EventScheduler event
+

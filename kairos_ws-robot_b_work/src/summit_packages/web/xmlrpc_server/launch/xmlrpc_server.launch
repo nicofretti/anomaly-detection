@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="ip_address" default="0.0.0.0"/>
+  <arg name="port" default="50000"/>
+
+  <!-- start xmlrpc server node -->
+  <node pkg="xmlrpc_server" type="rc_server_node.py" name="xmlrpc_server" output="screen">
+    <rosparam command="load" file="$(find xmlrpc_server)/config/server.yaml" subst_value="true"/>
+  </node>
+
+</launch>

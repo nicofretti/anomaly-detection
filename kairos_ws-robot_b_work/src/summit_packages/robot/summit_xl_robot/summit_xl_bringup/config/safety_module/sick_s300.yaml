@@ -1,0 +1,64 @@
+# Configuration file for safety_module based on sick S300
+
+desired_freq: 5.0
+
+address_registers:
+  laser_mode_output: 2001
+  current_speed: 2002
+
+outputs:
+  standby: 13
+  watchdog_signals: [25, 26] # two outputs needed
+  emergency_stop_sw: 1 # Causes E-Stop equivalent via Modbus
+
+custom_outputs:
+  buzzer_mode_2: 18
+  buzzer_mode_3: 19 
+  buzzer_cont: 11
+  buzzer_inter: 12
+
+laser_modes:    # custom laser modes
+  standard:     #  custom name of the mode
+    input: 237  # input to read the mode
+    output: 0   # value of the register when writing in the modbus address
+  docking_station:
+    input: 240
+    output: 771
+# Pana
+  uv1:
+    input: 239
+    output: 1028
+
+inputs:
+  emergency_stop: 228
+  laser_enabled: 230
+  laser_mute: 231
+  safety_stop: 225
+  standby: 238
+  wheels_power_enabled: 225
+  laser_ok: 226
+  edm_fault: 227
+  emergency_stop_fault: 229
+  motion_enabled: 235
+  emergency_stop_sw: 246
+  watchdog_ok: 248
+  selector_fault: 236
+  lasers:
+    front:
+      detecting_obstacles: 260
+      contamination_led: 263
+      reset_pressed: 264
+      free_warning: 262
+    rear:
+      detecting_obstacles: 292
+      contamination_led: 295
+      reset_pressed: 296
+      free_warning: 294
+
+#custom_inputs:
+#  battery_ok: 247 #Battery is correctly held in the robot
+
+watchdog_signals_frequency: 2.0
+# sets the current speed to the safety module
+set_speed_feedback_to_safety_module: true
+set_modbus_registers_service_name:  robotnik_modbus_io/set_modbus_registers

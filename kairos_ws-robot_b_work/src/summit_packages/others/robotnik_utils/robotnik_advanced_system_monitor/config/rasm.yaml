@@ -1,0 +1,105 @@
+
+conf_ddbb: {
+    user: "root",
+    password: "R0b0tn1K",
+    host: "127.0.0.1",
+    database: "db_astrobot"
+}
+
+config_rasm: {
+    base_directory: "/home/juanma/rasm_log",
+    temporal_bag_directory: "temp",
+    saved_bag_driectory: "saved",
+    frame_bag: 30,
+    max_size: 500, #MB
+    force_delet_files_days: 30,
+    add_in_data_base: True,
+    topics_exclude:
+    [
+    "/astrobot/front_laser/scan",
+    "/astrobot/ce30c_output"
+    
+    ]
+}
+
+topics_subscribe: {
+    cmd_vel: {
+        topic: "/astrobot/robotnik_base_control/cmd_vel",
+        type_msg: "geometry_msgs/Twist"
+    },
+    navpvt: {
+        topic: "/astrobot/cmd_vel",
+        type_msg: "geometry_msgs/Twist"
+    },
+    move_base_1_feedback: {
+	topic: "/astrobot/move_base_1/feedback",
+        type_msg: "move_base_msgs/MoveBaseActionFeedback"
+    },
+    move_base_2_feedback: {
+	topic: "/astrobot/move_base_2/feedback",
+        type_msg: "move_base_msgs/MoveBaseActionFeedback"
+    },
+    rms_substate: {
+	topic: "/astrobot/robotnik_rms/substate",
+        type_msg: "robotnik_msgs/SubState"
+    }
+}
+
+rasm_logic: {
+    move_base_1_feed:{
+        description: "Feedback 1 isn't in status = 1",
+        days_of_expiry: 0,
+        flag_erase_max_size_rasm: False,
+        trigger: "!--move_base_1_feedback--!.status.status!=1"
+        not_init_in: 30,
+        not_new_msg_in: 30,
+        add_files: {}
+    },
+    move_base_2_feed:{
+        description: "Feedback 2 isn't in status = 1",
+        days_of_expiry: 0,
+        flag_erase_max_size_rasm: False,
+        trigger: "!--move_base_2_feedback--!.status.status!=1"
+        not_init_in: 30,
+        not_new_msg_in: 30,
+        add_files: {}
+    },
+    substatusRMS:{
+        description: "RMS in deadline",
+        days_of_expiry: 0,
+        flag_erase_max_size_rasm: False,
+        trigger: "!--rms_substate--!.substate==-1"
+        not_init_in: 30,
+        not_new_msg_in: 30,
+        add_files: {}
+    }
+    
+
+#    navpvt: {
+#        description: "Not information",
+#        days_of_expiry: 0,
+#        flag_erase_max_size_rasm: False,
+#        trigger: "/--navpvt--/['last_msg']== None or ((/--navpvt--/['last_msg'] - datetime.now()).total_seconds() > 30)",
+#        not_init_in: 30,
+#        not_new_msg_in: 30,
+#        add_files: {
+#            dmesg: "/var/log/dmesg",
+#            kern: "/var/log/kern.log",
+#        }
+    
+#    },
+#    alarm_vel: {
+#        description: "The robot is moving",
+#        days_of_expiry: 1, 
+#        flag_erase_max_size_rasm: False,
+#        trigger: "!--cmd_vel--!.linear.x > 0 or !--cmd_vel--!.angular.x > 0",
+#        not_init_in: 30,
+#        not_new_msg_in: 30,
+#        add_files: {
+#            dmesg: "/var/log/dmesg",
+#            kern: "/var/log/kern.log",
+#        }
+#    }
+}
+
+

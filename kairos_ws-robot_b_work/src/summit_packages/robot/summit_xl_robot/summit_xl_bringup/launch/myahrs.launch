@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<launch>
+	<arg name="prefix" default="robot_"/>
+	<arg name="frame_id" default="$(arg prefix)imu_link"/>
+  <arg name="port" default="$(optenv ROBOT_IMU_PORT /dev/ttyACM_myAhrs)" />
+
+  <node name="imu_myahrs" pkg="myahrs_driver" type="myahrs_driver">
+    <param name="port" value="$(arg port)"/>
+    <param name="frame_id" value="$(arg frame_id)"/>
+    <remap from="imu/data" to="imu/data_raw"/>
+	</node>
+
+  <node pkg="imu_complementary_filter" type="complementary_filter_node" name="complementary_filter_node">
+    <param name="publish_tf" value="false"/>
+    <param name="publish_debug_topics" value="true"/>
+    <param name="do_bias_estimation" value="true"/>
+    <param name="gain_acc" value="0.01"/>
+    <param name="do_adaptive_gain" value="true"/>
+    <param name="bias_alpha " value="0.01"/>
+    <param name="bias_angular_velocity_x_threshold " value="0.04"/>
+    <param name="bias_angular_velocity_y_threshold " value="0.02"/>
+    <param name="bias_angular_velocity_z_threshold " value="0.01"/>
+    <param name="bias_angular_velocity_x_drift " value="0.02"/>
+    <param name="bias_angular_velocity_y_drift " value="0.005"/>
+    <param name="bias_angular_velocity_z_drift " value="0.005"/>
+    <param name="bias_k_acceleration_threshold " value="0.2"/>
+    <param name="bias_k_delta_angular_velocity_threshold " value="0.01"/>
+  </node>
+
+</launch>

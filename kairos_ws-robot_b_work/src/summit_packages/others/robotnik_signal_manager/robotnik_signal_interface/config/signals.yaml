@@ -1,0 +1,16 @@
+signals:
+
+  - id: "emergency"
+    enabled: false
+
+  - id: "turn_left"
+    enabled: false
+  
+  - id: "turn_right"
+    enabled: false
+  
+  - id: "stop"
+    enabled: true
+  
+  - id: "moving"
+    enabled: false

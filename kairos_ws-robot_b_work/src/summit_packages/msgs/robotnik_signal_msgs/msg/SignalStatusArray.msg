@@ -1,0 +1,2 @@
+
+SignalStatus[] signals_status

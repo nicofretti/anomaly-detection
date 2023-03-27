@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="debug" default="false"/>
+    <arg if="$(arg debug)" name="launch_prefix" default="gdb -ex run --args"/>
+    <arg unless="$(arg debug)" name="launch_prefix" default=""/>
+    <!--
+    <arg name="autorepeat_rate" default="10.0"/>
+    <arg name="pad_model" default="$(optenv ROBOT_PAD_MODEL ps4)"/>
+    <arg name="pad_deadzone" default="$(optenv ROBOT_PAD_DEADZONE 0.12)" />
+    <arg name="joy_dev" default="$(optenv ROBOT_PAD_DEV /dev/input/js_base)" />
+     -->
+    <arg
+        name="pad_config"
+        default="$(find robotnik_pad)/config/robotnik_pad_plugins_$(arg pad_model)_virtual.yaml"
+    />
+    <arg
+        name="joy_topic"
+        default="$(optenv VIRTUAL_JOY_TOPIC joy_virtual)"
+    />
+
+    <!-- joy node -->
+    <!--
+    <node pkg="joy" type="joy_node" name="joy" output="screen" respawn="true">
+        <param name="dev" type="string" value="$(arg joy_dev)" />
+        <param name="deadzone" value="$(arg pad_deadzone)" />
+        <param name="autorepeat_rate" value="$(arg autorepeat_rate)" type="double" />
+    </node>
+    -->
+    <!-- Parameters -->
+    <node
+        name="robotnik_pad_virtual"
+        pkg="robotnik_pad"
+        type="robotnik_pad_node"
+        output="screen"
+        launch-prefix="$(arg launch_prefix)"
+    >
+        <rosparam
+            command="load"
+            file="$(arg pad_config)"
+            subst_value="true"
+        />
+        <param
+            name="desired_freq"
+            value="100.0"
+        />
+    </node>
+
+</launch>

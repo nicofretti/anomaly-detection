@@ -1,0 +1,231 @@
+#!/usr/bin/env bash
+
+
+# USEFUL FORMAT PARAMETERS
+
+bold="\e[1m" 
+italic="\e[3m"
+underline="\e[4m"
+reset="\e[0m"
+
+black="\e[1;30m"
+blue="\e[1;34m"
+cyan="\e[1;36m"
+green="\e[1;32m"
+orange="\e[1;33m"
+purple="\e[1;35m"
+red="\e[1;31m"
+white="\e[1;37m"
+yellow="\e[1;33m"
+
+
+# IS USER REQUESTING FOR HELP?
+
+if [ "$1" == "--help" ] || [ "$1" == "-h" ]
+then
+    echo -e "Usage: $0 [OPTION...]\n"
+    echo -e "\toptions:\n"
+    echo -e -n "\t-t\tTest mode. Auto-completion of parameters (creation of "
+    echo -e    "${italic}tester_test${reset} pkg).\n"
+    exit 0
+fi
+
+
+# SCRIPT INTRODUCTION
+
+# Request sudo permissions
+#sudo clear
+#retval=$?
+#if [ $retval -ne 0 ]
+#then
+#    echo -e "\n${bold}${red}You need sudo permissions. Stopping the script."
+#    exit 1
+#fi
+
+# Introduction to the script
+clear
+echo -e "\n${bold}${yellow}Welcome to the Python node creator assistant."
+echo -e -n "\n${reset}The goal of this script is to simplify the creation of new "
+echo -e    "rcomponent-based nodes."
+
+
+# LOAD PARAMETERS
+
+# Load destination path
+src_path=`echo $CMAKE_PREFIX_PATH | awk '{split($1, a, "/devel:"); print a[1];}'`"/src"
+echo -e -n "\n${reset}Destination folder of the node. It is required to start with a slash "
+echo -e    "[${bold}${italic}${src_path}${reset} by default]: "
+read dest_path
+case $dest_path in
+/*)
+    ;;
+*)
+    dest_path=$src_path
+    ;;
+esac
+
+if [ "$1" == "--test" ] || [ "$1" == "-t" ]
+then
+
+    rc_package="tester_test"
+    RCNode="TsTest"
+    rc_node="ts_test"
+    RC_NODE=${rc_node^^}
+    authorName="José Gómez"
+    authorEmail="jgomez@robotnik.es"
+    brief="Description of the package"
+
+else
+
+    # Load rc_package name
+    echo -e -n "\n${reset}Name of the new package using snake_case (e.g. "
+    echo -e    "${italic}odometry_calibration${reset}): "
+    read rc_package
+    if [ -z "$rc_package" ]
+    then
+        echo -e "${bold}${red}You have skipped a required argument. Stopping the script."
+        exit 1
+    fi
+
+    # Load RCNode name
+    echo -e -n "\n${reset}Name of the main class using PascalCase (e.g. "
+    echo -e    "${italic}OdomCalibration${reset}): "
+    read RCNode
+    if [ -z "$RCNode" ]
+    then
+        echo -e "${bold}${red}You have skipped a required argument. Stopping the script."
+        exit 1
+    fi
+
+    # Load rc_node name
+    echo -e -n "\n${reset}Name of the main class using snake_case (e.g. "
+    echo -e    "${italic}odom_calibration${reset}): "
+    read rc_node
+    if [ -z "$rc_node" ]
+    then
+        echo -e "${bold}${red}You have skipped a required argument. Stopping the script."
+        exit 1
+    fi
+
+    # Load RC_NODE name
+    RC_NODE=${rc_node^^}
+
+    # Load author name
+    echo -e -n "\n${reset}Author name: "
+    read authorName
+
+    # Load author email
+    echo -e -n "\n${reset}Author email: "
+    read authorEmail
+
+    # Load node description
+    echo -e -n "\n${reset}Description of the node (not required, but recommended): "
+    read brief
+
+fi
+
+
+# CREATE PACKAGE
+
+pkg_path=$dest_path/$rc_package
+templates_path=`rospack find rcomponent`"/templates"
+
+# Create directories
+mkdir -p $pkg_path/config
+mkdir -p $pkg_path/launch
+mkdir -p $pkg_path/src/$rc_package
+
+# Create .yaml
+touch $pkg_path/config/"example.yaml"
+
+# Create python .launch
+rc_node_py_launch="$(cat $templates_path/rc_node_py.launch)"
+rc_node_py_launch=${rc_node_py_launch//"?rc_package"/$rc_package}
+rc_node_py_launch=${rc_node_py_launch//"?RCNode"/$RCNode}
+rc_node_py_launch=${rc_node_py_launch//"?rc_node"/$rc_node}
+rc_node_py_launch=${rc_node_py_launch//"?RC_NODE"/$RC_NODE}
+rc_node_py_launch=${rc_node_py_launch//"?authorName"/$authorName}
+rc_node_py_launch=${rc_node_py_launch//"?authorEmail"/$authorEmail}
+rc_node_py_launch=${rc_node_py_launch//"?brief"/$brief}
+echo -e "$rc_node_py_launch" > $pkg_path/launch/$rc_node".launch"
+
+# Create python files
+touch $pkg_path/src/$rc_package/__init__.py
+
+setup_py="$(cat $templates_path/setup.py)"
+setup_py=${setup_py//"?rc_package"/$rc_package}
+setup_py=${setup_py//"?RCNode"/$RCNode}
+setup_py=${setup_py//"?rc_node"/$rc_node}
+setup_py=${setup_py//"?RC_NODE"/$RC_NODE}
+setup_py=${setup_py//"?authorName"/$authorName}
+setup_py=${setup_py//"?authorEmail"/$authorEmail}
+setup_py=${setup_py//"?brief"/$brief}
+echo -e "$setup_py" > $pkg_path/setup.py
+
+rc_node_py="$(cat $templates_path/rc_node.py)"
+rc_node_py=${rc_node_py//"?rc_package"/$rc_package}
+rc_node_py=${rc_node_py//"?RCNode"/$RCNode}
+rc_node_py=${rc_node_py//"?rc_node"/$rc_node}
+rc_node_py=${rc_node_py//"?RC_NODE"/$RC_NODE}
+rc_node_py=${rc_node_py//"?authorName"/$authorName}
+rc_node_py=${rc_node_py//"?authorEmail"/$authorEmail}
+rc_node_py=${rc_node_py//"?brief"/$brief}
+echo -e "$rc_node_py" > $pkg_path/src/$rc_package/$rc_node.py
+
+rc_node_node_py="$(cat $templates_path/rc_node_node.py)"
+rc_node_node_py=${rc_node_node_py//"?rc_package"/$rc_package}
+rc_node_node_py=${rc_node_node_py//"?RCNode"/$RCNode}
+rc_node_node_py=${rc_node_node_py//"?rc_node"/$rc_node}
+rc_node_node_py=${rc_node_node_py//"?RC_NODE"/$RC_NODE}
+rc_node_node_py=${rc_node_node_py//"?authorName"/$authorName}
+rc_node_node_py=${rc_node_node_py//"?authorEmail"/$authorEmail}
+rc_node_node_py=${rc_node_node_py//"?brief"/$brief}
+echo -e "$rc_node_node_py" > $pkg_path/src/$rc_package/$rc_node"_node.py"
+chmod +x $pkg_path/src/$rc_package/$rc_node"_node.py"
+
+# Changelog file
+changelog="$(cat $templates_path/CHANGELOG.rst)"
+changelog=${changelog//"?rc_package"/$rc_package}
+changelog=${changelog//"?RCNode"/$RCNode}
+changelog=${changelog//"?rc_node"/$rc_node}
+changelog=${changelog//"?RC_NODE"/$RC_NODE}
+changelog=${changelog//"?authorName"/$authorName}
+changelog=${changelog//"?authorEmail"/$authorEmail}
+changelog=${changelog//"?brief"/$brief}
+echo -e "$changelog" > $pkg_path/CHANGELOG.rst
+
+# CMakeLists file
+cmakelists="$(cat $templates_path/CMakeLists_py.txt)"
+cmakelists=${cmakelists//"?rc_package"/$rc_package}
+cmakelists=${cmakelists//"?RCNode"/$RCNode}
+cmakelists=${cmakelists//"?rc_node"/$rc_node}
+cmakelists=${cmakelists//"?RC_NODE"/$RC_NODE}
+cmakelists=${cmakelists//"?authorName"/$authorName}
+cmakelists=${cmakelists//"?authorEmail"/$authorEmail}
+cmakelists=${cmakelists//"?brief"/$brief}
+echo -e "$cmakelists" > $pkg_path/CMakeLists.txt
+
+# package.xml file
+pkg_xml="$(cat $templates_path/package_py.xml)"
+pkg_xml=${pkg_xml//"?rc_package"/$rc_package}
+pkg_xml=${pkg_xml//"?RCNode"/$RCNode}
+pkg_xml=${pkg_xml//"?rc_node"/$rc_node}
+pkg_xml=${pkg_xml//"?RC_NODE"/$RC_NODE}
+pkg_xml=${pkg_xml//"?authorName"/$authorName}
+pkg_xml=${pkg_xml//"?authorEmail"/$authorEmail}
+pkg_xml=${pkg_xml//"?brief"/$brief}
+echo -e "$pkg_xml" > $pkg_path/package.xml
+
+# Readme file
+readme="$(cat $templates_path/README.md)"
+readme=${readme//"?rc_package"/$rc_package}
+readme=${readme//"?RCNode"/$RCNode}
+readme=${readme//"?rc_node"/$rc_node}
+readme=${readme//"?RC_NODE"/$RC_NODE}
+readme=${readme//"?authorName"/$authorName}
+readme=${readme//"?authorEmail"/$authorEmail}
+readme=${readme//"?brief"/$brief}
+echo -e "$readme" > $pkg_path/README.md
+
+# Gitignore file
+cp $templates_path/.gitignore $pkg_path/.gitignore

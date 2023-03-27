@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="node_name"  default="ce30_cloud"/>
+  <arg name="ip_address"  default="192.168.0.20"/>
+  <arg name="frame_id"  default="ce30c_lidar"/>
+  <arg name="scan_topic"  default="points"/>
+  <arg name="angle_min"  default="-0.785398"/>
+  <arg name="angle_max"  default="0.785398"/>
+  <arg name="intensity"  default="true"/>
+  <arg name="range_max"  default="25.0"/>
+  <arg name="port"  default=""/>
+
+  <node pkg="ce30c_driver" type="ce30_cloud" name="$(arg node_name)" output="screen" >
+    <param name="IP" type="string" value="$(arg ip_address)" />
+    <param name="frame_id" type="string" value="$(arg frame_id)" />
+    <remap from="scan" to="~$(arg scan_topic)"/>
+  </node>
+
+  <!-- run pointcloud_to_laserscan node -->
+	<node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="$(arg node_name)_to_laser">
+	    <remap from="cloud_in" to="$(arg node_name)/$(arg scan_topic)"/>
+	    <remap from="scan" to="$(arg node_name)/scan"/>
+	    <!--param name="max_height" value="$(arg max_height)"/>
+	    <param name="min_height" value="$(arg min_height)"/-->
+	    <param name="angle_min" value="$(arg angle_min)"/>
+	    <param name="angle_max" value="$(arg angle_max)"/>	
+            <!--param name="angle_increment" value="$(arg angle_increment)"/>
+	    <param name="range_min" value="$(arg range_min)"/>
+	    <param name="range_max" value="$(arg range_max)"/>
+            <param name="min_intensity" value="$(arg min_intensity)" /-->
+			
+	    <param name="use_inf" value="true"/>
+	</node>
+</launch>

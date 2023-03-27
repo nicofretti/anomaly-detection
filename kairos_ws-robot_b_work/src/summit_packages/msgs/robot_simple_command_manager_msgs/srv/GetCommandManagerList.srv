@@ -1,0 +1,4 @@
+---
+robot_simple_command_manager_msgs/CommandManagerArray list
+bool success
+string message

@@ -1,0 +1,5 @@
+string joint_name
+float32 position
+---
+bool success
+string message

@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<launch>
+	<arg name="prefix" default="robot_front_rgbd_camera_" />
+	<arg name="remote" default="false" />
+	<arg name="machine_name" default="jetson-robotnik" />
+	<arg name="machine_address" default="jetson-robotnik" />
+	<arg name="machine_user_name" default="jetson" />
+	<arg name="machine_env_loader" default="/home/jetson/catkin_ws/src/zed_env.bash" />
+  <!-- Camera Model -->
+  <arg name="camera"                default="front_rgbd_camera" /> <!-- 'zed' or 'zedm' -->
+  <!-- Load SVO file -->
+  <arg name="svo_file"              default="" /><!-- <arg name="svo_file" default="path/to/svo/file.svo"> -->
+  <!-- Remote stream -->
+  <arg name="stream"                default="" /> <!-- <arg name="stream" default="<ip_address>:<port>"> -->
+  <arg name="device_id"             default="-1" />
+  <arg name="gpu_id"                default="-1" />
+  
+  <arg name="publish_tf"                default="false" />
+  
+  <arg name="base_frame" default="$(arg prefix)rgb_base_link" />
+  <arg name="camera_frame" default="$(arg prefix)link" />
+  <arg name="left_camera_frame" default="$(arg prefix)left_rgb_frame" />
+  <arg name="left_camera_optical_frame" default="$(arg prefix)left_rgb_optical_frame" />
+  <arg name="right_camera_frame" default="$(arg prefix)right_rgb_frame" />
+  <arg name="right_camera_optical_frame" default="$(arg prefix)right_rgb_optical_frame" />
+
+    <node name="$(arg camera)" pkg="zed_wrapper" type="zed_wrapper_node" output="screen">
+	    <rosparam file="$(find summit_xl_bringup)/config/zed.yaml" command="load" />
+
+      <!-- SVO file path -->
+      <param name="svo_file"          value="$(arg svo_file)" />
+      <!-- Remote stream -->
+      <param name="stream"            value="$(arg stream)" />
+      <!-- Camera ID -->
+      <param name="general/zed_id"             value="$(arg device_id)" />
+      <!-- GPU ID -->
+      <param name="general/gpu_id"             value="$(arg gpu_id)" />
+        
+      <param name="general/base_frame" value="$(arg base_frame)" />
+      <param name="general/camera_frame" value="$(arg camera_frame)" />
+      <param name="general/left_camera_frame" value="$(arg left_camera_frame)" />
+      <param name="general/left_camera_optical_frame" value="$(arg left_camera_optical_frame)" />
+      <param name="general/right_camera_frame" value="$(arg right_camera_frame)" />
+      <param name="general/right_camera_optical_frame" value="$(arg right_camera_optical_frame)" />
+      
+      <param name="tracking/publish_tf" value="$(arg publish_tf)" />
+      <param name="tracking/publish_tf_map" value="$(arg publish_tf)" />
+    </node>
+
+	
+
+</launch>
+

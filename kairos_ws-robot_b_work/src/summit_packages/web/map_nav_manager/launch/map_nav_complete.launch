@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+
+	<arg name="id_robot" default="summit_xl_a"/>
+
+	<group ns="$(arg id_robot)">
+		<include file="$(find map_nav_manager)/launch/servers.launch"/>
+		
+		<include file="$(find map_nav_manager)/launch/map_nav_manager.launch">
+			<arg name="global_frame_id" value="$(arg id_robot)_map"/>
+		</include>
+	</group>
+
+</launch>

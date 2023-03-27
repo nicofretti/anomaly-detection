@@ -1,0 +1,16 @@
+# signal_names
+string SIGNAL_CHARGING=charging
+string SIGNAL_SAFETY_STANDBY=safety_standby
+string SIGNAL_EMERGENCY_STOP=emergency_stop
+string SIGNAL_SAFETY_OBSTACLE_DETECTED=safety_obstacle_detected
+string SIGNAL_LOW_BATTERY=low_battery
+string SIGNAL_BASE_CONTROLLER_ERROR=base_controller_error
+string SIGNAL_ARM_CONTROLLER_ERROR=arm_controller_error
+string SIGNAL_SENSOR_ERROR=sensor_error
+string SIGNAL_ROBOT_IDLE=robot_idle
+string SIGNAL_ROBOT_MOVING=robot_moving
+string SIGNAL_RAISING_ELEVATOR=raising_elevator
+string SIGNAL_LOWERING_ELEVATOR=lowering_elevator
+
+string node_name
+string[] active_signals

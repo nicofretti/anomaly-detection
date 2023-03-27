@@ -1,0 +1,5 @@
+robot_simple_command_manager_msgs/CommandString command
+---
+robot_simple_command_manager_msgs/CommandStringResult result
+---
+robot_simple_command_manager_msgs/CommandStringFeedback feedback

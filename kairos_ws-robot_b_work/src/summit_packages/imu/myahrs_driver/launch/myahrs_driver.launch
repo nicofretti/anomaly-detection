@@ -1,0 +1,13 @@
+<launch>
+  <node pkg="myahrs_driver" type="myahrs_driver" name="myahrs_driver">
+    <param name="port" value="/dev/ttyACM0" />
+    <param name="baud_rate" value="115200" />
+    <param name="angular_velocity_offset_x" value="0" />
+    <param name="angular_velocity_offset_y" value="0" />
+    <param name="angular_velocity_offset_z" value="0" />
+    <param name="linear_acceleration_offset_x" value="0.0" />
+    <param name="linear_acceleration_offset_y" value="0.0" />
+    <param name="linear_acceleration_offset_z" value="0.0" />
+  </node>
+  <!--ode pkg="rviz" type="rviz" name="rviz" args="-d $(find myahrs_driver)/rviz_cfg/imu_test.rviz" /-->
+</launch>

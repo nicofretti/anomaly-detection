@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>  
+
+    <arg name ="scheduler_file" default="$(find robot_command_scheduler)/config/scheduler.yaml" />
+    <arg name ="schedules_file" default="$(find robot_command_scheduler)/config/schedules.yaml" />
+
+    <group ns="robot">
+      <!--arg name="command_input_name" default="command"/-->
+      <node name="command_scheduler" pkg="robot_command_scheduler" type="command_scheduler_node.py" output="screen">
+        <rosparam command="load" file="$(arg scheduler_file)" subst_value="true"/>
+      </node>
+    </group>  
+</launch>

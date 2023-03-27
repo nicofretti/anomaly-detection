@@ -1,0 +1,3 @@
+source_list:
+  - joint_states
+  - $(arg namespace)/joint_states

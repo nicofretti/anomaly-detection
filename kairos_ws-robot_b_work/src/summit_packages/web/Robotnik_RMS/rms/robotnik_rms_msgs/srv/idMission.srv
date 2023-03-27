@@ -1,0 +1,4 @@
+int32 id_mission
+---
+bool success
+string message

@@ -1,0 +1,7 @@
+# attach object link into robot link
+# Links and models are refered to Gazebo
+string object_model
+string robot_model
+---
+bool success
+string msg

@@ -1,0 +1,11 @@
+# goal
+string barcode_id # front, rear
+uint32 position # In mm
+---
+# result
+bool success
+string description
+---
+# feedback
+geometry_msgs/Pose2D remaining
+geometry_msgs/Twist current_velocity

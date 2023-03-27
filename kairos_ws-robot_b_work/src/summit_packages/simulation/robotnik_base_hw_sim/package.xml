@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>robotnik_base_hw_sim</name>
+  <version>0.0.0</version>
+  <description>The robotnik_base_hw_sim package</description>
+
+  <maintainer email="rnavarro@robotnik.es">rnavarro</maintainer>
+
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <!-- Commonly used license strings: -->
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>BSD</license>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>controller_interface</build_depend>
+  <build_depend>robotnik_msgs</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_export_depend>robotnik_msgs</build_export_depend>
+  <build_export_depend>rospy</build_export_depend>
+  <exec_depend>robotnik_msgs</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>controller_interface</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <controller_interface plugin="${prefix}/robotnik_elevator_controller_plugins.xml"/>
+  </export>
+</package>

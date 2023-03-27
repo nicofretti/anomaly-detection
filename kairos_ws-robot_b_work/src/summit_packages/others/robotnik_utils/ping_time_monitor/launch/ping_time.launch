@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+  	
+  <arg name="host" default="127.0.0.1"/>
+  <arg name="count" default="2"/>
+  <arg name="timeout" default="1"/>
+  <arg name="node_name" default="ping_time_monitor"/>
+  
+  <node pkg="ping_time_monitor" type="ping_time_monitor_node.py" name="$(arg node_name)">
+	<param name="host" value="$(arg host)" type="string"/>
+	<param name="timeout" value="$(arg timeout)" type="double"/>
+	<param name="count" value="$(arg count)" type="int"/>
+  </node>
+
+</launch>
+
