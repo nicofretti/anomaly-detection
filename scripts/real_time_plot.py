@@ -29,7 +29,7 @@ def update_plots(i):
     # for i, m in enumerate(means):
     #     map.text(m[0], m[1], 's%i' % (i + 1), size=10, horizontalalignment='center', bbox=dict(boxstyle='circle', alpha=.5, facecolor='w'))
 
-    img_backgroung = mpimg.imread('src/anomaly_detection/data/images/ICE_lab.png')
+    img_backgroung = mpimg.imread('src/anomalydetectionkairos/data/images/ICE_lab.png')
     map.imshow(img_backgroung, extent=(-1.5, 2.5, -13, 1), cmap='gray')
     
     map.set_xlim([-1.5, 2.5])
@@ -104,8 +104,8 @@ if __name__ == "__main__":
     mpl.rcParams['path.simplify_threshold'] = 1.0
 
     
-    nominal_0_csv = pd.read_csv('./src/anomaly_detection/data/csv/preprocess_data_ros/nominal_0.csv')
-    nominal_1_csv = pd.read_csv('./src/anomaly_detection/data/csv/preprocess_data_ros/nominal_1.csv')
+    nominal_0_csv = pd.read_csv('./src/anomalydetectionkairos/data/csv/preprocess_data_ros/nominal_0.csv')
+    nominal_1_csv = pd.read_csv('./src/anomalydetectionkairos/data/csv/preprocess_data_ros/nominal_1.csv')
 
     nominal_0_csv = nominal_0_csv.to_numpy()
     nominal_1_csv = nominal_1_csv.to_numpy()

@@ -340,8 +340,8 @@ if __name__ == '__main__':
     # gia' caricata nel programma.
 
     # file name of the hmm saved model. Insert the model path
-    # model_filename = './src/anomaly_detection/data/HMM_models/hmm.pkl'
-    model_filename = 'src/anomaly_detection/data/HMM_models/hmm_ros_data_centered_9_states.pkl'
+    # model_filename = './src/anomalydetectionkairos/data/HMM_models/hmm.pkl'
+    model_filename = 'src/anomalydetectionkairos/data/HMM_models/hmm_ros_data_centered_9_states.pkl'
 
     # Load the HMM from the disk
     model = pickle.load(open(model_filename, 'rb'))
