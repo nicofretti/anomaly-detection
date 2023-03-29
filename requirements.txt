@@ -101,7 +101,6 @@ simplejson==3.13.2
 singledispatch==3.7.0
 six==1.16.0
 subprocess32==3.2.7
-Twisted==17.9.0
 txaio==2.8.1
 typing==3.10.0.0
 u-msgpack-python==2.1
