@@ -1,3 +1,4 @@
+.idea
 *.pyc
 .catkin_tools
 build
