@@ -1,7 +1,7 @@
 import dash
 from dash import dcc
 from dash import html
-from flask import Flask
+from flask import Flask, request
 
 server = Flask(__name__)
 
@@ -70,18 +70,23 @@ def app_init():
     )
 
 
-@server.route("/map_position_insert")
+@server.route("/map_position_insert", methods=['GET', 'POST'])
 def map_position_insert():
-    print("map_position_insert")
+    if request.method != 'POST':
+        return 'Method not allowed', 405
+    print(request.data)
     # Return 200 OK
-    return "OK"
+    return "OK", 200
 
 
-@server.route("/variable_decomposition_insert")
+@server.route("/variable_decomposition_insert", methods=['GET', 'POST'])
 def variable_decomposition_insert():
-    print("variable_decomposition_insert")
+    if request.method != 'POST':
+        return 'Method not allowed', 405
+    print(request.data)
     # Return 200 OK
-    return "OK"
+    return "OK", 200
+
 
 
 if __name__ == "__main__":
