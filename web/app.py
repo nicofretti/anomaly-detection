@@ -92,8 +92,19 @@ def variable_decomposition_insert():
         return 'Method not allowed', 405
     data = json.loads(request.data.decode('utf-8'))
     VARIABLE_DECOMPOSITION.append(data)
+    print(len(VARIABLE_DECOMPOSITION))
     # Return 200
     return "OK", 200
+
+@SERVER.route("/commit", methods=['GET', 'POST'])
+def commit():
+    global MAP_POSITION, VARIABLE_DECOMPOSITION
+    if request.method == 'GET':
+        # Here we reset the data
+        MAP_POSITION, VARIABLE_DECOMPOSITION = [], []
+        return "OK", 200
+    # TODO: implement save to database
+    return "Not implemented", 501
 
 
 if __name__ == "__main__":
