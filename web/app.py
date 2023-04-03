@@ -1,11 +1,21 @@
 import dash
 from dash import dcc
 from dash import html
+from flask import Flask
+
+server = Flask(__name__)
 
 app = dash.Dash(
     __name__,
+    server=server,
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
-    external_scripts=["https://tailwindcss.com/", {"src": "https://cdn.tailwindcss.com"}],
+    external_scripts= [
+        # Tailwind CSS
+        "https://tailwindcss.com/",
+        {
+            "src": "https://cdn.tailwindcss.com"
+        }
+    ],
     external_stylesheets=[
         # Font Awesome
         {
@@ -18,8 +28,8 @@ app = dash.Dash(
 )
 
 
-def app_start(deb: bool = False):
-    app.title = "Anomatext-red-700ly Detection on Kairos"
+def app_init():
+    app.title = "Anomaly Detection on Kairos"
     app.layout = html.Div(
         id="app",
         children=[
@@ -58,9 +68,27 @@ def app_start(deb: bool = False):
             ),
         ],
     )
-    app.run(debug=deb)
+
+
+@server.route("/map_position_insert")
+def map_position_insert():
+    print("map_position_insert")
+    # Return 200 OK
+    return "OK"
+
+
+@server.route("/variable_decomposition_insert")
+def variable_decomposition_insert():
+    print("variable_decomposition_insert")
+    # Return 200 OK
+    return "OK"
 
 
 if __name__ == "__main__":
+    host = '0.0.0.0'
+    port = 8050
     debug = True
-    app_start(debug)
+    # Initialize the app
+    app_init()
+    # Start the app
+    app.run(debug=debug, host=host, port=port)

@@ -82,7 +82,7 @@ def avoid_null_variance(model_v, most_frequent_variance):
 def hellinger_distance(mean1, cov1, mean2, cov2):
     """Hellinger distance manual computation as in the paper"""
     first_operator = (np.dot(np.linalg.det(cov1) ** (0.25), np.linalg.det(cov2) ** (0.25)) / (
-                np.linalg.det((cov1 + cov2) / 2.0) ** (0.5)))
+            np.linalg.det((cov1 + cov2) / 2.0) ** (0.5)))
     second_operator = np.exp(np.dot((-1 / 8.0),
                                     np.dot(np.dot(np.transpose(mean1 - mean2), np.linalg.inv((cov1 + cov2) / 2.0)),
                                            (mean1 - mean2))))
@@ -136,9 +136,8 @@ def window_processing(dataHMM, hmm_model):
     # anomaly_behaviour = is_anomaly(h2_variables=variables_decomposition,state_means=model_m, state_covariance=model_v)
     h2_variables = np.append(h2_variables, np.array([variables_decomposition]), axis=0)
 
-    with open(h2_filename, 'a') as h2_csv:
-        writer = csv.writer(h2_csv)
-        writer.writerow(variables_decomposition)
+    # callback of variable decomposition
+    variable_decomposition_callback(variables_decomposition);
 
     # with open('anomaly_1_decomposition.npy', 'wb') as f:
     #     np.save(f, h2_variables)
@@ -212,12 +211,9 @@ def robot_pose_callback(data):
             dataHMM = np.delete(dataHMM, (0), axis=0)
         # use points to plot the map
         points.append([X, Y, anomaly])
-
-        # WRITE ALL THE ROWS ON A CSV FILE IN ORDER TO PLOT THE DATA
-        with open(map_filename, 'a') as map_csv:
-            writer = csv.writer(map_csv)
-            writer.writerow([X, Y, anomaly])
-
+        # callback for the map update
+        map_update_callback(X, Y, anomaly)
+        # close the row and reset it
         row = np.full(cols, np.nan)
         semaphore = False
 
@@ -238,20 +234,20 @@ def listener():
 
 
 # NEW GUI: TO BE FINISHED
-app = dash.Dash(__name__)
-app.layout = html.Div(
-    [
-        dcc.Graph(id='live-graph', animate=True),
-        dcc.Interval(
-            id='graph-update',
-            interval=1000,
-            n_intervals=0
-        )
-    ]
-)
+# app = dash.Dash(__name__)
+# app.layout = html.Div(
+#     [
+#         dcc.Graph(id='live-graph', animate=True),
+#         dcc.Interval(
+#             id='graph-update',
+#             interval=1000,
+#             n_intervals=0
+#         )
+#     ]
+# )
 
 
-@app.callback(Output('live-graph', 'figure'), Input('graph-update', 'n_intervals'))
+# @app.callback(Output('live-graph', 'figure'), Input('graph-update', 'n_intervals'))
 def update_graph(n):
     # Here we will call our sensors to plot
     global points
@@ -275,6 +271,23 @@ def update_graph(n):
                 xaxis=dict(range=[-1.5, 0.5]),
                 yaxis=dict(range=[-5, 1])
             )}
+
+
+def map_update_callback(X, Y, anomaly):
+    # WRITE ALL THE ROWS ON A CSV FILE IN ORDER TO PLOT THE DATA
+    # TODO: post on server
+    # with open(map_filename, 'a') as map_csv:
+    #     writer = csv.writer(map_csv)
+    #     writer.writerow([X, Y, anomaly])
+    print("Position update: {} {}".format(X, Y))
+
+
+def variable_decomposition_callback(variables_decomposition):
+    # TODO: post on server
+    # with open(h2_filename, 'a') as h2_csv:
+    #     writer = csv.writer(h2_csv)
+    #     writer.writerow(variables_decomposition)
+    print("H2 update: {}".format(variables_decomposition))
 
 
 if __name__ == '__main__':
@@ -360,5 +373,5 @@ if __name__ == '__main__':
     # ROS NODE FOR READING SENSORS
     listener()
 
-    app.run_server(Debug=True)
-    print("Running Server!")
+    # app.run_server(Debug=True)
+    # print("Running Server!")
