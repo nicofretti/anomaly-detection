@@ -1,15 +1,17 @@
+import json
+
 import dash
 from dash import dcc
 from dash import html
 from flask import Flask, request
 
-server = Flask(__name__)
+SERVER = Flask(__name__)
 
-app = dash.Dash(
+APP = dash.Dash(
     __name__,
-    server=server,
+    server=SERVER,
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
-    external_scripts= [
+    external_scripts=[
         # Tailwind CSS
         "https://tailwindcss.com/",
         {
@@ -27,10 +29,13 @@ app = dash.Dash(
     ]
 )
 
+MAP_POSITION = []
+VARIABLE_DECOMPOSITION = []
+
 
 def app_init():
-    app.title = "Anomaly Detection on Kairos"
-    app.layout = html.Div(
+    APP.title = "Anomaly Detection on Kairos"
+    APP.layout = html.Div(
         id="app",
         children=[
             # Banner
@@ -70,23 +75,25 @@ def app_init():
     )
 
 
-@server.route("/map_position_insert", methods=['GET', 'POST'])
+@SERVER.route("/map_position_insert", methods=['GET', 'POST'])
 def map_position_insert():
     if request.method != 'POST':
         return 'Method not allowed', 405
-    print(request.data)
+    # bytes to dict
+    data = json.loads(request.data.decode('utf-8'))
+    MAP_POSITION.append(data)
     # Return 200 OK
     return "OK", 200
 
 
-@server.route("/variable_decomposition_insert", methods=['GET', 'POST'])
+@SERVER.route("/variable_decomposition_insert", methods=['GET', 'POST'])
 def variable_decomposition_insert():
     if request.method != 'POST':
         return 'Method not allowed', 405
-    print(request.data)
-    # Return 200 OK
+    data = json.loads(request.data.decode('utf-8'))
+    VARIABLE_DECOMPOSITION.append(data)
+    # Return 200
     return "OK", 200
-
 
 
 if __name__ == "__main__":
@@ -96,4 +103,4 @@ if __name__ == "__main__":
     # Initialize the app
     app_init()
     # Start the app
-    app.run(debug=debug, host=host, port=port)
+    APP.run(debug=debug, host=host, port=port)
