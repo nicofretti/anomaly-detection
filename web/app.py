@@ -41,7 +41,7 @@ MAP_POSITION, VARIABLE_DECOMPOSITION = [], []
 # -------
 
 def app_init():
-    global MAP_POSITION
+    global MAP_POSITION, VARIABLE_DECOMPOSITION
     map_chart_init()
     variable_decomposition_chart_init()
     APP.title = "Anomaly Detection on Kairos"
@@ -99,7 +99,7 @@ def app_init():
                                         children="ICE Lab"
                                     ),
                                     dcc.Graph(
-                                        id="decomposition_chart", figure={},
+                                        id="variable_decomposition_chart", figure={},
                                         style={"height": "600px"}
                                     ),
                                 ]
@@ -153,23 +153,21 @@ def map_chart_init():
     MAP_CHART.add_traces([
         # correct behaviour
         go.Scatter(
-            x=[],
-            y=[],
+            x=[], y=[],
             mode="markers",
             marker={"color": "blue"},
             name="correct behaviour"
         ),
         # anomalies
         go.Scatter(
-            x=[],
-            y=[],
+            x=[], y=[],
             mode="markers",
             marker={"color": "red"},
             name="anomaly"
         ),
         # start and stop
         go.Scatter(
-            x=[],
+            x=[], y=[],
             mode="markers",
             marker={"color": "orange", "size": 12},
             name="start and end",
@@ -181,43 +179,65 @@ def map_chart_init():
 def variable_decomposition_chart_init():
     global VARIABLE_DECOMPOSITION_CHART
     VARIABLE_DECOMPOSITION_CHART = go.Figure()
+    VARIABLE_DECOMPOSITION_CHART.update_layout(
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=.9,
+            bgcolor="rgba(255, 255, 255, 0.9)"
+        ),
+        # string to maintain user selections
+        uirevision="VARIABLE DECOMPOSITION"
+    )
+
     # TODO
     # X_dec = h2_variables[:, 0]
-    #         Y_dec = h2_variables[:, 1]
-    #         O_dec = h2_variables[:, 2]
-    #         LS_dec = h2_variables[:, 3]
-    #         LC_dec = h2_variables[:, 4]
-    #         LD_dec = h2_variables[:, 5]
-    #         decomposition.plot(X_dec, 'k', linestyle='-', label='X')
-    #         decomposition.plot(Y_dec, 'g', linestyle='-', label='Y')
-    #         decomposition.plot(O_dec, 'y', linestyle='-', label='O')
-    #         decomposition.plot(LS_dec, 'c', linestyle='-', label='LS')
-    #         decomposition.plot(LC_dec, 'm', linestyle='-', label='LC')
-    #         decomposition.plot(LD_dec, 'b', linestyle='-', label='LD')
-    #
-    #         # PLOT A RED LINE IF THERE IS AN ANOMALY ON THE CURRENT SENSORS
-    #         anomalies = np.where(h2_variables > h2_thr, h2_variables, np.nan)
-    #         X_an = anomalies[:, 0]
-    #         Y_an = anomalies[:, 1]
-    #         O_an = anomalies[:, 2]
-    #         LS_an = anomalies[:, 3]
-    #         LC_an = anomalies[:, 4]
-    #         LD_an = anomalies[:, 5]
-    #         decomposition.plot(X_an, 'kx')
-    #         decomposition.plot(Y_an, 'gx')
-    #         decomposition.plot(O_an, 'yx')
-    #         decomposition.plot(LS_an, 'cx')
-    #         decomposition.plot(LC_an, 'mx')
-    #         decomposition.plot(LD_an, 'bx')
-    #         labels = ['X', 'Y', 'O', 'LS', 'LC', 'LD']
-    #         colors = np.where(h2_variables[-1] > h2_thr, 'red', 'green')
-    #         lights = []
-    #         for i in range(0, len(labels)):
-    #             light = mlines.Line2D([], [], color=colors[i], marker='.', linestyle='None', markersize=20, label=labels[i])
-    #             lights.append(light)
-    #         semaphore_legend = decomposition.legend(handles=lights, loc='upper left')
-    #         decomposition.legend(loc='upper right')
-    #         decomposition.add_artist(semaphore_legend)
+    # Y_dec = h2_variables[:, 1]
+    # O_dec = h2_variables[:, 2]
+    # LS_dec = h2_variables[:, 3]
+    # LC_dec = h2_variables[:, 4]
+    # LD_dec = h2_variables[:, 5]
+    # decomposition.plot(X_dec, 'k', linestyle='-', label='X')
+    # decomposition.plot(Y_dec, 'g', linestyle='-', label='Y')
+    # decomposition.plot(O_dec, 'y', linestyle='-', label='O')
+    # decomposition.plot(LS_dec, 'c', linestyle='-', label='LS')
+    # decomposition.plot(LC_dec, 'm', linestyle='-', label='LC')
+    # decomposition.plot(LD_dec, 'b', linestyle='-', label='LD')
+    colors = ["blue", "purple", "green", "yellow", "brown", "orange"]
+    variables = ["X", "Y", "O", "LS", "LC", "LD"]
+
+    VARIABLE_DECOMPOSITION_CHART.add_traces([
+        go.Scatter(
+            x=[], y=[],
+            mode="markers",
+            name=variables[i],
+            marker={"color": colors[i]}
+        ) for i in range(len(variables))
+    ])
+    # # PLOT A RED LINE IF THERE IS AN ANOMALY ON THE CURRENT SENSORS
+    # anomalies = np.where(h2_variables > h2_thr, h2_variables, np.nan)
+    # X_an = anomalies[:, 0]
+    # Y_an = anomalies[:, 1]
+    # O_an = anomalies[:, 2]
+    # LS_an = anomalies[:, 3]
+    # LC_an = anomalies[:, 4]
+    # LD_an = anomalies[:, 5]
+    # decomposition.plot(X_an, 'kx')
+    # decomposition.plot(Y_an, 'gx')
+    # decomposition.plot(O_an, 'yx')
+    # decomposition.plot(LS_an, 'cx')
+    # decomposition.plot(LC_an, 'mx')
+    # decomposition.plot(LD_an, 'bx')
+    # labels = ['X', 'Y', 'O', 'LS', 'LC', 'LD']
+    # colors = np.where(h2_variables[-1] > h2_thr, 'red', 'green')
+    # lights = []
+    # for i in range(0, len(labels)):
+    #     light = mlines.Line2D([], [], color=colors[i], marker='.', linestyle='None', markersize=20, label=labels[i])
+    #     lights.append(light)
+    # semaphore_legend = decomposition.legend(handles=lights, loc='upper left')
+    # decomposition.legend(loc='upper right')
+    # decomposition.add_artist(semaphore_legend)
 
 
 # --------
@@ -289,6 +309,27 @@ def update_map_position(n_intervals):
         [points_copy[0][0], points_copy[-1][0]], [points_copy[0][1], points_copy[-1][1]]
     return MAP_CHART
 
+
+@callback(
+    Output(component_id="variable_decomposition_chart", component_property="figure"),
+    Input(component_id='interval-component', component_property='n_intervals')
+)
+def update_variable_decomposition(n_intervals):
+    # n_intervals: not used its given by the default reloader
+    global VARIABLE_DECOMPOSITION, VARIABLE_DECOMPOSITION_CHART
+    print(len(VARIABLE_DECOMPOSITION))
+    if len(VARIABLE_DECOMPOSITION) == 0:
+        # no point, reset the chart
+        for i in range(6):
+            VARIABLE_DECOMPOSITION_CHART["data"][i]["x"], VARIABLE_DECOMPOSITION_CHART["data"][i]["y"] = [], []
+        return VARIABLE_DECOMPOSITION_CHART
+    # h2_thr = [1.26020238, 6.67861522, 0.4251171, 0.70920265, 0.94272347, 0.89692743]
+    points_copy = np.array(VARIABLE_DECOMPOSITION)
+    x_axis = [k for k in range(len(VARIABLE_DECOMPOSITION))]
+    for i in range(6):
+        VARIABLE_DECOMPOSITION_CHART["data"][i]["x"], VARIABLE_DECOMPOSITION_CHART["data"][i]["y"] = \
+            x_axis, points_copy[:, i]
+    return VARIABLE_DECOMPOSITION_CHART
 
 if __name__ == "__main__":
     debug = True
