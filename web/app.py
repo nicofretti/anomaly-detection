@@ -544,20 +544,49 @@ def app_init():
             # Left column
             html.Div(
                 id="left-column",
-                className="four columns",
+                className="three columns",
                 children=[
-                    dcc.Graph(
-                        id="ice_lab", figure={},
-                        responsive=True,
-                        style={"height": "600px", "width": "400px"}
-                    ),
                 ],
             ),
             # Right column
             html.Div(
                 id="right-column",
-                className="eight columns",
+                className="nine columns",
                 children=[
+                    html.Div(
+                        id="charts",
+                        className="flex bg-white mt-2",
+                        children=[
+                            html.Div(
+                                className="p-8",
+                                children=[
+                                    html.P(
+                                        className="text-center text-3xl border-b-[4px] border-orange-500",
+                                        children="ICE Lab"
+                                    ),
+                                    dcc.Graph(
+                                        id="ice_lab_chart", figure={},
+                                        style={"height": "600px", "width": "400px"}
+                                    ),
+                                ]
+                            ),
+                            html.Div(
+                                className="p-8 w-full",
+                                children=[
+                                    html.P(
+                                        className="text-center text-3xl border-b-[4px] border-orange-500",
+                                        children="ICE Lab"
+                                    ),
+                                    dcc.Graph(
+                                        id="decomposition_chart", figure={},
+                                        style={"height":"600px"}
+                                    ),
+                                ]
+                            )
+
+
+                        ]
+                    ),
 
                 ],
             ),
@@ -608,17 +637,14 @@ import plotly.graph_objects as go
 
 
 @callback(
-    Output(component_id='ice_lab', component_property='figure'),
+    Output(component_id='ice_lab_chart', component_property='figure'),
     Input(component_id='interval-component', component_property='n_intervals')
 )
 def update_map_position(n_intervals):
     global MAP_POSITION
     print(str(len(MAP_POSITION)) + " chart")
     map = make_subplots(rows=1)
-    # Set limits
-
     # plot map
-    # map.imshow(img_backgroung, extent=(-1.5, 2.5, -13, 1), cmap='gray')
     map.add_layout_image(
         source="assets/ICE_lab.png",
         y=1,
@@ -638,8 +664,8 @@ def update_map_position(n_intervals):
     # points_copy: {contains X, Y, anomaly}
     points_copy = np.array(MAP_POSITION)
     # substract a offset to the Y coordinate to fit the image
-    points_copy[:, 1] = points_copy[:, 1] + 0.0
-    points_copy[:, 0] = points_copy[:, 0] + 0.0
+    # points_copy[:, 1] = points_copy[:, 1] + 0.0
+    # points_copy[:, 0] = points_copy[:, 0] + 0.0
     x0, y0 = points_copy[0][0], points_copy[0][1]
     x_plot, y_plot = points_copy[1:, 0], points_copy[1:, 1]
     anomaly = points_copy[1:, 2]
@@ -652,6 +678,8 @@ def update_map_position(n_intervals):
     map.add_scatter(x=x_plot, y=y_plot)
 
     # map.legend(handles=[green_patch, blue_patch, red_patch], loc=1)
+
+    # set limits
     map.update_layout(
         xaxis_range=[-1.5, 2.5],
         yaxis_range=[-5, 1]
