@@ -549,7 +549,7 @@ def app_init():
                     dcc.Graph(
                         id="ice_lab", figure={},
                         responsive=True,
-                        style={"height": "580px", "width": "300px"}
+                        style={"height": "600px", "width": "400px"}
                     ),
                 ],
             ),
@@ -622,12 +622,14 @@ def update_map_position(n_intervals):
     map.add_layout_image(
         source="assets/ICE_lab.png",
         y=1,
-        x=-.2,
-        sizex=2,
-        sizey=2.5,
+        x=-1.5,
+        sizex=12,
+        sizey=15,
+        xref="x",
+        yref="y",
         opacity=1,
         layer="below",
-        sizing="stretch"
+        sizing="contain"
     )
 
     if len(MAP_POSITION) == 0:
