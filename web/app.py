@@ -4,15 +4,9 @@ import dash
 import numpy as np
 from dash import dcc, html, Output, Input, callback
 from flask import Flask, request
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-from matplotlib import image as mpimg
-import plotly.express as px
-from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
 SERVER = Flask(__name__)
-
 APP = dash.Dash(
     __name__,
     server=SERVER,
@@ -566,7 +560,8 @@ def app_init():
                                         children="ICE Lab"
                                     ),
                                     dcc.Graph(
-                                        id="ice_lab_chart", figure={},
+                                        id="ice_lab_chart",
+                                        figure={},
                                         style={"height": "600px", "width": "400px"}
                                     ),
                                 ]
@@ -602,7 +597,6 @@ def map_position_insert():
     # bytes to dict
     data = json.loads(request.data.decode('utf-8'))
     MAP_POSITION.append([data["X"], data["Y"], data["anomaly"]])
-    print(len(MAP_POSITION))
     # update_map_position()
     # Return 200 OK
     return "OK", 200
@@ -633,7 +627,37 @@ def commit():
 # --------
 # Callbacks
 # --------
-import plotly.graph_objects as go
+MAP_FIRST_LOAD = True
+MAP_CHART = go.Figure()
+MAP_CHART.add_layout_image(
+    source="assets/ICE_lab.png",
+    y=1,
+    x=-1.5,
+    sizex=12,
+    sizey=15,
+    xref="x",
+    yref="y",
+    opacity=1,
+    layer="below",
+    sizing="contain"
+)
+# set limits
+MAP_CHART.update_layout(
+    clickmode="event+select",
+    xaxis_range=[-1.5, 2.5],
+    yaxis_range=[-5, 1],
+    xaxis=dict(showgrid=False),
+    yaxis=dict(showgrid=False),
+    legend=dict(
+        yanchor="top",
+        y=0.99,
+        xanchor="left",
+        x=.4,
+        bgcolor="rgba(255, 255, 255, 0.9)"
+    ),
+    # string to maintain user selections
+    uirevision="ICE-LAB"
+)
 
 
 @callback(
@@ -641,75 +665,55 @@ import plotly.graph_objects as go
     Input(component_id='interval-component', component_property='n_intervals')
 )
 def update_map_position(n_intervals):
-    global MAP_POSITION
-    print(str(len(MAP_POSITION)) + " chart")
-    # fig_map = make_subplots(rows=1)
-    fig_map = go.Figure()
-    # plot map
-    fig_map.add_layout_image(
-        source="assets/ICE_lab.png",
-        y=1,
-        x=-1.5,
-        sizex=12,
-        sizey=15,
-        xref="x",
-        yref="y",
-        opacity=1,
-        layer="below",
-        sizing="contain"
-    )
-    # set limits
-    fig_map.update_layout(
-        xaxis_range=[-1.5, 2.5],
-        yaxis_range=[-5, 1],
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=False),
-        legend=dict(
-            yanchor="top",
-            y=0.99,
-            xanchor="left",
-            x=.4,
-            bgcolor="rgba(255, 255, 255, 0.9)"
-
-        )
-    )
-    # no point to display :(
+    global MAP_FIRST_LOAD, MAP_CHART, MAP_POSITION
+    print(len(MAP_POSITION))
     if len(MAP_POSITION) == 0:
-        return fig_map
+        # no point to display :(
+        MAP_CHART["data"][0]["x"], MAP_CHART["data"][0]["y"] = [],[]
+        MAP_CHART["data"][1]["x"], MAP_CHART["data"][1]["y"] = [],[]
+        MAP_CHART["data"][2]["x"], MAP_CHART["data"][1]["y"] = [],[]
+        return MAP_CHART
     # store our points
     points_copy = np.array(MAP_POSITION)
-    # subtract offset to the Y coordinate to fit the image
     x_plot, y_plot = points_copy[1:, 0], points_copy[1:, 1]
     anomaly = points_copy[1:, 2]
-    fig_map.add_traces([
-        # correct behaviour
-        go.Scatter(
-            x=x_plot[anomaly == 0],
-            y=y_plot[anomaly == 0],
-            mode="markers",
-            marker={"color": "blue"},
-            name="Correct behaviour"
-        ),
-        # anomalies
-        go.Scatter(
-            x=x_plot[anomaly == 1],
-            y=y_plot[anomaly == 1],
-            mode="markers",
-            marker={"color": "red"},
-            name="Anomaly"
-        ),
-        # start and stop
-        go.Scatter(
-            x=[points_copy[0][0], points_copy[-1][0]], y=[points_copy[0][1], points_copy[-1][1]],
-            mode="markers",
-            marker={"color": "orange", "size": 12},
-            name="Start and end",
-            showlegend=False
-        )
-    ])
-    # map.legend(handles=[green_patch, blue_patch, red_patch], loc=1)
+    if MAP_FIRST_LOAD:
+        # create the chart
+        MAP_CHART.add_traces([
+            # correct behaviour
+            go.Scatter(
+                x=x_plot[anomaly == 0],
+                y=y_plot[anomaly == 0],
+                mode="markers",
+                marker={"color": "blue"},
+                name="Correct behaviour"
+            ),
+            # anomalies
+            go.Scatter(
+                x=x_plot[anomaly == 1],
+                y=y_plot[anomaly == 1],
+                mode="markers",
+                marker={"color": "red"},
+                name="Anomaly"
+            ),
+            # start and stop
+            go.Scatter(
+                x=[points_copy[0][0], points_copy[-1][0]], y=[points_copy[0][1], points_copy[-1][1]],
+                mode="markers",
+                marker={"color": "orange", "size": 12},
+                name="Start and end",
+                showlegend=False
+            )
+        ])
+        MAP_FIRST_LOAD = False
+        return MAP_CHART
+    # Update only the charts without reloading!
+    # correct behaviour
+    MAP_CHART["data"][0]["x"], MAP_CHART["data"][0]["y"] = x_plot[anomaly == 0], y_plot[anomaly == 0]
+    # anomaly
+    MAP_CHART["data"][1]["x"], MAP_CHART["data"][1]["y"] = x_plot[anomaly == 1], y_plot[anomaly == 1]
 
-    return fig_map
+    return MAP_CHART
 
 
 if __name__ == "__main__":
