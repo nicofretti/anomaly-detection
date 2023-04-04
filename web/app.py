@@ -9,6 +9,7 @@ import matplotlib.patches as mpatches
 from matplotlib import image as mpimg
 import plotly.express as px
 from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 
 SERVER = Flask(__name__)
 
@@ -579,11 +580,10 @@ def app_init():
                                     ),
                                     dcc.Graph(
                                         id="decomposition_chart", figure={},
-                                        style={"height":"600px"}
+                                        style={"height": "600px"}
                                     ),
                                 ]
                             )
-
 
                         ]
                     ),
@@ -643,9 +643,10 @@ import plotly.graph_objects as go
 def update_map_position(n_intervals):
     global MAP_POSITION
     print(str(len(MAP_POSITION)) + " chart")
-    map = make_subplots(rows=1)
+    # fig_map = make_subplots(rows=1)
+    fig_map = go.Figure()
     # plot map
-    map.add_layout_image(
+    fig_map.add_layout_image(
         source="assets/ICE_lab.png",
         y=1,
         x=-1.5,
@@ -657,35 +658,58 @@ def update_map_position(n_intervals):
         layer="below",
         sizing="contain"
     )
+    # set limits
+    fig_map.update_layout(
+        xaxis_range=[-1.5, 2.5],
+        yaxis_range=[-5, 1],
+        xaxis=dict(showgrid=False),
+        yaxis=dict(showgrid=False),
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=.4,
+            bgcolor="rgba(255, 255, 255, 0.9)"
 
+        )
+    )
+    # no point to display :(
     if len(MAP_POSITION) == 0:
-        return map
-
-    # points_copy: {contains X, Y, anomaly}
+        return fig_map
+    # store our points
     points_copy = np.array(MAP_POSITION)
-    # substract a offset to the Y coordinate to fit the image
-    # points_copy[:, 1] = points_copy[:, 1] + 0.0
-    # points_copy[:, 0] = points_copy[:, 0] + 0.0
-    x0, y0 = points_copy[0][0], points_copy[0][1]
+    # subtract offset to the Y coordinate to fit the image
     x_plot, y_plot = points_copy[1:, 0], points_copy[1:, 1]
     anomaly = points_copy[1:, 2]
-    green_patch = mpatches.Patch(color='green', label='start')
-    red_patch = mpatches.Patch(color='red', label='anomaly')
-    blue_patch = mpatches.Patch(color='blue', label='normal')
-    color = np.where(anomaly, 'r', 'b')
-    # map.add_scatter(x_plot, y_plot, c=color, s=7, zorder=1)
-    map.add_scatter(x=[x0], y=[y0])
-    map.add_scatter(x=x_plot, y=y_plot)
-
+    fig_map.add_traces([
+        # correct behaviour
+        go.Scatter(
+            x=x_plot[anomaly == 0],
+            y=y_plot[anomaly == 0],
+            mode="markers",
+            marker={"color": "blue"},
+            name="Correct behaviour"
+        ),
+        # anomalies
+        go.Scatter(
+            x=x_plot[anomaly == 1],
+            y=y_plot[anomaly == 1],
+            mode="markers",
+            marker={"color": "red"},
+            name="Anomaly"
+        ),
+        # start and stop
+        go.Scatter(
+            x=[points_copy[0][0], points_copy[-1][0]], y=[points_copy[0][1], points_copy[-1][1]],
+            mode="markers",
+            marker={"color": "orange", "size": 12},
+            name="Start and end",
+            showlegend=False
+        )
+    ])
     # map.legend(handles=[green_patch, blue_patch, red_patch], loc=1)
 
-    # set limits
-    map.update_layout(
-        xaxis_range=[-1.5, 2.5],
-        yaxis_range=[-5, 1]
-
-    )
-    return map
+    return fig_map
 
 
 if __name__ == "__main__":
