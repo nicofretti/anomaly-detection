@@ -32,6 +32,7 @@ APP = dash.Dash(
         }
     ]
 )
+VARIABLES = ["X", "Y", "O", "LS", "LC", "LD"]
 MAP_CHART, VARIABLE_DECOMPOSITION_CHART = {}, {}
 MAP_POSITION, VARIABLE_DECOMPOSITION = [], []
 
@@ -41,7 +42,7 @@ MAP_POSITION, VARIABLE_DECOMPOSITION = [], []
 # -------
 
 def app_init():
-    global MAP_POSITION, VARIABLE_DECOMPOSITION
+    global MAP_POSITION, VARIABLES, VARIABLE_DECOMPOSITION
     map_chart_init()
     variable_decomposition_chart_init()
     APP.title = "Anomaly Detection on Kairos"
@@ -86,17 +87,28 @@ def app_init():
                                     ),
                                     dcc.Graph(
                                         id="map_position_chart",
+                                        config=dict(
+                                            displayModeBar=False
+                                        ),
                                         figure={},
-                                        style={"height": "600px", "width": "400px"}
+                                        style={"height": "600px", "width": "400px"},
                                     ),
                                 ]
                             ),
                             html.Div(
-                                className="p-8 w-full",
+                                className="p-8 w-full relative",
                                 children=[
                                     html.P(
                                         className="text-center text-3xl border-b-[4px] border-orange-500",
                                         children="ICE Lab"
+                                    ),
+                                    html.Div(
+                                        id="variable_decomposition_semaphore",
+                                        className="absolute top-60 left-44 text-white text-center z-10 text-black pl-2 pr-6",
+                                        style={
+                                            "background-color": "rgba(255, 255, 255, 0.9)",
+                                        },
+                                        children=semaphore_generator()
                                     ),
                                     dcc.Graph(
                                         id="variable_decomposition_chart", figure={},
@@ -104,7 +116,6 @@ def app_init():
                                     ),
                                 ]
                             )
-
                         ]
                     ),
 
@@ -115,6 +126,33 @@ def app_init():
     if debug:
         MAP_POSITION = debug_costrants.DEBUG_MAP_POSITION
         VARIABLE_DECOMPOSITION = debug_costrants.VARIABLE_DECOMPOSITION_DEBUG
+
+
+def semaphore_generator():
+    global VARIABLE_DECOMPOSITION
+    r = []
+    h2_thr = [1.26020238, 6.67861522, 0.4251171, 0.70920265, 0.94272347, 0.89692743]
+    anomalies = np.where(VARIABLE_DECOMPOSITION > h2_thr, VARIABLE_DECOMPOSITION, np.nan)
+    if len(anomalies) == 0:
+        last_anomaly = np.zeros(len(VARIABLES))
+    else:
+        last_anomaly = anomalies[-1]
+    index = 0
+    for v in VARIABLES:
+        active = False
+        if np.isnan(last_anomaly[index]):
+            active = True
+        r.append(
+            html.Div(
+                className="flex justify-start items-center text-2xl my-2",
+                children=[
+                    html.Div(
+                        className="fa fa-circle mr-2 {}".format("text-red-500" if active else "text-green-500"),
+                    ),
+                    v
+                ])
+        )
+    return r
 
 
 # Init only at the startup the chart of the ICE-lab
@@ -138,8 +176,8 @@ def map_chart_init():
         clickmode="event+select",
         xaxis_range=[-1.5, 2.5],
         yaxis_range=[-5, 1],
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=False),
+        xaxis=dict(showgrid=False, fixedrange=True),
+        yaxis=dict(showgrid=False, fixedrange=True),
         legend=dict(
             yanchor="top",
             y=0.99,
@@ -177,7 +215,7 @@ def map_chart_init():
 
 
 def variable_decomposition_chart_init():
-    global VARIABLE_DECOMPOSITION_CHART
+    global VARIABLES, VARIABLE_DECOMPOSITION_CHART
     VARIABLE_DECOMPOSITION_CHART = go.Figure()
     VARIABLE_DECOMPOSITION_CHART.update_layout(
         legend=dict(
@@ -205,16 +243,16 @@ def variable_decomposition_chart_init():
     # decomposition.plot(LC_dec, 'm', linestyle='-', label='LC')
     # decomposition.plot(LD_dec, 'b', linestyle='-', label='LD')
     colors = ["blue", "purple", "green", "yellow", "brown", "orange"]
-    variables = ["X", "Y", "O", "LS", "LC", "LD"]
 
     VARIABLE_DECOMPOSITION_CHART.add_traces([
         go.Scatter(
             x=[], y=[],
-            mode="markers",
-            name=variables[i],
-            marker={"color": colors[i]}
-        ) for i in range(len(variables))
+            mode="lines+markers",
+            name=VARIABLES[i],
+            marker={"color": colors[i], "size": 3}
+        ) for i in range(len(VARIABLES))
     ])
+
     # # PLOT A RED LINE IF THERE IS AN ANOMALY ON THE CURRENT SENSORS
     # anomalies = np.where(h2_variables > h2_thr, h2_variables, np.nan)
     # X_an = anomalies[:, 0]
@@ -311,25 +349,29 @@ def update_map_position(n_intervals):
 
 
 @callback(
-    Output(component_id="variable_decomposition_chart", component_property="figure"),
+    [
+        Output(component_id="variable_decomposition_chart", component_property="figure"),
+        Output(component_id="variable_decomposition_semaphore", component_property="children")
+    ],
     Input(component_id='interval-component', component_property='n_intervals')
 )
 def update_variable_decomposition(n_intervals):
     # n_intervals: not used its given by the default reloader
     global VARIABLE_DECOMPOSITION, VARIABLE_DECOMPOSITION_CHART
     print(len(VARIABLE_DECOMPOSITION))
+    # MACAQUE
     if len(VARIABLE_DECOMPOSITION) == 0:
         # no point, reset the chart
         for i in range(6):
             VARIABLE_DECOMPOSITION_CHART["data"][i]["x"], VARIABLE_DECOMPOSITION_CHART["data"][i]["y"] = [], []
         return VARIABLE_DECOMPOSITION_CHART
-    # h2_thr = [1.26020238, 6.67861522, 0.4251171, 0.70920265, 0.94272347, 0.89692743]
     points_copy = np.array(VARIABLE_DECOMPOSITION)
     x_axis = [k for k in range(len(VARIABLE_DECOMPOSITION))]
     for i in range(6):
         VARIABLE_DECOMPOSITION_CHART["data"][i]["x"], VARIABLE_DECOMPOSITION_CHART["data"][i]["y"] = \
             x_axis, points_copy[:, i]
-    return VARIABLE_DECOMPOSITION_CHART
+    return VARIABLE_DECOMPOSITION_CHART, semaphore_generator()
+
 
 if __name__ == "__main__":
     debug = True
