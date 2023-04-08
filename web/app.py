@@ -82,16 +82,16 @@ def app_init():
                 ]
             ),
             # left column
-            html.Div(
-                id="left-column",
-                className="three columns",
-                children=[
-                ],
-            ),
+            # html.Div(
+            #     id="left-column",
+            #     className="three columns",
+            #     children=[
+            #     ],
+            # ),
             # Right column
             html.Div(
                 id="right-column",
-                className="nine columns shadow-lg",
+                className="twelve columns shadow-lg",
                 children=[
                     html.Div(
                         id="charts",
