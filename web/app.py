@@ -15,6 +15,7 @@ SERVER = Flask(__name__)
 APP = dash.Dash(
     __name__,
     server=SERVER,
+    update_title=None,
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
     external_scripts=[
         # Tailwind CSS
@@ -81,14 +82,14 @@ def app_init():
             # left column
             html.Div(
                 id="left-column",
-                className="three columns",
+                className="two columns",
                 children=[
                 ],
             ),
             # Right column
             html.Div(
                 id="right-column",
-                className="nine columns",
+                className="ten columns",
                 children=[
                     html.Div(
                         id="charts",
@@ -98,11 +99,12 @@ def app_init():
                                 className="p-8",
                                 children=[
                                     html.P(
-                                        className="text-center text-3xl border-b-[4px] border-orange-500",
+                                        className="text-left text-3xl font-bold pl-2",
                                         children="ICE LAB MAP"
                                     ),
                                     dcc.Graph(
                                         id="map_position_chart",
+                                        className="p-2",
                                         config=dict(
                                             displayModeBar=False
                                         ),
@@ -115,12 +117,12 @@ def app_init():
                                 className="p-8 w-full relative",
                                 children=[
                                     html.P(
-                                        className="text-center text-3xl border-b-[4px] border-orange-500",
+                                        className="text-left text-3xl font-bold pl-2",
                                         children="HELLINGER DISTANCE DECOMPOSITION"
                                     ),
                                     html.Div(
                                         id="variable_decomposition_semaphore",
-                                        className="absolute top-60 left-44 text-center z-10 text-black " + \
+                                        className="absolute top-36 left-20 text-center z-10 text-black " + \
                                                   "pl-2 pr-6",
                                         style={
                                             "background-color": "rgba(255, 255, 255, 0.9)",
@@ -128,8 +130,13 @@ def app_init():
                                         children=semaphore_generator()
                                     ),
                                     dcc.Graph(
-                                        id="variable_decomposition_chart", figure={},
-                                        style={"height": "600px"}
+                                        id="variable_decomposition_chart",
+                                        className="p-2",
+                                        style={"height": "600px"},
+                                        config=dict(
+                                            displayModeBar=True,
+                                            modeBarButtonsToRemove=["lasso2d", "select2d"]
+                                        )
                                     ),
                                 ]
                             )
@@ -155,12 +162,8 @@ def semaphore_generator():
     else:
         # there are datas, we calculate the last anomaly
         last_anomaly = VARIABLE_DECOMPOSITION[-1]
-        # set true and false respectively to red and green with the threshold
-        last_anomaly = np.where(last_anomaly > h2_thr, last_anomaly, True)
     for i in range(len(VARIABLES)):
-        active = False
-        if np.isnan(last_anomaly[i]):
-            active = True
+        active = last_anomaly[i] > h2_thr[i]
         r.append(
             html.Div(
                 className="flex justify-start items-center text-2xl my-1",
@@ -205,7 +208,8 @@ def map_chart_init():
             bgcolor="rgba(255, 255, 255, 0.9)"
         ),
         # string to maintain user selections
-        uirevision="ICE-LAB"
+        uirevision="ICE-LAB",
+        margin=dict(l=0, r=0, t=30, b=0)
     )
     MAP_CHART.add_traces([
         # correct behaviour
@@ -239,62 +243,24 @@ def variable_decomposition_chart_init():
     VARIABLE_DECOMPOSITION_CHART.update_layout(
         legend=dict(
             yanchor="top",
-            y=0.99,
+            y=0.98,
             xanchor="left",
-            x=.9,
+            x=.87,
             bgcolor="rgba(255, 255, 255, 0.9)"
         ),
         # string to maintain user selections
-        uirevision="VARIABLE DECOMPOSITION"
+        uirevision="VARIABLE DECOMPOSITION",
+        margin=dict(l=0, r=0, t=30, b=0),
     )
-
-    # TODO
-    # X_dec = h2_variables[:, 0]
-    # Y_dec = h2_variables[:, 1]
-    # O_dec = h2_variables[:, 2]
-    # LS_dec = h2_variables[:, 3]
-    # LC_dec = h2_variables[:, 4]
-    # LD_dec = h2_variables[:, 5]
-    # decomposition.plot(X_dec, 'k', linestyle='-', label='X')
-    # decomposition.plot(Y_dec, 'g', linestyle='-', label='Y')
-    # decomposition.plot(O_dec, 'y', linestyle='-', label='O')
-    # decomposition.plot(LS_dec, 'c', linestyle='-', label='LS')
-    # decomposition.plot(LC_dec, 'm', linestyle='-', label='LC')
-    # decomposition.plot(LD_dec, 'b', linestyle='-', label='LD')
     colors = ["blue", "purple", "green", "yellow", "brown", "orange"]
-
     VARIABLE_DECOMPOSITION_CHART.add_traces([
         go.Scatter(
             x=[], y=[],
             mode="lines+markers",
             name=VARIABLES[i],
-            marker={"color": colors[i], "size": 3}
+            marker={"color": colors[i % len(VARIABLES)], "size": 3}
         ) for i in range(len(VARIABLES))
     ])
-
-    # # PLOT A RED LINE IF THERE IS AN ANOMALY ON THE CURRENT SENSORS
-    # anomalies = np.where(h2_variables > h2_thr, h2_variables, np.nan)
-    # X_an = anomalies[:, 0]
-    # Y_an = anomalies[:, 1]
-    # O_an = anomalies[:, 2]
-    # LS_an = anomalies[:, 3]
-    # LC_an = anomalies[:, 4]
-    # LD_an = anomalies[:, 5]
-    # decomposition.plot(X_an, 'kx')
-    # decomposition.plot(Y_an, 'gx')
-    # decomposition.plot(O_an, 'yx')
-    # decomposition.plot(LS_an, 'cx')
-    # decomposition.plot(LC_an, 'mx')
-    # decomposition.plot(LD_an, 'bx')
-    # labels = ['X', 'Y', 'O', 'LS', 'LC', 'LD']
-    # colors = np.where(h2_variables[-1] > h2_thr, 'red', 'green')
-    # lights = []
-    # for i in range(0, len(labels)):
-    #     light = mlines.Line2D([], [], color=colors[i], marker='.', linestyle='None', markersize=20, label=labels[i])
-    #     lights.append(light)
-    # semaphore_legend = decomposition.legend(handles=lights, loc='upper left')
-    # decomposition.legend(loc='upper right')
-    # decomposition.add_artist(semaphore_legend)
 
 
 # --------
@@ -372,12 +338,12 @@ def callback_hidden_trigger(n_intervals, map_trigger, variable_trigger):
     Input(component_id='hidden_map_position_trigger', component_property='value')
 )
 def callback_map_position(update_chart):
+    global MAP_CHART, MAP_POSITION
     if not update_chart:
         # do not update the chart
-        raise PreventUpdate
+        return MAP_CHART
     print("called variable")
     # n_intervals: not used its given by the default reloader
-    global MAP_CHART, MAP_POSITION
     if len(MAP_POSITION) == 0:
         # no point to display :( reset the map
         for i in range(3):
@@ -406,12 +372,12 @@ def callback_map_position(update_chart):
     Input(component_id='hidden_variable_decomposition_trigger', component_property='value')
 )
 def callback_variable_decomposition(update_chart):
-    print("called map")
+    global VARIABLE_DECOMPOSITION, VARIABLE_DECOMPOSITION_CHART
     if not update_chart:
         # do not update the chart
-        raise PreventUpdate
+        return VARIABLE_DECOMPOSITION_CHART, semaphore_generator()
+    print("called map")
     # n_intervals: not used its given by the default reloader
-    global VARIABLE_DECOMPOSITION, VARIABLE_DECOMPOSITION_CHART
     if not VARIABLE_DECOMPOSITION or len(VARIABLE_DECOMPOSITION) == 0:
         # no point, reset the chart
         for i in range(6):

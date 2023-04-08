@@ -196,7 +196,8 @@ H5, H3 {
 
 }
 
-/* Custom, css
-#map_position_chart .modebar-container {
-    display: none !important;
-}*/
+/* Custom, css */
+.modebar-group{
+    display: flex !important;
+    flex-direction: row !important;
+}

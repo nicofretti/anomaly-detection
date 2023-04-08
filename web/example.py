@@ -194,7 +194,7 @@ def generate_patient_volume_heatmap(start, end, clinic, hm_click, admit_type, re
                 y=day,
                 font=dict(family="sans-serif"),
             )
-            # Highlight annotation text by self-click
+            # Highlight annotation texninet by self-click
             if x_val == hour_of_day and day == weekday:
                 if not reset:
                     annotation_dict.update(size=15, font=dict(color="#ff6347"))
