@@ -32,6 +32,7 @@ import psutil
 
 import os
 import signal
+NEW_VERSION = True
 
 
 def quaternion_to_euler(w, x, y, z):
@@ -166,13 +167,16 @@ def robot_pose_callback(data):
     global Y_first
     global points
     global anomaly
-
-    position = data.pose.pose
-    # position = data.position
-    # quaternion_orientation = data.orientation
-    # euler_orientation = quaternion_to_euler(quaternion_orientation.w, quaternion_orientation.x,
-    #                                        quaternion_orientation.y, quaternion_orientation.z)
-    Z_orientation = data.pose.pose.theta# euler_orientation[2]
+    global NEW_VERSION
+    if not NEW_VERSION:
+        position = data.position
+        quaternion_orientation = data.orientation
+        euler_orientation = quaternion_to_euler(quaternion_orientation.w, quaternion_orientation.x,
+                                                quaternion_orientation.y, quaternion_orientation.z)
+        Z_orientation = euler_orientation[2]
+    else:
+        position = data.pose.pose
+        Z_orientation = data.pose.pose.theta
     X = position.x
     Y = position.y
     # Z_orientation = position.theta
@@ -221,13 +225,16 @@ def robot_pose_callback(data):
 
 # main function in which we call all the above callbacks for each topic
 def listener():
+    global NEW_VERSION
     rospy.init_node('listener', anonymous=True)
     # Subscribe to the KAIROS sensors
     # The HMM has to process mainly the front_laser and the robot_pose
     # robot_pose average_rate : 10.085 Hz
-    # rospy.Subscriber(robot_pose_topic, Pose, robot_pose_callback)
-    # NEW TOPIC WITH ROBOTNIK UPDATED TOPIC
-    rospy.Subscriber(robot_pose_topic, LocalizationStatus, robot_pose_callback)
+    if not NEW_VERSION:
+        rospy.Subscriber(robot_pose_topic, Pose, robot_pose_callback)
+    else:
+        # NEW TOPIC WITH ROBOTNIK UPDATED TOPIC
+        rospy.Subscriber(robot_pose_topic, LocalizationStatus, robot_pose_callback)
     # front_laser average_rate : 13.083 Hz
     rospy.Subscriber(front_laser_topic, LaserScan, front_laser_callback)
     # spin() simply keeps python from exiting until this node is stopped
@@ -278,9 +285,9 @@ def map_update_callback(X, Y, anomaly):
     global map_filename
     # WRITE ALL THE ROWS ON A CSV FILE IN ORDER TO PLOT THE DATA
     # TODO: post on server
-    # with open(map_filename, 'a') as map_csv:
-    #     writer = csv.writer(map_csv)
-    #     writer.writerow([X, Y, anomaly])
+    with open(map_filename, 'a') as map_csv:
+        writer = csv.writer(map_csv)
+        writer.writerow([X, Y, anomaly])
 
     print("Position update: {} {}".format(X, Y))
 
@@ -288,9 +295,9 @@ def map_update_callback(X, Y, anomaly):
 def variable_decomposition_callback(variables_decomposition):
     global h2_filename
     # TODO: post on server
-    # with open(h2_filename, 'a') as h2_csv:
-    #     writer = csv.writer(h2_csv)
-    #     writer.writerow(variables_decomposition)
+    with open(h2_filename, 'a') as h2_csv:
+        writer = csv.writer(h2_csv)
+        writer.writerow(variables_decomposition)
     print("H2 update: {}".format(variables_decomposition))
 
 
@@ -314,13 +321,14 @@ if __name__ == '__main__':
         head = ['X', 'Y', 'O', 'LS', 'LC', 'LD']
         writer.writerow(head)
 
-    # OLD USED TOPICS
-    # front_laser_topic = "/fufi/front_laser/scan"
-    # robot_pose_topic = "/fufi/robot_pose"
-
-    # NEW TOPICS REMAPPED IN ICE LAB
-    front_laser_topic = "/robot/front_laser/scan"
-    robot_pose_topic = "/robot/robot_local_control/LocalizationComponent/status"
+    if not NEW_VERSION:
+        # OLD USED TOPICS
+        front_laser_topic = "/fufi/front_laser/scan"
+        robot_pose_topic = "/fufi/robot_pose"
+    else:
+        # NEW TOPICS REMAPPED IN ICE LAB
+        front_laser_topic = "/robot/front_laser/scan"
+        robot_pose_topic = "/robot/robot_local_control/LocalizationComponent/status"
 
     # WINDOW LENGTH
     w = 30

@@ -63,43 +63,45 @@ def app_init():
             dcc.Input(
                 id="hidden_map_position_trigger",
                 type="hidden",
-                value=1
+                value=0
             ),
             # hidden input for the last variable decomposition, if value is 0, the chart is not updated
             dcc.Input(
                 id="hidden_variable_decomposition_trigger",
                 type="hidden",
-                value=1
+                value=0
             ),
 
             # banner
             html.Div(
                 id="banner",
-                className="banner text-5xl",
-                children=[html.Div(className="fa fa-chart-bar text-red-700"),
-                          html.H3("Anomaly Detection", className="ml-2 text-gray-700")]
+                className="banner text-5xl font-bold",
+                children=[
+                    html.Div(className="fa fa-chart-bar text-blue-500"),
+                    html.H3("Anomaly Detection", className="ml-2 font-bold uppercase")
+                ]
             ),
             # left column
             html.Div(
                 id="left-column",
-                className="two columns",
+                className="three columns",
                 children=[
                 ],
             ),
             # Right column
             html.Div(
                 id="right-column",
-                className="ten columns",
+                className="nine columns shadow-lg",
                 children=[
                     html.Div(
                         id="charts",
-                        className="flex bg-white mt-2",
+                        className="flex bg-white mt-2 rounded-lg shadow-lg",
                         children=[
                             html.Div(
                                 className="p-8",
                                 children=[
                                     html.P(
-                                        className="text-left text-3xl font-bold pl-2",
+                                        className="text-left text-3xl font-bold pl-2 text-blue-500",
                                         children="ICE LAB MAP"
                                     ),
                                     dcc.Graph(
@@ -117,7 +119,7 @@ def app_init():
                                 className="p-8 w-full relative",
                                 children=[
                                     html.P(
-                                        className="text-left text-3xl font-bold pl-2",
+                                        className="text-left text-3xl font-bold pl-2 text-blue-500",
                                         children="HELLINGER DISTANCE DECOMPOSITION"
                                     ),
                                     html.Div(
@@ -313,24 +315,14 @@ def api_commit():
         Output(component_id='hidden_map_position_trigger', component_property='value'),
         Output(component_id='hidden_variable_decomposition_trigger', component_property='value')
     ],
-    [
-        Input(component_id='interval-component', component_property='n_intervals'),
-        Input(component_id='hidden_map_position_trigger', component_property='value'),
-        Input(component_id='hidden_variable_decomposition_trigger', component_property='value')
-    ]
+    Input(component_id='interval-component', component_property='n_intervals')
 )
-def callback_hidden_trigger(n_intervals, map_trigger, variable_trigger):
-    global NEW_DATA, MAP_POSITION, VARIABLE_DECOMPOSITION
+def callback_hidden_trigger(_):
+    global NEW_DATA
     if not NEW_DATA:
-        raise PreventUpdate
-    reload_map = 0
-    reload_variable = 0
-    if len(MAP_POSITION) > 0 and not map_trigger:
-        reload_map = 1
-    if len(VARIABLE_DECOMPOSITION) > 0 and not variable_trigger:
-        reload_variable = 1
+        return 0, 0
     NEW_DATA = False
-    return reload_map, reload_variable
+    return 1, 1
 
 
 @callback(
@@ -340,9 +332,10 @@ def callback_hidden_trigger(n_intervals, map_trigger, variable_trigger):
 def callback_map_position(update_chart):
     global MAP_CHART, MAP_POSITION
     if not update_chart:
+        # print("not called map")
         # do not update the chart
-        return MAP_CHART
-    print("called variable")
+        raise PreventUpdate
+    print("called map")
     # n_intervals: not used its given by the default reloader
     if len(MAP_POSITION) == 0:
         # no point to display :( reset the map
@@ -368,27 +361,28 @@ def callback_map_position(update_chart):
         Output(component_id="variable_decomposition_chart", component_property="figure"),
         Output(component_id="variable_decomposition_semaphore", component_property="children")
     ],
-    # Input(component_id='interval-component', component_property='n_intervals')
     Input(component_id='hidden_variable_decomposition_trigger', component_property='value')
 )
 def callback_variable_decomposition(update_chart):
     global VARIABLE_DECOMPOSITION, VARIABLE_DECOMPOSITION_CHART
     if not update_chart:
+        # print("not called variable")
         # do not update the chart
-        return VARIABLE_DECOMPOSITION_CHART, semaphore_generator()
-    print("called map")
+        raise PreventUpdate
     # n_intervals: not used its given by the default reloader
-    if not VARIABLE_DECOMPOSITION or len(VARIABLE_DECOMPOSITION) == 0:
+    if len(VARIABLE_DECOMPOSITION) == 0:
         # no point, reset the chart
         for i in range(6):
+            print("resetting variable")
             VARIABLE_DECOMPOSITION_CHART["data"][i]["x"], VARIABLE_DECOMPOSITION_CHART["data"][i]["y"] = [], []
-        return VARIABLE_DECOMPOSITION_CHART
+        return VARIABLE_DECOMPOSITION_CHART, semaphore_generator()
     points_copy = np.array(VARIABLE_DECOMPOSITION)
     x_axis = [k for k in range(len(VARIABLE_DECOMPOSITION))]
     for i in range(6):
         VARIABLE_DECOMPOSITION_CHART["data"][i]["x"], VARIABLE_DECOMPOSITION_CHART["data"][i]["y"] = \
             x_axis, points_copy[:, i]
-    return [VARIABLE_DECOMPOSITION_CHART, semaphore_generator()]
+    print("updated variable")
+    return VARIABLE_DECOMPOSITION_CHART, semaphore_generator()
 
 
 if __name__ == "__main__":

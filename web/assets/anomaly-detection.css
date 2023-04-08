@@ -1,7 +1,6 @@
 @font-face {
-    font-family: Acumin;
-    font-weight: bold;
-    src: url("Acumin-BdPro.otf") format("opentype");
+    font-family: 'Poppins', sans-serif;;
+    src: url("Poppins-Regular.ttf") format("truetype");
 }
 
 #app-container {
@@ -58,6 +57,8 @@ H5, H3 {
     background-color: #f4f4f4;
     padding: 0rem 2rem;
     min-height: calc(100vh - 5.5rem);
+    /* add inverse shadow on left*/
+    box-shadow: inset 2px 0px 15px -6px rgba(0,0,0,0.2);
 }
 
 .table-row {
