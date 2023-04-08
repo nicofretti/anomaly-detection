@@ -2,7 +2,8 @@ import json
 
 import dash
 import numpy as np
-from dash import dcc, html, Output, Input, callback
+from dash import dcc, html, Output, Input, callback, ClientsideFunction, State
+from dash.exceptions import PreventUpdate
 from flask import Flask, request
 import plotly.graph_objects as go
 import debug as debug_costrants
@@ -32,6 +33,7 @@ APP = dash.Dash(
         }
     ]
 )
+NEW_DATA = True
 VARIABLES = ["X", "Y", "O", "LS", "LC", "LD"]
 MAP_CHART, VARIABLE_DECOMPOSITION_CHART = {}, {}
 MAP_POSITION, VARIABLE_DECOMPOSITION = [], []
@@ -52,17 +54,31 @@ def app_init():
             # Global interval for refreshing data
             dcc.Interval(
                 id="interval-component",
-                interval=1000,
+                interval=200,
                 n_intervals=0
             ),
-            # Banner
+
+            # hidden input for the last position, if value is 0, the chart is not updated
+            dcc.Input(
+                id="hidden_map_position_trigger",
+                type="hidden",
+                value=1
+            ),
+            # hidden input for the last variable decomposition, if value is 0, the chart is not updated
+            dcc.Input(
+                id="hidden_variable_decomposition_trigger",
+                type="hidden",
+                value=1
+            ),
+
+            # banner
             html.Div(
                 id="banner",
                 className="banner text-5xl",
                 children=[html.Div(className="fa fa-chart-bar text-red-700"),
                           html.H3("Anomaly Detection", className="ml-2 text-gray-700")]
             ),
-            # Left column
+            # left column
             html.Div(
                 id="left-column",
                 className="three columns",
@@ -286,31 +302,34 @@ def variable_decomposition_chart_init():
 # --------
 
 @SERVER.route("/map_position_insert", methods=['GET', 'POST'])
-def map_position_insert():
-    global MAP_POSITION
+def api_map_position_insert():
+    global NEW_DATA, MAP_POSITION
     if request.method != 'POST':
         return 'Method not allowed', 405
     # bytes to dict
     data = json.loads(request.data.decode('utf-8'))
     MAP_POSITION.append([data["X"], data["Y"], data["anomaly"]])
-    # update_map_position()
+    # set new data to true, to trigger the update of the charts
+    NEW_DATA = True
     # Return 200 OK
     return "OK", 200
 
 
 @SERVER.route("/variable_decomposition_insert", methods=['GET', 'POST'])
-def variable_decomposition_insert():
-    global VARIABLE_DECOMPOSITION
+def api_variable_decomposition_insert():
+    global NEW_DATA, VARIABLE_DECOMPOSITION
     if request.method != 'POST':
         return 'Method not allowed', 405
     data = json.loads(request.data.decode('utf-8'))
-    VARIABLE_DECOMPOSITION.append(data)
+    VARIABLE_DECOMPOSITION.append([data[var] for var in VARIABLES])
+    # set new data to true, to trigger the update of the charts
+    NEW_DATA = True
     # Return 200
     return "OK", 200
 
 
 @SERVER.route("/commit", methods=['GET', 'POST'])
-def commit():
+def api_commit():
     global MAP_POSITION, VARIABLE_DECOMPOSITION
     if request.method == 'GET':
         # Here we reset the data
@@ -323,12 +342,40 @@ def commit():
 # --------
 # Callbacks
 # --------
+@callback(
+    [
+        Output(component_id='hidden_map_position_trigger', component_property='value'),
+        Output(component_id='hidden_variable_decomposition_trigger', component_property='value')
+    ],
+    [
+        Input(component_id='interval-component', component_property='n_intervals'),
+        Input(component_id='hidden_map_position_trigger', component_property='value'),
+        Input(component_id='hidden_variable_decomposition_trigger', component_property='value')
+    ]
+)
+def callback_hidden_trigger(n_intervals, map_trigger, variable_trigger):
+    global NEW_DATA, MAP_POSITION, VARIABLE_DECOMPOSITION
+    if not NEW_DATA:
+        raise PreventUpdate
+    reload_map = 0
+    reload_variable = 0
+    if len(MAP_POSITION) > 0 and not map_trigger:
+        reload_map = 1
+    if len(VARIABLE_DECOMPOSITION) > 0 and not variable_trigger:
+        reload_variable = 1
+    NEW_DATA = False
+    return reload_map, reload_variable
+
 
 @callback(
     Output(component_id='map_position_chart', component_property='figure'),
-    Input(component_id='interval-component', component_property='n_intervals')
+    Input(component_id='hidden_map_position_trigger', component_property='value')
 )
-def update_map_position(n_intervals):
+def callback_map_position(update_chart):
+    if not update_chart:
+        # do not update the chart
+        raise PreventUpdate
+    print("called variable")
     # n_intervals: not used its given by the default reloader
     global MAP_CHART, MAP_POSITION
     if len(MAP_POSITION) == 0:
@@ -346,8 +393,7 @@ def update_map_position(n_intervals):
     # anomaly
     MAP_CHART["data"][1]["x"], MAP_CHART["data"][1]["y"] = x_plot[anomaly == 1], y_plot[anomaly == 1]
     # last position
-    MAP_CHART["data"][2]["x"], MAP_CHART["data"][2]["y"] = \
-        [points_copy[0][1]], [points_copy[-1][1]]
+    MAP_CHART["data"][2]["x"], MAP_CHART["data"][2]["y"] = [points_copy[-1][0]], [points_copy[-1][1]]
     return MAP_CHART
 
 
@@ -356,9 +402,14 @@ def update_map_position(n_intervals):
         Output(component_id="variable_decomposition_chart", component_property="figure"),
         Output(component_id="variable_decomposition_semaphore", component_property="children")
     ],
-    Input(component_id='interval-component', component_property='n_intervals')
+    # Input(component_id='interval-component', component_property='n_intervals')
+    Input(component_id='hidden_variable_decomposition_trigger', component_property='value')
 )
-def update_variable_decomposition(n_intervals):
+def callback_variable_decomposition(update_chart):
+    print("called map")
+    if not update_chart:
+        # do not update the chart
+        raise PreventUpdate
     # n_intervals: not used its given by the default reloader
     global VARIABLE_DECOMPOSITION, VARIABLE_DECOMPOSITION_CHART
     if not VARIABLE_DECOMPOSITION or len(VARIABLE_DECOMPOSITION) == 0:

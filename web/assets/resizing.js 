@@ -7,4 +7,9 @@ window.dash_clientside.clientside = {
        window.dispatchEvent(new Event('resize'));
        return null
    }
+   update_charts: function (value) {
+       console.log("updating charts...");
+       window.dispatchEvent(new Event('update_charts'));
+       return null
+   }
 }
