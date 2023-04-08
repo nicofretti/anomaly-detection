@@ -83,7 +83,7 @@ def app_init():
                                 children=[
                                     html.P(
                                         className="text-center text-3xl border-b-[4px] border-orange-500",
-                                        children="ICE LAB"
+                                        children="ICE LAB MAP"
                                     ),
                                     dcc.Graph(
                                         id="map_position_chart",
@@ -100,11 +100,12 @@ def app_init():
                                 children=[
                                     html.P(
                                         className="text-center text-3xl border-b-[4px] border-orange-500",
-                                        children="ICE Lab"
+                                        children="HELLINGER DISTANCE DECOMPOSITION"
                                     ),
                                     html.Div(
                                         id="variable_decomposition_semaphore",
-                                        className="absolute top-60 left-44 text-white text-center z-10 text-black pl-2 pr-6",
+                                        className="absolute top-60 left-44 text-center z-10 text-black " + \
+                                                  "pl-2 pr-6",
                                         style={
                                             "background-color": "rgba(255, 255, 255, 0.9)",
                                         },
@@ -132,24 +133,26 @@ def semaphore_generator():
     global VARIABLE_DECOMPOSITION
     r = []
     h2_thr = [1.26020238, 6.67861522, 0.4251171, 0.70920265, 0.94272347, 0.89692743]
-    anomalies = np.where(VARIABLE_DECOMPOSITION > h2_thr, VARIABLE_DECOMPOSITION, np.nan)
-    if len(anomalies) == 0:
+    if not VARIABLE_DECOMPOSITION or len(VARIABLE_DECOMPOSITION) == 0:
+        # semaphore are all green, no anomaly detected
         last_anomaly = np.zeros(len(VARIABLES))
     else:
-        last_anomaly = anomalies[-1]
-    index = 0
-    for v in VARIABLES:
+        # there are datas, we calculate the last anomaly
+        last_anomaly = VARIABLE_DECOMPOSITION[-1]
+        # set true and false respectively to red and green with the threshold
+        last_anomaly = np.where(last_anomaly > h2_thr, last_anomaly, True)
+    for i in range(len(VARIABLES)):
         active = False
-        if np.isnan(last_anomaly[index]):
+        if np.isnan(last_anomaly[i]):
             active = True
         r.append(
             html.Div(
-                className="flex justify-start items-center text-2xl my-2",
+                className="flex justify-start items-center text-2xl my-1",
                 children=[
                     html.Div(
                         className="fa fa-circle mr-2 {}".format("text-red-500" if active else "text-green-500"),
                     ),
-                    v
+                    VARIABLES[i]
                 ])
         )
     return r
@@ -203,13 +206,13 @@ def map_chart_init():
             marker={"color": "red"},
             name="anomaly"
         ),
-        # start and stop
+        # last position
         go.Scatter(
             x=[], y=[],
             mode="markers",
             marker={"color": "orange", "size": 12},
-            name="start and end",
-            showlegend=False
+            name="last position",
+            showlegend=True
         )
     ])
 
@@ -342,9 +345,9 @@ def update_map_position(n_intervals):
     MAP_CHART["data"][0]["x"], MAP_CHART["data"][0]["y"] = x_plot[anomaly == 0], y_plot[anomaly == 0]
     # anomaly
     MAP_CHART["data"][1]["x"], MAP_CHART["data"][1]["y"] = x_plot[anomaly == 1], y_plot[anomaly == 1]
-    # start and end
+    # last position
     MAP_CHART["data"][2]["x"], MAP_CHART["data"][2]["y"] = \
-        [points_copy[0][0], points_copy[-1][0]], [points_copy[0][1], points_copy[-1][1]]
+        [points_copy[0][1]], [points_copy[-1][1]]
     return MAP_CHART
 
 
@@ -358,9 +361,7 @@ def update_map_position(n_intervals):
 def update_variable_decomposition(n_intervals):
     # n_intervals: not used its given by the default reloader
     global VARIABLE_DECOMPOSITION, VARIABLE_DECOMPOSITION_CHART
-    print(len(VARIABLE_DECOMPOSITION))
-    # MACAQUE
-    if len(VARIABLE_DECOMPOSITION) == 0:
+    if not VARIABLE_DECOMPOSITION or len(VARIABLE_DECOMPOSITION) == 0:
         # no point, reset the chart
         for i in range(6):
             VARIABLE_DECOMPOSITION_CHART["data"][i]["x"], VARIABLE_DECOMPOSITION_CHART["data"][i]["y"] = [], []
@@ -370,7 +371,7 @@ def update_variable_decomposition(n_intervals):
     for i in range(6):
         VARIABLE_DECOMPOSITION_CHART["data"][i]["x"], VARIABLE_DECOMPOSITION_CHART["data"][i]["y"] = \
             x_axis, points_copy[:, i]
-    return VARIABLE_DECOMPOSITION_CHART, semaphore_generator()
+    return [VARIABLE_DECOMPOSITION_CHART, semaphore_generator()]
 
 
 if __name__ == "__main__":

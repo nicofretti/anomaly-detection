@@ -13,6 +13,9 @@ if __name__ == "__main__":
     csv_map_data = pd.read_csv(map_data_filename)
 
     m_lines = max(csv_map_data.shape[0], csv_decomposition.shape[0])
+    
+    # commit the data to reset the state on the server
+    requests.get(f"{server_url}/commit")
 
     for index in range(m_lines):
         if index < csv_map_data.shape[0]:
@@ -21,6 +24,4 @@ if __name__ == "__main__":
             requests.post(f"{server_url}/variable_decomposition_insert", data=json.dumps(csv_decomposition.iloc[index].to_dict()))
         # Wait timeout seconds
         time.sleep(timeout)
-    # Commit the data
-    requests.get(f"{server_url}/commit")
 
