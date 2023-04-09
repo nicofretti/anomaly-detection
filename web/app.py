@@ -36,6 +36,7 @@ APP = dash.Dash(
 )
 NEW_DATA = True
 VARIABLES = ["X", "Y", "O", "LS", "LC", "LD"]
+VARIABLE_DECOMPOSITION_THR = [1.26020238, 6.67861522, 0.4251171, 0.70920265, 0.94272347, 0.89692743]
 MAP_CHART, VARIABLE_DECOMPOSITION_CHART = {}, {}
 MAP_POSITION, VARIABLE_DECOMPOSITION = [], []
 
@@ -155,9 +156,8 @@ def app_init():
 
 
 def semaphore_generator():
-    global VARIABLE_DECOMPOSITION
+    global VARIABLE_DECOMPOSITION, VARIABLE_DECOMPOSITION_THR
     r = []
-    h2_thr = [1.26020238, 6.67861522, 0.4251171, 0.70920265, 0.94272347, 0.89692743]
     if not VARIABLE_DECOMPOSITION or len(VARIABLE_DECOMPOSITION) == 0:
         # semaphore are all green, no anomaly detected
         last_anomaly = np.zeros(len(VARIABLES))
@@ -165,7 +165,7 @@ def semaphore_generator():
         # there are datas, we calculate the last anomaly
         last_anomaly = VARIABLE_DECOMPOSITION[-1]
     for i in range(len(VARIABLES)):
-        active = last_anomaly[i] > h2_thr[i]
+        active = last_anomaly[i] > VARIABLE_DECOMPOSITION_THR[i]
         r.append(
             html.Div(
                 className="flex justify-start items-center text-2xl my-1",
@@ -255,14 +255,41 @@ def variable_decomposition_chart_init():
         margin=dict(l=0, r=0, t=30, b=0),
     )
     colors = ["blue", "purple", "green", "yellow", "brown", "orange"]
-    VARIABLE_DECOMPOSITION_CHART.add_traces([
-        go.Scatter(
-            x=[], y=[],
-            mode="lines+markers",
-            name=VARIABLES[i],
-            marker={"color": colors[i % len(VARIABLES)], "size": 3}
-        ) for i in range(len(VARIABLES))
-    ])
+    # VARIABLE_DECOMPOSITION_CHART.add_traces([
+    #    go.Scatter(
+    #        x=[], y=[],
+    #        mode="lines+markers",
+    #        name=VARIABLES[i],
+    #        marker={"color": colors[i % len(VARIABLES)], "size": 3}
+    #    ) for i in range(len(VARIABLES))
+    # ])
+    for i in range(len(VARIABLES)):
+        VARIABLE_DECOMPOSITION_CHART.add_traces(
+            [
+                # correct behaviour for the i-th variable
+                go.Scatter(
+                    x=[], y=[],
+                    mode="lines+markers",
+                    name=VARIABLES[i],
+                    marker={
+                        "color": colors[i % len(VARIABLES)],
+                        "size": 3
+                    },
+                ),
+                # anomaly for the i-th variable
+                go.Scatter(
+                    x=[], y=[],
+                    mode="lines+markers",
+                    name=VARIABLES[i],
+                    marker={
+                        "color": colors[i % len(VARIABLES)],
+                        "size": 10,
+                        "symbol": "x"
+                    },
+                    showlegend=False
+                ),
+            ]
+        )
 
 
 # --------
@@ -364,7 +391,7 @@ def callback_map_position(update_chart):
     Input(component_id='hidden_variable_decomposition_trigger', component_property='value')
 )
 def callback_variable_decomposition(update_chart):
-    global VARIABLE_DECOMPOSITION, VARIABLE_DECOMPOSITION_CHART
+    global VARIABLE_DECOMPOSITION, VARIABLE_DECOMPOSITION_THR, VARIABLE_DECOMPOSITION_CHART
     if not update_chart:
         # print("not called variable")
         # do not update the chart
@@ -372,15 +399,22 @@ def callback_variable_decomposition(update_chart):
     # n_intervals: not used its given by the default reloader
     if len(VARIABLE_DECOMPOSITION) == 0:
         # no point, reset the chart
-        for i in range(6):
+        for i in range(len(VARIABLES)*2):
             print("resetting variable")
             VARIABLE_DECOMPOSITION_CHART["data"][i]["x"], VARIABLE_DECOMPOSITION_CHART["data"][i]["y"] = [], []
         return VARIABLE_DECOMPOSITION_CHART, semaphore_generator()
     points_copy = np.array(VARIABLE_DECOMPOSITION)
     x_axis = [k for k in range(len(VARIABLE_DECOMPOSITION))]
-    for i in range(6):
-        VARIABLE_DECOMPOSITION_CHART["data"][i]["x"], VARIABLE_DECOMPOSITION_CHART["data"][i]["y"] = \
+    count = 0
+    for i in range(len(VARIABLES)):
+        # calculate the period of anomaly
+        anomaly = np.where(points_copy[:, i] > VARIABLE_DECOMPOSITION_THR[i], points_copy[:, i], np.nan)
+        VARIABLE_DECOMPOSITION_CHART["data"][count]["x"], VARIABLE_DECOMPOSITION_CHART["data"][count]["y"] = \
             x_axis, points_copy[:, i]
+        count += 1
+        VARIABLE_DECOMPOSITION_CHART["data"][count]["x"], VARIABLE_DECOMPOSITION_CHART["data"][count]["y"] = \
+            x_axis, anomaly
+        count += 1
     print("updated variable")
     return VARIABLE_DECOMPOSITION_CHART, semaphore_generator()
 
