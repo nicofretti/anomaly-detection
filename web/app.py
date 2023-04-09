@@ -48,17 +48,20 @@ MAP_POSITION, VARIABLE_DECOMPOSITION = [], []
 
 def app_init():
     global MAP_POSITION, VARIABLES, VARIABLE_DECOMPOSITION
+    if debug:
+        MAP_POSITION = debug_constraints.DEBUG_MAP_POSITION
+        VARIABLE_DECOMPOSITION = debug_constraints.VARIABLE_DECOMPOSITION_DEBUG
     map_chart_init()
     variable_decomposition_chart_init()
     APP.title = "Anomaly Detection"
     APP.layout = html.Div(
         id="app",
         children=[
-            # Global interval for refreshing data
+            # global interval for refreshing data
             dcc.Interval(
                 id="interval-component",
                 interval=200,
-                n_intervals=0
+                n_intervals=0,
             ),
 
             # hidden input for the last position, if value is 0, the chart is not updated
@@ -151,9 +154,6 @@ def app_init():
             ),
         ],
     )
-    if debug:
-        MAP_POSITION = debug_constraints.DEBUG_MAP_POSITION
-        VARIABLE_DECOMPOSITION = debug_constraints.VARIABLE_DECOMPOSITION_DEBUG
 
 
 def semaphore_generator():
@@ -352,12 +352,16 @@ def api_commit():
         Output(component_id='hidden_map_position_trigger', component_property='value'),
         Output(component_id='hidden_variable_decomposition_trigger', component_property='value')
     ],
-    Input(component_id='interval-component', component_property='n_intervals')
+    Input(component_id='interval-component', component_property='n_intervals'),
+    Input(component_id='hidden_map_position_trigger', component_property='value'),
+    Input(component_id='hidden_variable_decomposition_trigger', component_property='value')
 )
-def callback_hidden_trigger(_):
-    global NEW_DATA
-    if not NEW_DATA:
+def callback_hidden_trigger(_, map_trigger, variable_trigger):
+    global NEW_DATA, MAP_CHART
+    # if charts are created and there are no new data, do not update the charts
+    if map_trigger and variable_trigger and not NEW_DATA:
         return 0, 0
+    # we have to update the charts, also them update their data
     NEW_DATA = False
     return 1, 1
 
