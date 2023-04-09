@@ -353,17 +353,15 @@ def api_commit():
         Output(component_id='hidden_variable_decomposition_trigger', component_property='value')
     ],
     Input(component_id='interval-component', component_property='n_intervals'),
-    Input(component_id='hidden_map_position_trigger', component_property='value'),
-    Input(component_id='hidden_variable_decomposition_trigger', component_property='value')
 )
-def callback_hidden_trigger(_, map_trigger, variable_trigger):
+def callback_hidden_trigger(_):
     global NEW_DATA, MAP_CHART
-    # if charts are created and there are no new data, do not update the charts
-    if map_trigger and variable_trigger and not NEW_DATA:
-        return 0, 0
+    if NEW_DATA:
+        NEW_DATA = False
+        # update the charts
+        return 1, 1
     # we have to update the charts, also them update their data
-    NEW_DATA = False
-    return 1, 1
+    return 0, 0
 
 
 @callback(
