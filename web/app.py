@@ -2,11 +2,12 @@ import json
 
 import dash
 import numpy as np
+import pandas as pd
 from dash import dcc, html, Output, Input, callback, ClientsideFunction, State
 from dash.exceptions import PreventUpdate
 from flask import Flask, request
 import plotly.graph_objects as go
-import debug as debug_costrants
+import debug as debug_constraints
 
 # --------
 # Global variables
@@ -49,7 +50,7 @@ def app_init():
     global MAP_POSITION, VARIABLES, VARIABLE_DECOMPOSITION
     map_chart_init()
     variable_decomposition_chart_init()
-    APP.title = "Anomaly Detection on Kairos"
+    APP.title = "Anomaly Detection"
     APP.layout = html.Div(
         id="app",
         children=[
@@ -79,7 +80,7 @@ def app_init():
                 className="banner text-5xl font-bold",
                 children=[
                     html.Div(className="fa fa-chart-bar text-blue-500"),
-                    html.H3("Anomaly Detection", className="ml-2 font-bold uppercase")
+                    html.H3("Anomaly Detection", className="ml-2 font-bold")
                 ]
             ),
             # left column
@@ -151,8 +152,8 @@ def app_init():
         ],
     )
     if debug:
-        MAP_POSITION = debug_costrants.DEBUG_MAP_POSITION
-        VARIABLE_DECOMPOSITION = debug_costrants.VARIABLE_DECOMPOSITION_DEBUG
+        MAP_POSITION = debug_constraints.DEBUG_MAP_POSITION
+        VARIABLE_DECOMPOSITION = debug_constraints.VARIABLE_DECOMPOSITION_DEBUG
 
 
 def semaphore_generator():
@@ -206,7 +207,7 @@ def map_chart_init():
             yanchor="top",
             y=0.99,
             xanchor="left",
-            x=.4,
+            x=.6,
             bgcolor="rgba(255, 255, 255, 0.9)"
         ),
         # string to maintain user selections
@@ -237,6 +238,23 @@ def map_chart_init():
             showlegend=True
         )
     ])
+    # Adding nominal position
+    nominal_0 = pd.read_csv('./data/nominal_0.csv').to_numpy()
+    nominal_1 = pd.read_csv('./data/nominal_1.csv').to_numpy()
+    MAP_CHART.add_traces([
+        go.Scatter(
+            x=nominal_0[:, 0], y=nominal_0[:, 1],
+            mode="lines",
+            line={"color": "green"},
+            name="nominal position 0",
+        ),
+        go.Scatter(
+            x=nominal_1[:, 0], y=nominal_1[:, 1],
+            mode="lines",
+            line={"color": "lightgreen"},
+            name="nominal position 1",
+        )
+    ])
 
 
 def variable_decomposition_chart_init():
@@ -255,14 +273,6 @@ def variable_decomposition_chart_init():
         margin=dict(l=0, r=0, t=30, b=0),
     )
     colors = ["blue", "purple", "green", "yellow", "brown", "orange"]
-    # VARIABLE_DECOMPOSITION_CHART.add_traces([
-    #    go.Scatter(
-    #        x=[], y=[],
-    #        mode="lines+markers",
-    #        name=VARIABLES[i],
-    #        marker={"color": colors[i % len(VARIABLES)], "size": 3}
-    #    ) for i in range(len(VARIABLES))
-    # ])
     for i in range(len(VARIABLES)):
         VARIABLE_DECOMPOSITION_CHART.add_traces(
             [
@@ -373,7 +383,6 @@ def callback_map_position(update_chart):
     points_copy = np.array(MAP_POSITION)
     x_plot, y_plot = points_copy[1:, 0], points_copy[1:, 1]
     anomaly = points_copy[1:, 2]
-    # Update only the charts without reloading!
     # correct behaviour
     MAP_CHART["data"][0]["x"], MAP_CHART["data"][0]["y"] = x_plot[anomaly == 0], y_plot[anomaly == 0]
     # anomaly
@@ -393,13 +402,12 @@ def callback_map_position(update_chart):
 def callback_variable_decomposition(update_chart):
     global VARIABLE_DECOMPOSITION, VARIABLE_DECOMPOSITION_THR, VARIABLE_DECOMPOSITION_CHART
     if not update_chart:
-        # print("not called variable")
         # do not update the chart
         raise PreventUpdate
     # n_intervals: not used its given by the default reloader
     if len(VARIABLE_DECOMPOSITION) == 0:
         # no point, reset the chart
-        for i in range(len(VARIABLES)*2):
+        for i in range(len(VARIABLES) * 2):
             print("resetting variable")
             VARIABLE_DECOMPOSITION_CHART["data"][i]["x"], VARIABLE_DECOMPOSITION_CHART["data"][i]["y"] = [], []
         return VARIABLE_DECOMPOSITION_CHART, semaphore_generator()
@@ -417,6 +425,24 @@ def callback_variable_decomposition(update_chart):
         count += 1
     print("updated variable")
     return VARIABLE_DECOMPOSITION_CHART, semaphore_generator()
+
+
+@callback(
+    Output(component_id="banner", component_property="children"),
+    Input(component_id='variable_decomposition_chart', component_property='restyleData')
+)
+def callback_update_variable_decomposition_options(layout):
+    global NEW_DATA
+    if not layout or len(layout) < 2:
+        raise PreventUpdate
+    chart = layout[1][0]
+    active = layout[0]["visible"][0] == True
+    # hide or show the chart (only anomaly)
+    VARIABLE_DECOMPOSITION_CHART["data"][chart + 1]["visible"] = active
+    # to trigger the update of the chart
+    NEW_DATA = True
+    # nothing to update
+    raise PreventUpdate
 
 
 if __name__ == "__main__":
