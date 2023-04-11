@@ -7,11 +7,14 @@ from dash import dcc, html, Output, Input, callback, ClientsideFunction, State
 from dash.exceptions import PreventUpdate
 from flask import Flask, request
 import plotly.graph_objects as go
+import paho.mqtt.client as mqtt
+
 import debug as debug_constraints
 
 # --------
 # Global variables
 # --------
+MQTT_CLIENT = None
 SERVER = Flask(__name__)
 APP = dash.Dash(
     __name__,
@@ -303,48 +306,6 @@ def variable_decomposition_chart_init():
 
 
 # --------
-# Custom apis
-# --------
-
-@SERVER.route("/map_position_insert", methods=['GET', 'POST'])
-def api_map_position_insert():
-    global NEW_DATA, MAP_POSITION
-    if request.method != 'POST':
-        return 'Method not allowed', 405
-    # bytes to dict
-    data = json.loads(request.data.decode('utf-8'))
-    MAP_POSITION.append([data["X"], data["Y"], data["anomaly"]])
-    # set new data to true, to trigger the update of the charts
-    NEW_DATA = True
-    # Return 200 OK
-    return "OK", 200
-
-
-@SERVER.route("/variable_decomposition_insert", methods=['GET', 'POST'])
-def api_variable_decomposition_insert():
-    global NEW_DATA, VARIABLE_DECOMPOSITION
-    if request.method != 'POST':
-        return 'Method not allowed', 405
-    data = json.loads(request.data.decode('utf-8'))
-    VARIABLE_DECOMPOSITION.append([data[var] for var in VARIABLES])
-    # set new data to true, to trigger the update of the charts
-    NEW_DATA = True
-    # Return 200
-    return "OK", 200
-
-
-@SERVER.route("/commit", methods=['GET', 'POST'])
-def api_commit():
-    global MAP_POSITION, VARIABLE_DECOMPOSITION
-    if request.method == 'GET':
-        # Here we reset the data
-        MAP_POSITION, VARIABLE_DECOMPOSITION = [], []
-        return "OK", 200
-    # TODO: implement save to database
-    return "Not implemented", 501
-
-
-# --------
 # Callbacks
 # --------
 @callback(
@@ -447,10 +408,105 @@ def callback_update_variable_decomposition_options(layout):
     raise PreventUpdate
 
 
+# function to add new data into the map_position chart
+def callback_map_position_insert(data):
+    global NEW_DATA
+    MAP_POSITION.append([data["X"], data["Y"], data["anomaly"]])
+    # set new data to true, to trigger the update of the charts
+    NEW_DATA = True
+
+
+# function to add new data into the variable_decomposition chart
+def callback_variable_decomposition_insert(data):
+    global NEW_DATA
+    VARIABLE_DECOMPOSITION.append([data[var] for var in VARIABLES])
+    # set new data to true, to trigger the update of the charts
+    NEW_DATA = True
+
+
+# --------
+# Custom apis
+# --------
+
+@SERVER.route("/map_position_insert", methods=['GET', 'POST'])
+def api_map_position_insert():
+    global NEW_DATA, MAP_POSITION
+    if request.method != 'POST':
+        return 'Method not allowed', 405
+    # bytes to dict
+    data = json.loads(request.data.decode('utf-8'))
+    callback_map_position_insert(data)
+    # Return 200 OK
+    return "OK", 200
+
+
+@SERVER.route("/variable_decomposition_insert", methods=['GET', 'POST'])
+def api_variable_decomposition_insert():
+    global NEW_DATA, VARIABLE_DECOMPOSITION
+    if request.method != 'POST':
+        return 'Method not allowed', 405
+    data = json.loads(request.data.decode('utf-8'))
+    callback_map_position_insert(data)
+    # Return 200
+    return "OK", 200
+
+
+@SERVER.route("/commit", methods=['GET', 'POST'])
+def api_commit():
+    global MAP_POSITION, VARIABLE_DECOMPOSITION
+    if request.method == 'GET':
+        # Here we reset the data
+        MAP_POSITION, VARIABLE_DECOMPOSITION = [], []
+        return "OK", 200
+    # TODO: implement save to database
+    return "Not implemented", 501
+
+
+# --------
+# mqtt client
+# --------
+def mqtt_init(host_srv, port_srv, topic_map_data, topic_variable_data):
+    print("Initializing mqtt client")
+    # initialize the mqtt client
+    client = mqtt.Client("web_interface")
+    # set the callback
+    client.on_message = mqtt_on_message
+    client.on_connect = mqtt_on_connect
+    # connect to the broker, the callback will be called
+    client.connect(host_srv, port_srv)
+    client.loop_start()
+
+
+def mqtt_on_connect(client, userdata, flags, rc):
+    # subscribe to the topic
+    client.subscribe("map_position_insert")
+    client.subscribe("variable_decomposition_insert")
+
+
+def mqtt_on_message(client, userdata, msg):
+    global MAP_POSITION, VARIABLE_DECOMPOSITION, NEW_DATA
+    print("Received message from topic: " + msg.topic)
+    # check the topic
+    if msg.topic == "map_position_insert":
+        # update the map position
+        callback_map_position_insert(json.loads(msg.payload))
+    elif msg.topic == "variable_decomposition_insert":
+        # update the variable decomposition
+        callback_variable_decomposition_insert(json.loads(msg.payload))
+
+
 if __name__ == "__main__":
     debug = True
-    host, port = '0.0.0.0', 8050
-    # Initialize the app
+    # app host and port
+    host, port = '0.0.0.0', 8080
+    # mqtt host and port
+    mqtt_host, mqtt_port = '0.0.0.0', 1883
+    # mqtt topics
+    mqtt_topic_map_data = "map_position_insert"
+    mqtt_topic_variable_data = "variable_decomposition_insert"
+    # initialize the mqtt client
+    mqtt_init(mqtt_host, mqtt_port, mqtt_topic_map_data, mqtt_topic_variable_data)
+    # initialize the app
     app_init()
     # Start the app
     APP.run(debug=debug, host=host, port=port)
