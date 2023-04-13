@@ -3,7 +3,7 @@ import json
 import dash
 import numpy as np
 import pandas as pd
-from dash import dcc, html, Output, Input, callback, ClientsideFunction, State
+from dash import dcc, html, Output, Input, callback
 from dash.exceptions import PreventUpdate
 from flask import Flask, request
 import plotly.graph_objects as go
@@ -14,7 +14,6 @@ import debug as debug_constraints
 # --------
 # Global variables
 # --------
-MQTT_CLIENT = None
 SERVER = Flask(__name__)
 APP = dash.Dash(
     __name__,
@@ -51,9 +50,9 @@ MAP_POSITION, VARIABLE_DECOMPOSITION = [], []
 
 def app_init():
     global MAP_POSITION, VARIABLES, VARIABLE_DECOMPOSITION
-    if debug:
-        MAP_POSITION = debug_constraints.DEBUG_MAP_POSITION
-        VARIABLE_DECOMPOSITION = debug_constraints.VARIABLE_DECOMPOSITION_DEBUG
+    # TODO: remove this
+    MAP_POSITION = debug_constraints.DEBUG_MAP_POSITION
+    VARIABLE_DECOMPOSITION = debug_constraints.VARIABLE_DECOMPOSITION_DEBUG
     map_chart_init()
     variable_decomposition_chart_init()
     APP.title = "Anomaly Detection"
@@ -332,10 +331,8 @@ def callback_hidden_trigger(_):
 def callback_map_position(update_chart):
     global MAP_CHART, MAP_POSITION
     if not update_chart:
-        # print("not called map")
         # do not update the chart
         raise PreventUpdate
-    print("called map")
     # n_intervals: not used its given by the default reloader
     if len(MAP_POSITION) == 0:
         # no point to display :( reset the map
@@ -371,7 +368,6 @@ def callback_variable_decomposition(update_chart):
     if len(VARIABLE_DECOMPOSITION) == 0:
         # no point, reset the chart
         for i in range(len(VARIABLES) * 2):
-            print("resetting variable")
             VARIABLE_DECOMPOSITION_CHART["data"][i]["x"], VARIABLE_DECOMPOSITION_CHART["data"][i]["y"] = [], []
         return VARIABLE_DECOMPOSITION_CHART, semaphore_generator()
     points_copy = np.array(VARIABLE_DECOMPOSITION)
@@ -386,7 +382,6 @@ def callback_variable_decomposition(update_chart):
         VARIABLE_DECOMPOSITION_CHART["data"][count]["x"], VARIABLE_DECOMPOSITION_CHART["data"][count]["y"] = \
             x_axis, anomaly
         count += 1
-    print("updated variable")
     return VARIABLE_DECOMPOSITION_CHART, semaphore_generator()
 
 
@@ -410,7 +405,7 @@ def callback_update_variable_decomposition_options(layout):
 
 # function to add new data into the map_position chart
 def callback_map_position_insert(data):
-    global NEW_DATA
+    global NEW_DATA, MAP_POSITION
     MAP_POSITION.append([data["X"], data["Y"], data["anomaly"]])
     # set new data to true, to trigger the update of the charts
     NEW_DATA = True
@@ -418,7 +413,7 @@ def callback_map_position_insert(data):
 
 # function to add new data into the variable_decomposition chart
 def callback_variable_decomposition_insert(data):
-    global NEW_DATA
+    global NEW_DATA, VARIABLE_DECOMPOSITION
     VARIABLE_DECOMPOSITION.append([data[var] for var in VARIABLES])
     # set new data to true, to trigger the update of the charts
     NEW_DATA = True
@@ -465,8 +460,7 @@ def api_commit():
 # --------
 # mqtt client
 # --------
-def mqtt_init(host_srv, port_srv, topic_map_data, topic_variable_data):
-    print("Initializing mqtt client")
+def mqtt_init(host_srv, port_srv):
     # initialize the mqtt client
     client = mqtt.Client("web_interface")
     # set the callback
@@ -485,7 +479,6 @@ def mqtt_on_connect(client, userdata, flags, rc):
 
 def mqtt_on_message(client, userdata, msg):
     global MAP_POSITION, VARIABLE_DECOMPOSITION, NEW_DATA
-    print("Received message from topic: " + msg.topic)
     # check the topic
     if msg.topic == "map_position_insert":
         # update the map position
@@ -496,17 +489,9 @@ def mqtt_on_message(client, userdata, msg):
 
 
 if __name__ == "__main__":
-    debug = True
-    # app host and port
-    host, port = '0.0.0.0', 8080
-    # mqtt host and port
-    mqtt_host, mqtt_port = '0.0.0.0', 1883
-    # mqtt topics
-    mqtt_topic_map_data = "map_position_insert"
-    mqtt_topic_variable_data = "variable_decomposition_insert"
-    # initialize the mqtt client
-    mqtt_init(mqtt_host, mqtt_port, mqtt_topic_map_data, mqtt_topic_variable_data)
-    # initialize the app
+    # initialize the app variables
     app_init()
+    # initialize the mqtt client
+    mqtt_init('0.0.0.0', 1883)
     # Start the app
-    APP.run(debug=debug, host=host, port=port)
+    APP.run(debug=False, host='0.0.0.0', port=8080)

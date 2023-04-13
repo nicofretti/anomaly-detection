@@ -27,9 +27,9 @@ def mqtt_sender(map_data, decomposition_data, timeout):
     m_lines = max(map_data.shape[0], decomposition_data.shape[0])
     for index in range(m_lines):
         if index < map_data.shape[0]:
-            client.publish(topic_map, json.dumps(map_data.iloc[index].to_dict()), qos=0, retain=False)
+            client.publish(topic_map, json.dumps(map_data.iloc[index].to_dict()))
         if index < decomposition_data.shape[0]:
-            client.publish(topic_decomposition, json.dumps(decomposition_data.iloc[index].to_dict()), qos=0, retain=False)
+            client.publish(topic_decomposition, json.dumps(decomposition_data.iloc[index].to_dict()))
         # Wait timeout seconds
         time.sleep(0.1)
         print(f"Sent {index} lines")
