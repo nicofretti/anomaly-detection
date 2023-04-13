@@ -1,37 +1,40 @@
 #!/usr/bin/env python
+import json
+
 import rospy
+# import paho.mqtt.client as mqtt
 from sensor_msgs.msg import LaserScan, JointState, Temperature, Imu
 from geometry_msgs.msg import Pose, Twist
-from nav_msgs.msg import Odometry
+# from nav_msgs.msg import Odometry
 
 from robot_local_control_msgs.msg import LocalizationStatus
 
 # to see execution time later
-import time
-from datetime import datetime
+# import time
+# from datetime import datetime
 
 # To load the HMM model already trained
 import pickle
 import math
 import numpy as np
-import pandas as pd
+# import pandas as pd
 from hmmlearn import hmm
 
 # Plot the data in real time
-import dash
-from dash.dependencies import Output, Input
-import dash_core_components as dcc
-import dash_html_components as html
-import plotly
-import plotly.graph_objs as go
+# import dash
+# from dash.dependencies import Output, Input
+# import dash_core_components as dcc
+# import dash_html_components as html
+# import plotly
+# import plotly.graph_objs as go
 
 # CSV library
 import csv
 
-import psutil
+# import psutil
 
-import os
-import signal
+#import os
+#import signal
 NEW_VERSION = True
 
 
@@ -256,53 +259,55 @@ def listener():
 
 
 # @app.callback(Output('live-graph', 'figure'), Input('graph-update', 'n_intervals'))
-def update_graph(n):
-    # Here we will call our sensors to plot
-    global points
-    if len(points) > 0:
-        points_array = np.array(points)
-        x = points_array[:, 0]
-        y = points_array[:, 1]
-        anomaly = points_array[:, 2]
-        color = np.where(anomaly == 1, 'red', 'blue')
-        data = go.Scatter(
-            x=x,
-            y=y,
-            mode='markers',
-            marker=dict(
-                color=color
-            )
-        )
-        return {
-            'data': [data],
-            'layout': go.Layout(
-                xaxis=dict(range=[-1.5, 0.5]),
-                yaxis=dict(range=[-5, 1])
-            )}
+#def update_graph(n):
+#    # Here we will call our sensors to plot
+#    global points
+#    if len(points) > 0:
+#        points_array = np.array(points)
+#        x = points_array[:, 0]
+#        y = points_array[:, 1]
+#        anomaly = points_array[:, 2]
+#        color = np.where(anomaly == 1, 'red', 'blue')
+#        data = go.Scatter(
+#            x=x,
+#            y=y,
+#            mode='markers',
+#            marker=dict(
+#                color=color
+#            )
+#        )
+#        return {
+#            'data': [data],
+#            'layout': go.Layout(
+#                xaxis=dict(range=[-1.5, 0.5]),
+#                yaxis=dict(range=[-5, 1])
+#            )}
 
 
 def map_update_callback(X, Y, anomaly):
     global map_filename
     # WRITE ALL THE ROWS ON A CSV FILE IN ORDER TO PLOT THE DATA
     # TODO: post on server
-    with open(map_filename, 'a') as map_csv:
-        writer = csv.writer(map_csv)
-        writer.writerow([X, Y, anomaly])
-
+    # with open(map_filename, 'a') as map_csv:
+    #     writer = csv.writer(map_csv)
+    #     writer.writerow([X, Y, anomaly])
     print("Position update: {} {}".format(X, Y))
+    #MQTT_CLIENT.publish("map_position_insert", json.dumps([X, Y, anomaly]))
 
 
 def variable_decomposition_callback(variables_decomposition):
     global h2_filename
     # TODO: post on server
-    with open(h2_filename, 'a') as h2_csv:
-        writer = csv.writer(h2_csv)
-        writer.writerow(variables_decomposition)
+    # with open(h2_filename, 'a') as h2_csv:
+    #     writer = csv.writer(h2_csv)w
+    #     writer.writerow(variables_decomposition)
     print("H2 update: {}".format(variables_decomposition))
+    #MQTT_CLIENT.publish("variable_decomposition_insert", json.dumps(variables_decomposition))
 
-
+# MQTT_CLIENT = False
 if __name__ == '__main__':
-
+    #MQTT_CLIENT = mqtt.Client("kairos")
+    #MQTT_CLIENT.connect(host='192.168.1.22', port=1883)
     map_filename = "map_data.csv"
     h2_filename = "h2_decomposition_data.csv"
     training_filename = "training_data.csv"
