@@ -82,10 +82,25 @@ def app_init():
             # banner
             html.Div(
                 id="banner",
-                className="banner text-5xl font-bold",
+                className="banner text-5xl font-bold flex justify-between items-center",
                 children=[
-                    html.Div(className="fa fa-chart-bar text-blue-500"),
-                    html.H3("Anomaly Detection", className="ml-2 font-bold")
+                    html.Div(
+                        className="flex items-center",
+                        children=[
+                            html.Div(className="fa fa-chart-bar text-blue-500"),
+                            html.H3("Anomaly Detection", className="ml-2 font-bold")
+                        ],
+                    ),
+                    # button to reset the charts
+                    html.Button(
+                        id="reset_button",
+                        className="bg-blue-500 text-xl hover:bg-blue-700 text-white font-bold py-2 px-4 rounded",
+                        style={"border": "none"},
+                        children=[
+                            html.Div(className="fa fa-redo-alt mr-2"),
+                            html.Span("Reset")
+                        ]
+                    )
                 ]
             ),
             # left column
@@ -401,7 +416,21 @@ def callback_update_variable_decomposition_options(layout):
     NEW_DATA = True
     # nothing to update
     raise PreventUpdate
-
+@callback(
+    Output(component_id="reset_button", component_property="children"),
+    Input(component_id='reset_button', component_property='n_clicks')
+)
+def callback_reset_button(n_clicks):
+    global NEW_DATA, MAP_POSITION, VARIABLE_DECOMPOSITION
+    if n_clicks is None:
+        raise PreventUpdate
+    # reset the charts
+    MAP_POSITION = []
+    VARIABLE_DECOMPOSITION = []
+    # to trigger the update of the charts
+    NEW_DATA = True
+    # nothing to update
+    raise PreventUpdate
 
 # function to add new data into the map_position chart
 def callback_map_position_insert(data):
