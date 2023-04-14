@@ -2,7 +2,7 @@
 import json
 
 import rospy
-# import paho.mqtt.client as mqtt
+import paho.mqtt.client as mqtt
 from sensor_msgs.msg import LaserScan, JointState, Temperature, Imu
 from geometry_msgs.msg import Pose, Twist
 # from nav_msgs.msg import Odometry
@@ -291,8 +291,13 @@ def map_update_callback(X, Y, anomaly):
     # with open(map_filename, 'a') as map_csv:
     #     writer = csv.writer(map_csv)
     #     writer.writerow([X, Y, anomaly])
-    print("Position update: {} {}".format(X, Y))
-    #MQTT_CLIENT.publish("map_position_insert", json.dumps([X, Y, anomaly]))
+    variables = ["X", "Y", "anomaly"]
+    data = {
+        "X": X,
+        "Y": Y,
+        "anomaly": anomaly
+    }
+    MQTT_CLIENT.publish("map_position_insert", json.dumps(data))
 
 
 def variable_decomposition_callback(variables_decomposition):
@@ -302,12 +307,16 @@ def variable_decomposition_callback(variables_decomposition):
     #     writer = csv.writer(h2_csv)w
     #     writer.writerow(variables_decomposition)
     print("H2 update: {}".format(variables_decomposition))
-    #MQTT_CLIENT.publish("variable_decomposition_insert", json.dumps(variables_decomposition))
+    variables = ["X", "Y", "O", "LS", "LC", "LD"]
+    data = dict()
+    for i in range(len(variables)):
+        data[variables[i]] = variables_decomposition[i]
+    MQTT_CLIENT.publish("variable_decomposition_insert", json.dumps(data))
 
-# MQTT_CLIENT = False
+MQTT_CLIENT = False
 if __name__ == '__main__':
-    #MQTT_CLIENT = mqtt.Client("kairos")
-    #MQTT_CLIENT.connect(host='192.168.1.22', port=1883)
+    MQTT_CLIENT = mqtt.Client("kairos")
+    MQTT_CLIENT.connect(host='157.27.184.45', port=1883)
     map_filename = "map_data.csv"
     h2_filename = "h2_decomposition_data.csv"
     training_filename = "training_data.csv"

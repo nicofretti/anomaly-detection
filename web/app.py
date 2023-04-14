@@ -479,6 +479,7 @@ def mqtt_on_connect(client, userdata, flags, rc):
 
 def mqtt_on_message(client, userdata, msg):
     global MAP_POSITION, VARIABLE_DECOMPOSITION, NEW_DATA
+    print(str(msg.topic))
     # check the topic
     if msg.topic == "map_position_insert":
         # update the map position
