@@ -291,11 +291,10 @@ def map_update_callback(X, Y, anomaly):
     # with open(map_filename, 'a') as map_csv:
     #     writer = csv.writer(map_csv)
     #     writer.writerow([X, Y, anomaly])
-    variables = ["X", "Y", "anomaly"]
     data = {
-        "X": X,
-        "Y": Y,
-        "anomaly": anomaly
+        "X": round(X, 3),
+        "Y": round(Y, 3),
+        "anomaly": 1 if anomaly else 0
     }
     MQTT_CLIENT.publish("map_position_insert", json.dumps(data))
 
@@ -306,7 +305,7 @@ def variable_decomposition_callback(variables_decomposition):
     # with open(h2_filename, 'a') as h2_csv:
     #     writer = csv.writer(h2_csv)w
     #     writer.writerow(variables_decomposition)
-    print("H2 update: {}".format(variables_decomposition))
+    # print("H2 update: {}".format(variables_decomposition))
     variables = ["X", "Y", "O", "LS", "LC", "LD"]
     data = dict()
     for i in range(len(variables)):
