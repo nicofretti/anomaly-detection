@@ -7,9 +7,9 @@ from dash import dcc, html, Output, Input, callback
 from dash.exceptions import PreventUpdate
 from flask import Flask, request
 import plotly.graph_objects as go
-import paho.mqtt.client as mqtt
 
-import debug as debug_constraints
+from controllers.charts_controller import ChartsController
+import paho.mqtt.client as mqtt
 
 # --------
 # Global variables
@@ -37,11 +37,9 @@ APP = dash.Dash(
         }
     ]
 )
-NEW_DATA = True
-VARIABLES = ["X", "Y", "O", "LS", "LC", "LD"]
-VARIABLE_DECOMPOSITION_THR = [1.26020238, 6.67861522, 0.4251171, 0.70920265, 0.94272347, 0.89692743]
 MAP_CHART, VARIABLE_DECOMPOSITION_CHART = {}, {}
-MAP_POSITION, VARIABLE_DECOMPOSITION = [], []
+CHARTS_CONTROLLER = ChartsController(["X", "Y", "O", "LS", "LC", "LD"],
+                                     [1.26020238, 6.67861522, 0.4251171, 0.70920265, 0.94272347, 0.89692743])
 
 
 # -------
@@ -49,10 +47,7 @@ MAP_POSITION, VARIABLE_DECOMPOSITION = [], []
 # -------
 
 def app_init():
-    global MAP_POSITION, VARIABLES, VARIABLE_DECOMPOSITION
-    # TODO: remove this
-    MAP_POSITION = debug_constraints.DEBUG_MAP_POSITION
-    VARIABLE_DECOMPOSITION = debug_constraints.VARIABLE_DECOMPOSITION_DEBUG
+    global CHARTS_CONTROLLER
     map_chart_init()
     variable_decomposition_chart_init()
     APP.title = "Anomaly Detection"
@@ -177,16 +172,16 @@ def app_init():
 
 
 def semaphore_generator():
-    global VARIABLE_DECOMPOSITION, VARIABLE_DECOMPOSITION_THR
+    global CHARTS_CONTROLLER
     r = []
-    if not VARIABLE_DECOMPOSITION or len(VARIABLE_DECOMPOSITION) == 0:
+    if not CHARTS_CONTROLLER.decomposition or len(CHARTS_CONTROLLER.decomposition) == 0:
         # semaphore are all green, no anomaly detected
-        last_anomaly = np.zeros(len(VARIABLES))
+        last_anomaly = np.zeros(len(CHARTS_CONTROLLER.variables))
     else:
         # there are datas, we calculate the last anomaly
-        last_anomaly = VARIABLE_DECOMPOSITION[-1]
-    for i in range(len(VARIABLES)):
-        active = last_anomaly[i] > VARIABLE_DECOMPOSITION_THR[i]
+        last_anomaly = CHARTS_CONTROLLER.decomposition[-1]
+    for i in range(len(CHARTS_CONTROLLER.variables)):
+        active = last_anomaly[i] > CHARTS_CONTROLLER.decomposition_thr[i]
         r.append(
             html.Div(
                 className="flex justify-start items-center text-2xl my-1",
@@ -194,7 +189,7 @@ def semaphore_generator():
                     html.Div(
                         className="fa fa-circle mr-2 {}".format("text-red-500" if active else "text-green-500"),
                     ),
-                    VARIABLES[i]
+                    CHARTS_CONTROLLER.variables[i]
                 ])
         )
     return r
@@ -278,7 +273,7 @@ def map_chart_init():
 
 
 def variable_decomposition_chart_init():
-    global VARIABLES, VARIABLE_DECOMPOSITION_CHART
+    global CHARTS_CONTROLLER, VARIABLE_DECOMPOSITION_CHART
     VARIABLE_DECOMPOSITION_CHART = go.Figure()
     VARIABLE_DECOMPOSITION_CHART.update_layout(
         legend=dict(
@@ -293,16 +288,16 @@ def variable_decomposition_chart_init():
         margin=dict(l=0, r=0, t=30, b=0),
     )
     colors = ["blue", "purple", "green", "yellow", "brown", "orange"]
-    for i in range(len(VARIABLES)):
+    for i in range(len(CHARTS_CONTROLLER.variables)):
         VARIABLE_DECOMPOSITION_CHART.add_traces(
             [
                 # correct behaviour for the i-th variable
                 go.Scatter(
                     x=[], y=[],
                     mode="lines+markers",
-                    name=VARIABLES[i],
+                    name=CHARTS_CONTROLLER.variables[i],
                     marker={
-                        "color": colors[i % len(VARIABLES)],
+                        "color": colors[i % len(CHARTS_CONTROLLER.variables)],
                         "size": 3
                     },
                 ),
@@ -310,9 +305,9 @@ def variable_decomposition_chart_init():
                 go.Scatter(
                     x=[], y=[],
                     mode="lines+markers",
-                    name=VARIABLES[i],
+                    name=CHARTS_CONTROLLER.variables[i],
                     marker={
-                        "color": colors[i % len(VARIABLES)],
+                        "color": colors[i % len(CHARTS_CONTROLLER.variables)],
                         "size": 10,
                         "symbol": "x"
                     },
@@ -333,9 +328,9 @@ def variable_decomposition_chart_init():
     Input(component_id='interval-component', component_property='n_intervals'),
 )
 def callback_hidden_trigger(_):
-    global NEW_DATA, MAP_CHART
-    if NEW_DATA:
-        NEW_DATA = False
+    global CHARTS_CONTROLLER
+    if CHARTS_CONTROLLER.can_update():
+        CHARTS_CONTROLLER.update_charts(False)
         # update the charts
         return 1, 1
     # we have to update the charts, also them update their data
@@ -347,18 +342,18 @@ def callback_hidden_trigger(_):
     Input(component_id='hidden_map_position_trigger', component_property='value')
 )
 def callback_map_position(update_chart):
-    global MAP_CHART, MAP_POSITION
+    global MAP_CHART, CHARTS_CONTROLLER
     if not update_chart:
         # do not update the chart
         raise PreventUpdate
     # n_intervals: not used its given by the default reloader
-    if len(MAP_POSITION) == 0:
+    if len(CHARTS_CONTROLLER.position) == 0:
         # no point to display :( reset the map
         for i in range(3):
             MAP_CHART["data"][i]["x"], MAP_CHART["data"][i]["y"] = [], []
         return MAP_CHART
     # store our points
-    points_copy = np.array(MAP_POSITION)
+    points_copy = np.array(CHARTS_CONTROLLER.position)
     x_plot, y_plot = points_copy[1:, 0], points_copy[1:, 1]
     anomaly = points_copy[1:, 2]
     # correct behaviour
@@ -378,22 +373,22 @@ def callback_map_position(update_chart):
     Input(component_id='hidden_variable_decomposition_trigger', component_property='value')
 )
 def callback_variable_decomposition(update_chart):
-    global VARIABLE_DECOMPOSITION, VARIABLE_DECOMPOSITION_THR, VARIABLE_DECOMPOSITION_CHART
+    global CHARTS_CONTROLLER, VARIABLE_DECOMPOSITION_CHART
     if not update_chart:
         # do not update the chart
         raise PreventUpdate
     # n_intervals: not used its given by the default reloader
-    if len(VARIABLE_DECOMPOSITION) == 0:
+    if len(CHARTS_CONTROLLER.decomposition) == 0:
         # no point, reset the chart
-        for i in range(len(VARIABLES) * 2):
+        for i in range(len(CHARTS_CONTROLLER.variables) * 2):
             VARIABLE_DECOMPOSITION_CHART["data"][i]["x"], VARIABLE_DECOMPOSITION_CHART["data"][i]["y"] = [], []
         return VARIABLE_DECOMPOSITION_CHART, semaphore_generator()
-    points_copy = np.array(VARIABLE_DECOMPOSITION)
-    x_axis = [k for k in range(len(VARIABLE_DECOMPOSITION))]
+    points_copy = np.array(CHARTS_CONTROLLER.decomposition)
+    x_axis = [k for k in range(len(CHARTS_CONTROLLER.decomposition))]
     count = 0
-    for i in range(len(VARIABLES)):
+    for i in range(len(CHARTS_CONTROLLER.variables)):
         # calculate the period of anomaly
-        anomaly = np.where(points_copy[:, i] > VARIABLE_DECOMPOSITION_THR[i], points_copy[:, i], np.nan)
+        anomaly = np.where(points_copy[:, i] > CHARTS_CONTROLLER.decomposition_thr[i], points_copy[:, i], np.nan)
         VARIABLE_DECOMPOSITION_CHART["data"][count]["x"], VARIABLE_DECOMPOSITION_CHART["data"][count]["y"] = \
             x_axis, points_copy[:, i]
         count += 1
@@ -408,7 +403,7 @@ def callback_variable_decomposition(update_chart):
     Input(component_id='variable_decomposition_chart', component_property='restyleData')
 )
 def callback_update_variable_decomposition_options(layout):
-    global NEW_DATA
+    global CHARTS_CONTROLLER
     if not layout or len(layout) < 2:
         raise PreventUpdate
     chart = layout[1][0]
@@ -416,7 +411,7 @@ def callback_update_variable_decomposition_options(layout):
     # hide or show the chart (only anomaly)
     VARIABLE_DECOMPOSITION_CHART["data"][chart + 1]["visible"] = active
     # to trigger the update of the chart
-    NEW_DATA = True
+    CHARTS_CONTROLLER.update_charts(True)
     # nothing to update
     raise PreventUpdate
 
@@ -426,37 +421,13 @@ def callback_update_variable_decomposition_options(layout):
     Input(component_id='reset_button', component_property='n_clicks')
 )
 def callback_reset_button(n_clicks):
-    global NEW_DATA, MAP_POSITION, VARIABLE_DECOMPOSITION
+    global CHARTS_CONTROLLER
     if n_clicks is None:
         raise PreventUpdate
     # reset the charts
-    core_reset()
+    CHARTS_CONTROLLER.reset()
     # nothing to update
     raise PreventUpdate
-
-
-# function to add new data into the map_position chart
-def core_map_position_insert(data):
-    global NEW_DATA, MAP_POSITION
-    MAP_POSITION.append([data["X"], data["Y"], data["anomaly"]])
-    # set new data to true, to trigger the update of the charts
-    NEW_DATA = True
-
-
-# function to add new data into the variable_decomposition chart
-def core_variable_decomposition_insert(data):
-    global NEW_DATA, VARIABLE_DECOMPOSITION
-    VARIABLE_DECOMPOSITION.append([data[var] for var in VARIABLES])
-    # set new data to true, to trigger the update of the charts
-    NEW_DATA = True
-
-
-def core_reset():
-    global NEW_DATA, MAP_POSITION, VARIABLE_DECOMPOSITION
-    # reset the charts
-    MAP_POSITION, VARIABLE_DECOMPOSITION = [], []
-    # to trigger the update of the charts
-    NEW_DATA = True
 
 
 # --------
@@ -465,33 +436,31 @@ def core_reset():
 
 @SERVER.route("/map_position_insert", methods=['GET', 'POST'])
 def api_map_position_insert():
-    global NEW_DATA, MAP_POSITION
+    global CHARTS_CONTROLLER
     if request.method != 'POST':
         return 'Method not allowed', 405
     # bytes to dict
-    data = json.loads(request.data.decode('utf-8'))
-    core_map_position_insert(data)
+    CHARTS_CONTROLLER.map_position_insert(json.loads(request.data.decode('utf-8')))
     # Return 200 OK
     return "OK", 200
 
 
 @SERVER.route("/variable_decomposition_insert", methods=['GET', 'POST'])
 def api_variable_decomposition_insert():
-    global NEW_DATA, VARIABLE_DECOMPOSITION
+    global CHARTS_CONTROLLER
     if request.method != 'POST':
         return 'Method not allowed', 405
-    data = json.loads(request.data.decode('utf-8'))
-    core_map_position_insert(data)
+    CHARTS_CONTROLLER.variable_decomposition_insert(json.loads(request.data.decode('utf-8')))
     # Return 200
     return "OK", 200
 
 
 @SERVER.route("/commit", methods=['GET', 'POST'])
 def api_commit():
-    global MAP_POSITION, VARIABLE_DECOMPOSITION
+    global CHARTS_CONTROLLER
     if request.method == 'GET':
         # Here we reset the data
-        MAP_POSITION, VARIABLE_DECOMPOSITION = [], []
+        CHARTS_CONTROLLER.reset()
         return "OK", 200
     # TODO: implement save to database
     return "Not implemented", 501
@@ -518,15 +487,15 @@ def mqtt_on_connect(client, userdata, flags, rc):
 
 
 def mqtt_on_message(client, userdata, msg):
-    global MAP_POSITION, VARIABLE_DECOMPOSITION, NEW_DATA
-    # print(str(msg.topic))
+    global CHARTS_CONTROLLER
     # check the topic
     if msg.topic == "map_position_insert":
         # update the map position
-        core_map_position_insert(json.loads(msg.payload))
+        CHARTS_CONTROLLER.map_position_insert(json.loads(msg.payload))
+
     elif msg.topic == "variable_decomposition_insert":
         # update the variable decomposition
-        core_variable_decomposition_insert(json.loads(msg.payload))
+        CHARTS_CONTROLLER.variable_decomposition_insert(json.loads(msg.payload))
 
 
 if __name__ == "__main__":
