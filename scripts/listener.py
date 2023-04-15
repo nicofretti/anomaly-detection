@@ -17,7 +17,7 @@ import numpy as np
 from hmmlearn import hmm
 
 # CSV library
-import csv
+# import csv
 
 CONFIG = configparser.ConfigParser()
 CONFIG.read('src/anomalydetectionkairos/scripts/config.ini')
@@ -230,46 +230,6 @@ def listener():
     rospy.spin()
 
 
-# NEW GUI: TO BE FINISHED
-# app = dash.Dash(__name__)
-# app.layout = html.Div(
-#     [
-#         dcc.Graph(id='live-graph', animate=True),
-#         dcc.Interval(
-#             id='graph-update',
-#             interval=1000,
-#             n_intervals=0
-#         )
-#     ]
-# )
-
-
-# @app.callback(Output('live-graph', 'figure'), Input('graph-update', 'n_intervals'))
-# def update_graph(n):
-#    # Here we will call our sensors to plot
-#    global points
-#    if len(points) > 0:
-#        points_array = np.array(points)
-#        x = points_array[:, 0]
-#        y = points_array[:, 1]
-#        anomaly = points_array[:, 2]
-#        color = np.where(anomaly == 1, 'red', 'blue')
-#        data = go.Scatter(
-#            x=x,
-#            y=y,
-#            mode='markers',
-#            marker=dict(
-#                color=color
-#            )
-#        )
-#        return {
-#            'data': [data],
-#            'layout': go.Layout(
-#                xaxis=dict(range=[-1.5, 0.5]),
-#                yaxis=dict(range=[-5, 1])
-#            )}
-
-
 def map_update_callback(X, Y, anomaly):
     # global map_filename
     # WRITE ALL THE ROWS ON A CSV FILE IN ORDER TO PLOT THE DATA
@@ -355,7 +315,7 @@ if __name__ == '__main__':
     hellinger_distances = []
     # h2_thr = np.zeros((6))
     # DATASET NOMNALE 2
-    h2_thr = [1.26020238, 6.67861522, 0.4251171, 0.70920265, 0.94272347, 0.89692743]
+    h2_thr = list(map(float, CONFIG["charts"]["decomposition_thr"].strip().split(",")))
 
     # HMM model takes the X, Y, Orientation, Left, Front and Right Lasers.
     # The orientation is taken has Euler Angles, so remember to convert them.
@@ -383,6 +343,3 @@ if __name__ == '__main__':
 
     # ROS NODE FOR READING SENSORS
     listener()
-
-    # app.run_server(Debug=True)
-    # print("Running Server!")
