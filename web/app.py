@@ -15,6 +15,9 @@ import paho.mqtt.client as mqtt
 # --------
 # Global variables
 # --------
+# in the config file set up the server options
+CONFIG = configparser.ConfigParser()
+CONFIG.read('config.ini')
 SERVER = Flask(__name__)
 APP = dash.Dash(
     __name__,
@@ -478,9 +481,10 @@ def mqtt_init(host_srv, port_srv):
 
 
 def mqtt_on_connect(client, userdata, flags, rc):
+    global CONFIG
     # subscribe to the topic
-    client.subscribe("map_position_insert")
-    client.subscribe("variable_decomposition_insert")
+    client.subscribe(CONFIG["mqtt"]["map_topic"])
+    client.subscribe(CONFIG["mqtt"]["decomposition_topic"])
 
 
 def mqtt_on_message(client, userdata, msg):
@@ -496,17 +500,14 @@ def mqtt_on_message(client, userdata, msg):
 
 
 if __name__ == "__main__":
-    # in the config file set up the server options
-    config = configparser.ConfigParser()
-    config.read('config.ini')
     # init the controller with the configuration
     CHARTS_CONTROLLER = ChartsController(
-        config["charts"]["decomposition_variables"].split(","),
-        list(map(float, config["charts"]["decomposition_thr"].strip().split(","))),
+        CONFIG["charts"]["decomposition_variables"].split(","),
+        list(map(float, CONFIG["charts"]["decomposition_thr"].strip().split(","))),
     )
     # initialize the app variables
     app_init()
     # initialize the mqtt client
-    mqtt_init(config["mqtt"]["host"], int(config["mqtt"]["port"]))
+    mqtt_init(CONFIG["mqtt"]["host"], int(CONFIG["mqtt"]["port"]))
     # Start the app
-    APP.run(debug=False, host=config["app"]["host"], port=int(config["app"]["port"]))
+    APP.run(debug=False, host=CONFIG["app"]["host"], port=int(CONFIG["app"]["port"]))

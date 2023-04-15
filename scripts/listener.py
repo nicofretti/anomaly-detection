@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import configparser
 import json
 
 import rospy
@@ -9,33 +10,18 @@ from geometry_msgs.msg import Pose, Twist
 
 from robot_local_control_msgs.msg import LocalizationStatus
 
-# to see execution time later
-# import time
-# from datetime import datetime
-
 # To load the HMM model already trained
 import pickle
 import math
 import numpy as np
-# import pandas as pd
 from hmmlearn import hmm
-
-# Plot the data in real time
-# import dash
-# from dash.dependencies import Output, Input
-# import dash_core_components as dcc
-# import dash_html_components as html
-# import plotly
-# import plotly.graph_objs as go
 
 # CSV library
 import csv
 
-# import psutil
-
-#import os
-#import signal
-NEW_VERSION = True
+CONFIG = configparser.ConfigParser()
+CONFIG.read('src/anomalydetectionkairos/scripts/config.ini')
+NEW_VERSION = bool(CONFIG["kairos"]["new_version"])
 
 
 def quaternion_to_euler(w, x, y, z):
@@ -194,9 +180,9 @@ def robot_pose_callback(data):
         Y = Y - Y_first
         row[0:3] = [X, Y, Z_orientation]
         dataHMM = np.append(dataHMM, np.array([row]), axis=0)
-        with open(training_filename, 'a') as train_csv:
-            writer = csv.writer(train_csv, delimiter=',')
-            writer.writerow(row)
+        # with open(training_filename, 'a') as train_csv:
+        #     writer = csv.writer(train_csv, delimiter=',')
+        #     writer.writerow(row)
         n_rows = np.shape(dataHMM)[0]
         # when the number of rows, so the number of collected data is equal to the window length
         # I process the data using the HMM
@@ -259,7 +245,7 @@ def listener():
 
 
 # @app.callback(Output('live-graph', 'figure'), Input('graph-update', 'n_intervals'))
-#def update_graph(n):
+# def update_graph(n):
 #    # Here we will call our sensors to plot
 #    global points
 #    if len(points) > 0:
@@ -285,54 +271,54 @@ def listener():
 
 
 def map_update_callback(X, Y, anomaly):
-    global map_filename
+    # global map_filename
     # WRITE ALL THE ROWS ON A CSV FILE IN ORDER TO PLOT THE DATA
     # TODO: post on server
     # with open(map_filename, 'a') as map_csv:
     #     writer = csv.writer(map_csv)
     #     writer.writerow([X, Y, anomaly])
+    print("Map update: {}, {}, {}".format(X, Y, anomaly))
     data = {
         "X": round(X, 3),
         "Y": round(Y, 3),
         "anomaly": 1 if anomaly else 0
     }
-    MQTT_CLIENT.publish("map_position_insert", json.dumps(data))
+    MQTT_CLIENT.publish(CONFIG["mqtt"]["map_topic"], json.dumps(data))
 
 
 def variable_decomposition_callback(variables_decomposition):
-    global h2_filename
+    # global h2_filename
     # TODO: post on server
     # with open(h2_filename, 'a') as h2_csv:
     #     writer = csv.writer(h2_csv)w
     #     writer.writerow(variables_decomposition)
-    # print("H2 update: {}".format(variables_decomposition))
+    print("H2 update: {} {}".format(variables_decomposition[0], variables_decomposition[1]))
     variables = ["X", "Y", "O", "LS", "LC", "LD"]
     data = dict()
     for i in range(len(variables)):
         data[variables[i]] = variables_decomposition[i]
-    MQTT_CLIENT.publish("variable_decomposition_insert", json.dumps(data))
+    MQTT_CLIENT.publish(CONFIG["mqtt"]["decomposition_topic"], json.dumps(data))
+
 
 MQTT_CLIENT = False
 if __name__ == '__main__':
     MQTT_CLIENT = mqtt.Client("kairos")
     MQTT_CLIENT.connect(host='157.27.184.45', port=1883)
-    map_filename = "map_data.csv"
-    h2_filename = "h2_decomposition_data.csv"
-    training_filename = "training_data.csv"
-    with open(map_filename, 'w') as map_csv:
-        writer = csv.writer(map_csv)
-        head = ['X', 'Y', 'anomaly']
-        writer.writerow(head)
-
-    with open(h2_filename, 'w') as h2_csv:
-        writer = csv.writer(h2_csv)
-        head = ['X', 'Y', 'O', 'LS', 'LC', 'LD']
-        writer.writerow(head)
-
-    with open(training_filename, 'w') as h2_csv:
-        writer = csv.writer(h2_csv)
-        head = ['X', 'Y', 'O', 'LS', 'LC', 'LD']
-        writer.writerow(head)
+    # map_filename = "map_data.csv"
+    # h2_filename = "h2_decomposition_data.csv"
+    # training_filename = "training_data.csv"
+    # with open(map_filename, 'w') as map_csv:
+    #    writer = csv.writer(map_csv)
+    #    head = ['X', 'Y', 'anomaly']
+    #    writer.writerow(head)
+    # with open(h2_filename, 'w') as h2_csv:
+    #    writer = csv.writer(h2_csv)
+    #    head = ['X', 'Y', 'O', 'LS', 'LC', 'LD']
+    #    writer.writerow(head)
+    # with open(training_filename, 'w') as h2_csv:
+    #    writer = csv.writer(h2_csv)
+    #    head = ['X', 'Y', 'O', 'LS', 'LC', 'LD']
+    #    writer.writerow(head)
 
     if not NEW_VERSION:
         # OLD USED TOPICS
