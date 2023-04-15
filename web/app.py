@@ -97,8 +97,11 @@ def app_init():
                         className="bg-blue-500 text-xl hover:bg-blue-700 text-white font-bold py-2 px-4 rounded",
                         style={"border": "none"},
                         children=[
-                            html.Div(className="fa fa-redo-alt mr-2"),
-                            html.Span("Reset")
+                            html.Div(className="fa fa-redo-alt mr-2 text-white"),
+                            html.Span(
+                                className="text-white",
+                                children="Reset"
+                            )
                         ]
                     )
                 ]
@@ -416,6 +419,8 @@ def callback_update_variable_decomposition_options(layout):
     NEW_DATA = True
     # nothing to update
     raise PreventUpdate
+
+
 @callback(
     Output(component_id="reset_button", component_property="children"),
     Input(component_id='reset_button', component_property='n_clicks')
@@ -425,15 +430,13 @@ def callback_reset_button(n_clicks):
     if n_clicks is None:
         raise PreventUpdate
     # reset the charts
-    MAP_POSITION = []
-    VARIABLE_DECOMPOSITION = []
-    # to trigger the update of the charts
-    NEW_DATA = True
+    core_reset()
     # nothing to update
     raise PreventUpdate
 
+
 # function to add new data into the map_position chart
-def callback_map_position_insert(data):
+def core_map_position_insert(data):
     global NEW_DATA, MAP_POSITION
     MAP_POSITION.append([data["X"], data["Y"], data["anomaly"]])
     # set new data to true, to trigger the update of the charts
@@ -441,10 +444,18 @@ def callback_map_position_insert(data):
 
 
 # function to add new data into the variable_decomposition chart
-def callback_variable_decomposition_insert(data):
+def core_variable_decomposition_insert(data):
     global NEW_DATA, VARIABLE_DECOMPOSITION
     VARIABLE_DECOMPOSITION.append([data[var] for var in VARIABLES])
     # set new data to true, to trigger the update of the charts
+    NEW_DATA = True
+
+
+def core_reset():
+    global NEW_DATA, MAP_POSITION, VARIABLE_DECOMPOSITION
+    # reset the charts
+    MAP_POSITION, VARIABLE_DECOMPOSITION = [], []
+    # to trigger the update of the charts
     NEW_DATA = True
 
 
@@ -459,7 +470,7 @@ def api_map_position_insert():
         return 'Method not allowed', 405
     # bytes to dict
     data = json.loads(request.data.decode('utf-8'))
-    callback_map_position_insert(data)
+    core_map_position_insert(data)
     # Return 200 OK
     return "OK", 200
 
@@ -470,7 +481,7 @@ def api_variable_decomposition_insert():
     if request.method != 'POST':
         return 'Method not allowed', 405
     data = json.loads(request.data.decode('utf-8'))
-    callback_map_position_insert(data)
+    core_map_position_insert(data)
     # Return 200
     return "OK", 200
 
@@ -508,14 +519,14 @@ def mqtt_on_connect(client, userdata, flags, rc):
 
 def mqtt_on_message(client, userdata, msg):
     global MAP_POSITION, VARIABLE_DECOMPOSITION, NEW_DATA
-    print(str(msg.topic))
+    # print(str(msg.topic))
     # check the topic
     if msg.topic == "map_position_insert":
         # update the map position
-        callback_map_position_insert(json.loads(msg.payload))
+        core_map_position_insert(json.loads(msg.payload))
     elif msg.topic == "variable_decomposition_insert":
         # update the variable decomposition
-        callback_variable_decomposition_insert(json.loads(msg.payload))
+        core_variable_decomposition_insert(json.loads(msg.payload))
 
 
 if __name__ == "__main__":
