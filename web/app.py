@@ -1,3 +1,4 @@
+import configparser
 import json
 
 import dash
@@ -38,9 +39,7 @@ APP = dash.Dash(
     ]
 )
 MAP_CHART, VARIABLE_DECOMPOSITION_CHART = {}, {}
-CHARTS_CONTROLLER = ChartsController(["X", "Y", "O", "LS", "LC", "LD"],
-                                     [1.26020238, 6.67861522, 0.4251171, 0.70920265, 0.94272347, 0.89692743])
-
+CHARTS_CONTROLLER = None
 
 # -------
 # Layout methods
@@ -346,7 +345,6 @@ def callback_map_position(update_chart):
     if not update_chart:
         # do not update the chart
         raise PreventUpdate
-    # n_intervals: not used its given by the default reloader
     if len(CHARTS_CONTROLLER.position) == 0:
         # no point to display :( reset the map
         for i in range(3):
@@ -377,7 +375,6 @@ def callback_variable_decomposition(update_chart):
     if not update_chart:
         # do not update the chart
         raise PreventUpdate
-    # n_intervals: not used its given by the default reloader
     if len(CHARTS_CONTROLLER.decomposition) == 0:
         # no point, reset the chart
         for i in range(len(CHARTS_CONTROLLER.variables) * 2):
@@ -499,9 +496,17 @@ def mqtt_on_message(client, userdata, msg):
 
 
 if __name__ == "__main__":
+    # in the config file set up the server options
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    # init the controller with the configuration
+    CHARTS_CONTROLLER = ChartsController(
+        config["charts"]["decomposition_variables"].split(","),
+        list(map(float, config["charts"]["decomposition_thr"].strip().split(","))),
+    )
     # initialize the app variables
     app_init()
     # initialize the mqtt client
-    mqtt_init('0.0.0.0', 1883)
+    mqtt_init(config["mqtt"]["host"], int(config["mqtt"]["port"]))
     # Start the app
-    APP.run(debug=False, host='0.0.0.0', port=8080)
+    APP.run(debug=False, host=config["app"]["host"], port=int(config["app"]["port"]))

@@ -37,8 +37,8 @@ def mqtt_sender(map_data, decomposition_data, timeout):
 
 
 if __name__ == "__main__":
-    h2_decomposition_filename = "./data/h2_decomposition_data.csv"
-    map_data_filename = "./data/map_data.csv"
+    h2_decomposition_filename = "../data/h2_decomposition_data.csv"
+    map_data_filename = "../data/map_data.csv"
     timeout = .1
     csv_decomposition = pd.read_csv(h2_decomposition_filename)
     csv_map_data = pd.read_csv(map_data_filename)
