@@ -44,6 +44,7 @@ APP = dash.Dash(
 MAP_CHART, VARIABLE_DECOMPOSITION_CHART = {}, {}
 CHARTS_CONTROLLER = None
 
+
 # -------
 # Layout methods
 # -------
@@ -85,7 +86,7 @@ def app_init():
                         className="flex items-center",
                         children=[
                             html.Div(className="fa fa-chart-bar text-blue-500"),
-                            html.H3("Anomaly Detection", className="ml-2 font-bold")
+                            html.H3("Anomaly Detection", className="ml-3 font-bold")
                         ],
                     ),
                     # button to reset the charts
@@ -123,8 +124,8 @@ def app_init():
                                 className="p-8",
                                 children=[
                                     html.P(
-                                        className="text-left text-3xl font-bold pl-2 text-blue-500",
-                                        children="ICE LAB MAP"
+                                        className="text-left text-4xl font-bold pl-2",
+                                        children="Ice lab map"
                                     ),
                                     dcc.Graph(
                                         id="map_position_chart",
@@ -141,8 +142,8 @@ def app_init():
                                 className="p-8 w-full relative",
                                 children=[
                                     html.P(
-                                        className="text-left text-3xl font-bold pl-2 text-blue-500",
-                                        children="HELLINGER DISTANCE DECOMPOSITION"
+                                        className="text-left text-4xl font-bold pl-2",
+                                        children="Hellinger distance decomposition"
                                     ),
                                     html.Div(
                                         id="variable_decomposition_semaphore",
@@ -201,23 +202,23 @@ def semaphore_generator():
 def map_chart_init():
     global MAP_CHART
     MAP_CHART = go.Figure()
-    MAP_CHART.add_layout_image(
-        source="assets/ICE_lab.png",
-        y=1,
-        x=-1.5,
-        sizex=12,
-        sizey=15,
-        xref="x",
-        yref="y",
-        opacity=1,
-        layer="below",
-        sizing="contain"
-    )
+    # MAP_CHART.add_layout_image(
+    #     source="assets/ICE_lab.png",
+    #     y=1,
+    #     x=-1.5,
+    #     sizex=12,
+    #     sizey=15,
+    #     xref="x",
+    #     yref="y",
+    #     opacity=1,
+    #     layer="below",
+    #     sizing="contain"
+    # )
     # set limits
     MAP_CHART.update_layout(
         clickmode="event+select",
-        xaxis_range=[-1.5, 2.5],
-        yaxis_range=[-5, 1],
+        #xaxis_range=[-1.5, 2.5],
+        #yaxis_range=[-5, 1],
         xaxis=dict(showgrid=False, fixedrange=True),
         yaxis=dict(showgrid=False, fixedrange=True),
         legend=dict(
@@ -235,14 +236,14 @@ def map_chart_init():
         # correct behaviour
         go.Scatter(
             x=[], y=[],
-            mode="markers",
+            mode="lines+markers",
             marker={"color": "blue"},
             name="correct behaviour"
         ),
         # anomalies
         go.Scatter(
             x=[], y=[],
-            mode="markers",
+            mode="lines+markers",
             marker={"color": "red"},
             name="anomaly"
         ),
@@ -348,6 +349,7 @@ def callback_map_position(update_chart):
     if not update_chart:
         # do not update the chart
         raise PreventUpdate
+    print("Updating map position chart")
     if len(CHARTS_CONTROLLER.position) == 0:
         # no point to display :( reset the map
         for i in range(3):
@@ -378,6 +380,7 @@ def callback_variable_decomposition(update_chart):
     if not update_chart:
         # do not update the chart
         raise PreventUpdate
+    print("Updating variable decomposition chart")
     if len(CHARTS_CONTROLLER.decomposition) == 0:
         # no point, reset the chart
         for i in range(len(CHARTS_CONTROLLER.variables) * 2):
@@ -493,7 +496,6 @@ def mqtt_on_message(client, userdata, msg):
     if msg.topic == "map_position_insert":
         # update the map position
         CHARTS_CONTROLLER.map_position_insert(json.loads(msg.payload))
-
     elif msg.topic == "variable_decomposition_insert":
         # update the variable decomposition
         CHARTS_CONTROLLER.variable_decomposition_insert(json.loads(msg.payload))
@@ -510,4 +512,4 @@ if __name__ == "__main__":
     # initialize the mqtt client
     mqtt_init(CONFIG["mqtt"]["host"], int(CONFIG["mqtt"]["port"]))
     # Start the app
-    APP.run(debug=False, host=CONFIG["app"]["host"], port=int(CONFIG["app"]["port"]))
+    APP.run(debug=True, host=CONFIG["app"]["host"], port=int(CONFIG["app"]["port"]))
