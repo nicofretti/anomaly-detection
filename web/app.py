@@ -236,14 +236,14 @@ def map_chart_init():
         # correct behaviour
         go.Scatter(
             x=[], y=[],
-            mode="lines+markers",
+            mode="markers",
             marker={"color": "blue"},
             name="correct behaviour"
         ),
         # anomalies
         go.Scatter(
             x=[], y=[],
-            mode="lines+markers",
+            mode="markers",
             marker={"color": "red"},
             name="anomaly"
         ),
@@ -512,4 +512,4 @@ if __name__ == "__main__":
     # initialize the mqtt client
     mqtt_init(CONFIG["mqtt"]["host"], int(CONFIG["mqtt"]["port"]))
     # Start the app
-    APP.run(debug=True, host=CONFIG["app"]["host"], port=int(CONFIG["app"]["port"]))
+    APP.run(debug=False, host=CONFIG["app"]["host"], port=int(CONFIG["app"]["port"]))
