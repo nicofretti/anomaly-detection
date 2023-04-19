@@ -257,20 +257,20 @@ def map_chart_init():
         )
     ])
     # Adding nominal position
-    nominal_0 = pd.read_csv('./data/nominal_0.csv').to_numpy()
-    nominal_1 = pd.read_csv('./data/nominal_1.csv').to_numpy()
+    nominal_0 = pd.read_csv(CONFIG["app"]["nominal_0"]).to_numpy()
+    nominal_1 = pd.read_csv(CONFIG["app"]["nominal_1"]).to_numpy()
     MAP_CHART.add_traces([
         go.Scatter(
             x=nominal_0[:, 0], y=nominal_0[:, 1],
             mode="lines",
             line={"color": "green"},
-            name="nominal position 0",
+            name="nominal position 1",
         ),
         go.Scatter(
             x=nominal_1[:, 0], y=nominal_1[:, 1],
             mode="lines",
             line={"color": "lightgreen"},
-            name="nominal position 1",
+            name="nominal position 2",
         )
     ])
 
@@ -349,7 +349,6 @@ def callback_map_position(update_chart):
     if not update_chart:
         # do not update the chart
         raise PreventUpdate
-    print("Updating map position chart")
     if len(CHARTS_CONTROLLER.position) == 0:
         # no point to display :( reset the map
         for i in range(3):
@@ -380,14 +379,13 @@ def callback_variable_decomposition(update_chart):
     if not update_chart:
         # do not update the chart
         raise PreventUpdate
-    print("Updating variable decomposition chart")
     if len(CHARTS_CONTROLLER.decomposition) == 0:
         # no point, reset the chart
         for i in range(len(CHARTS_CONTROLLER.variables) * 2):
             VARIABLE_DECOMPOSITION_CHART["data"][i]["x"], VARIABLE_DECOMPOSITION_CHART["data"][i]["y"] = [], []
         return VARIABLE_DECOMPOSITION_CHART, semaphore_generator()
     points_copy = np.array(CHARTS_CONTROLLER.decomposition)
-    x_axis = [k for k in range(len(CHARTS_CONTROLLER.decomposition))]
+    x_axis = CHARTS_CONTROLLER.decomposition_x
     count = 0
     for i in range(len(CHARTS_CONTROLLER.variables)):
         # calculate the period of anomaly

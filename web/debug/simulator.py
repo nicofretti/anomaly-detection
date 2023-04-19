@@ -44,7 +44,7 @@ if __name__ == "__main__":
     csv_map_data = pd.read_csv(map_data_filename)
 
     # commit the data to reset the state on the server
-    requests.get("http://0.0.0.0:8080/commit")
+    # requests.get("http://0.0.0.0:8080/commit")
     # start the simulation
     # http_sender(csv_map_data, csv_decomposition, timeout)
     mqtt_sender(csv_map_data, csv_decomposition, timeout)
