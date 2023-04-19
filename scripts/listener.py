@@ -22,6 +22,8 @@ from hmmlearn import hmm
 CONFIG = configparser.ConfigParser()
 CONFIG.read('src/anomalydetectionkairos/scripts/config.ini')
 NEW_VERSION = bool(CONFIG["kairos"]["new_version"])
+DEBUG = CONFIG["global"]["debug"] == "1"
+MQTT_CLIENT = False
 
 
 def quaternion_to_euler(w, x, y, z):
@@ -231,13 +233,9 @@ def listener():
 
 
 def map_update_callback(X, Y, anomaly):
-    # global map_filename
-    # WRITE ALL THE ROWS ON A CSV FILE IN ORDER TO PLOT THE DATA
-    # TODO: post on server
-    # with open(map_filename, 'a') as map_csv:
-    #     writer = csv.writer(map_csv)
-    #     writer.writerow([X, Y, anomaly])
-    print("Map update: {}, {}, {}".format(X, Y, anomaly))
+    global DEBUG
+    if DEBUG:
+        print("Map update: {}, {}, {}".format(X, Y, anomaly))
     data = {
         "X": round(X, 3),
         "Y": round(Y, 3),
@@ -247,12 +245,13 @@ def map_update_callback(X, Y, anomaly):
 
 
 def variable_decomposition_callback(variables_decomposition):
-    # global h2_filename
+    global DEBUG
     # TODO: post on server
     # with open(h2_filename, 'a') as h2_csv:
     #     writer = csv.writer(h2_csv)w
     #     writer.writerow(variables_decomposition)
-    print("H2 update: {} {}".format(variables_decomposition[0], variables_decomposition[1]))
+    if DEBUG:
+        print("H2 update: {} {}".format(variables_decomposition[0], variables_decomposition[1]))
     variables = ["X", "Y", "O", "LS", "LC", "LD"]
     data = dict()
     for i in range(len(variables)):
@@ -260,34 +259,12 @@ def variable_decomposition_callback(variables_decomposition):
     MQTT_CLIENT.publish(CONFIG["mqtt"]["decomposition_topic"], json.dumps(data))
 
 
-MQTT_CLIENT = False
 if __name__ == '__main__':
     MQTT_CLIENT = mqtt.Client("kairos")
-    MQTT_CLIENT.connect(host='157.27.184.45', port=1883)
-    # map_filename = "map_data.csv"
-    # h2_filename = "h2_decomposition_data.csv"
-    # training_filename = "training_data.csv"
-    # with open(map_filename, 'w') as map_csv:
-    #    writer = csv.writer(map_csv)
-    #    head = ['X', 'Y', 'anomaly']
-    #    writer.writerow(head)
-    # with open(h2_filename, 'w') as h2_csv:
-    #    writer = csv.writer(h2_csv)
-    #    head = ['X', 'Y', 'O', 'LS', 'LC', 'LD']
-    #    writer.writerow(head)
-    # with open(training_filename, 'w') as h2_csv:
-    #    writer = csv.writer(h2_csv)
-    #    head = ['X', 'Y', 'O', 'LS', 'LC', 'LD']
-    #    writer.writerow(head)
+    MQTT_CLIENT.connect(host=CONFIG["mqtt"]["host"], port=int(CONFIG["mqtt"]["port"]))
 
-    if not NEW_VERSION:
-        # OLD USED TOPICS
-        front_laser_topic = "/fufi/front_laser/scan"
-        robot_pose_topic = "/fufi/robot_pose"
-    else:
-        # NEW TOPICS REMAPPED IN ICE LAB
-        front_laser_topic = "/robot/front_laser/scan"
-        robot_pose_topic = "/robot/robot_local_control/LocalizationComponent/status"
+    front_laser_topic = CONFIG["kairos"]["front_laser_topic"]
+    robot_pose_topic = CONFIG["kairos"]["robot_pose_topic"]
 
     # WINDOW LENGTH
     w = 30
@@ -325,7 +302,7 @@ if __name__ == '__main__':
 
     # file name of the hmm saved model. Insert the model path
     # model_filename = './src/anomalydetectionkairos/data/HMM_models/hmm.pkl'
-    model_filename = 'src/anomalydetectionkairos/data/HMM_models/hmm_ros_data_centered_9_states.pkl'
+    model_filename = CONFIG["kairos"]["model_path"]
 
     # Load the HMM from the disk
     model = pickle.load(open(model_filename, 'rb'))
