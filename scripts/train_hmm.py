@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import numpy as np
-from hmmlearn import hmm 
+from hmmlearn import hmm
 import pickle
+
 
 def bic_score(sample_size, log_likelihood, n_param):
     # BIC = k * log(n) - 2*log(L)
@@ -11,37 +12,79 @@ def bic_score(sample_size, log_likelihood, n_param):
     value = (n_param * np.log(sample_size) - (2 * log_likelihood))
     return value
 
-def train_hmm(filename):
-    # the data in filename are already preprocessed so we can just train the network with several states and select the best model
-    train_data = np.loadtxt(filename, delimiter=',')
-    BICs = []
-    models = []
-    min_states = 2
-    max_states = 20
+
+# def train_hmm(filename):
+#     # the data in filename are already preprocessed so we can just train the network with several states and select the best model
+#     train_data = np.loadtxt(filename, delimiter=',')
+#     BICs = []
+#     models = []
+#     min_states = 2
+#     max_states = 20
+#     for state in range(min_states, max_states + 1):
+#         model = hmm.GaussianHMM(n_components=state, covariance_type="diag")
+#         model.fit(train_data)
+#         # for hmmlearn 0.2.2 in Python 2.7 I do not have the bic attribute.
+#         features = model.n_features
+#         free_param = 2 * (features * state) + state * (state - 1) + (state - 1)
+#         sample_size = len(train_data)
+#         bic = bic_score(sample_size, model.score(train_data), free_param)
+#         BICs.append(bic)
+#         models.append(model)
+#
+#     best_model_idx = np.argmin(BICs)
+#     best_model = models[best_model_idx]
+#
+#     # TRY TO REPLICATE THE SAME HMM WITH 9 STATES USED IN THE OFFLINE PROCEDURE WITH CSV FILES
+#     best_model = hmm.GaussianHMM(n_components=9, covariance_type="diag")
+#     best_model.fit(train_data)
+#     print("Best model has a number of states equal to: " + str(best_model_idx + 2))
+#     filename = "hmm_berardo.pkl"
+#     with open(filename, "wb") as file:
+#         pickle.dump(best_model, file)
+
+def train_hmm(files, filter_train=False):
+    train_data = []
+    sample_size = 0
+    for f in files:
+        data = np.loadtxt(f, delimiter=',', skiprows=1)
+        train_data.append(data)
+        sample_size += len(data)
+    test_data = train_data[0]
+    if filter_train:
+        train_data = train_data[1:]
+    min_states, max_states = 8, 20
+    best_features, best_bic, best_model = 0, None, None
     for state in range(min_states, max_states + 1):
         model = hmm.GaussianHMM(n_components=state, covariance_type="diag")
-        model.fit(train_data)
+        for train in train_data:
+            model.fit(train)
         # for hmmlearn 0.2.2 in Python 2.7 I do not have the bic attribute.
         features = model.n_features
         free_param = 2 * (features * state) + state * (state - 1) + (state - 1)
-        sample_size = len(train_data)
-        bic = bic_score(sample_size, model.score(train_data), free_param)
-        BICs.append(bic)
-        models.append(model)
+        bic = bic_score(sample_size, model.score(test_data), free_param)
+        if best_bic is None or bic < best_bic:
+            best_bic = bic
+            best_features = state
+            best_model = model
 
-    best_model_idx = np.argmin(BICs)
-    best_model = models[best_model_idx]
+    print("Best model has a number of states equal to: " + str(best_features))
+    return best_model
 
-    # TRY TO REPLICATE THE SAME HMM WITH 9 STATES USED IN THE OFFLINE PROCEDURE WITH CSV FILES
-    best_model = hmm.GaussianHMM(n_components=9, covariance_type="diag")
-    best_model.fit(train_data)
-    print("Best model has a number of states equal to: " + str(best_model_idx + 2))
-    filename = "hmm_berardo.pkl"
-    with open(filename, "wb") as file: 
-        pickle.dump(best_model, file)
-    
+
+def save_model(model, filename):
+    with open(filename, "wb") as file:
+        pickle.dump(model, file)
+
+
 if __name__ == '__main__':
     # filename is in the catkin_ws folder
     # REMEMBER TO DELETE FIRST ROW WITH TITLES IF NEEDED, OTHERWISE ERROR
-    filename = './data/csv/preprocess_data_ros/nominal_0.csv'
-    train_hmm(filename)
+    filename = ''
+    model = train_hmm(
+        files=[
+            "../data/csv/preprocess_data_ros/nominal_0.csv",
+            "../data/csv/preprocess_data_ros/nominal_1.csv"
+        ],
+        filter_train=True
+    )
+    # save_model(model, "hmm_best.pkl")
