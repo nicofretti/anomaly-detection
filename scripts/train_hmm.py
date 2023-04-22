@@ -43,5 +43,5 @@ def train_hmm(filename):
 if __name__ == '__main__':
     # filename is in the catkin_ws folder
     # REMEMBER TO DELETE FIRST ROW WITH TITLES IF NEEDED, OTHERWISE ERROR
-    filename = 'src/anomaly_detection/data/csv/preprocess_data_ros/nominal_0.csv'
+    filename = './data/csv/preprocess_data_ros/nominal_0.csv'
     train_hmm(filename)
