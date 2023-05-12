@@ -19,4 +19,3 @@
 6. Build the workspace
 7. Source the workspace
 8. Run the `rosrun anomaly_detection listener.py` script
- 

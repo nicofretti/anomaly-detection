@@ -60,7 +60,7 @@ def app_init():
             # global interval for refreshing data
             dcc.Interval(
                 id="interval-component",
-                interval=200,
+                interval=500,
                 n_intervals=0,
             ),
 
@@ -202,23 +202,23 @@ def semaphore_generator():
 def map_chart_init():
     global MAP_CHART
     MAP_CHART = go.Figure()
-    # MAP_CHART.add_layout_image(
-    #     source="assets/ICE_lab.png",
-    #     y=1,
-    #     x=-1.5,
-    #     sizex=12,
-    #     sizey=15,
-    #     xref="x",
-    #     yref="y",
-    #     opacity=1,
-    #     layer="below",
-    #     sizing="contain"
-    # )
+    #MAP_CHART.add_layout_image(
+    #   source="assets/ICE_lab.png",
+    #   y=1,
+    #   x=-1.5,
+    #   sizex=12,
+    #   sizey=15,
+    #   xref="x",
+    #   yref="y",
+    #   opacity=1,
+    #   layer="below",
+    #   sizing="contain")
+
     # set limits
     MAP_CHART.update_layout(
         clickmode="event+select",
-        #xaxis_range=[-1.5, 2.5],
-        #yaxis_range=[-5, 1],
+        # xaxis_range=[-1.5, 2.5],
+        # yaxis_range=[-5, 1],
         xaxis=dict(showgrid=False, fixedrange=True),
         yaxis=dict(showgrid=False, fixedrange=True),
         legend=dict(

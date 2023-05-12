@@ -17,7 +17,7 @@ import numpy as np
 from hmmlearn import hmm
 
 # CSV library
-# import csv
+import csv
 
 CONFIG = configparser.ConfigParser()
 CONFIG.read('src/anomalydetectionkairos/scripts/config.ini')
@@ -182,9 +182,10 @@ def robot_pose_callback(data):
         Y = Y - Y_first
         row[0:3] = [X, Y, Z_orientation]
         dataHMM = np.append(dataHMM, np.array([row]), axis=0)
-        # with open(training_filename, 'a') as train_csv:
-        #     writer = csv.writer(train_csv, delimiter=',')
-        #     writer.writerow(row)
+        training_filename = 'nominal_01.csv'
+        with open(training_filename, 'a') as train_csv:
+            writer = csv.writer(train_csv, delimiter=',')
+            writer.writerow(row)
         n_rows = np.shape(dataHMM)[0]
         # when the number of rows, so the number of collected data is equal to the window length
         # I process the data using the HMM
@@ -248,7 +249,7 @@ def variable_decomposition_callback(variables_decomposition):
     global DEBUG
     # TODO: post on server
     # with open(h2_filename, 'a') as h2_csv:
-    #     writer = csv.writer(h2_csv)w
+    #     writer = csv.writer(h2_csv)
     #     writer.writerow(variables_decomposition)
     if DEBUG:
         print("H2 update: {} {}".format(variables_decomposition[0], variables_decomposition[1]))
