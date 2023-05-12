@@ -42,26 +42,26 @@ def bic_score(sample_size, log_likelihood, n_param):
 #     with open(filename, "wb") as file:
 #         pickle.dump(best_model, file)
 
-def train_hmm(files, filter_train=False):
-    train_data = []
-    sample_size = 0
-    for f in files:
-        data = np.loadtxt(f, delimiter=',', skiprows=1)
-        train_data.append(data)
-        sample_size += len(data)
-    test_data = train_data[0]
-    if filter_train:
-        train_data = train_data[1:]
-    min_states, max_states = 8, 20
+def train_hmm(files, test_file):
+    assert len(files) > 0, "No files to train the hmm"
+    assert test_file is not None, "No test file to test the hmm"
+    train_data = np.loadtxt(files[0], delimiter=',', skiprows=0)
+    lengths = [len(train_data)]
+    for f in files[1:]:
+        data = np.loadtxt(f, delimiter=',', skiprows=0)
+        lengths.append(len(data))
+        # add each element of data to train_data
+        train_data = np.concatenate((train_data, data), axis=0)
+    test_data = np.loadtxt(test_file, delimiter=',', skiprows=0)
+    min_states, max_states = 6, 20
     best_features, best_bic, best_model = 0, None, None
     for state in range(min_states, max_states + 1):
         model = hmm.GaussianHMM(n_components=state, covariance_type="diag")
-        for train in train_data:
-            model.fit(train)
+        model.fit(X=train_data, lengths=lengths)
         # for hmmlearn 0.2.2 in Python 2.7 I do not have the bic attribute.
         features = model.n_features
         free_param = 2 * (features * state) + state * (state - 1) + (state - 1)
-        bic = bic_score(sample_size, model.score(test_data), free_param)
+        bic = bic_score(len(test_data), model.score(test_data), free_param)
         if best_bic is None or bic < best_bic:
             best_bic = bic
             best_features = state
@@ -82,9 +82,12 @@ if __name__ == '__main__':
     filename = ''
     model = train_hmm(
         files=[
-            "../data/csv/preprocess_data_ros/nominal_0.csv",
-            "../data/csv/preprocess_data_ros/nominal_1.csv"
+            "../data/bag_files/train/01_nominal.csv",
+            "../data/bag_files/train/03_nominal.csv",
+            "../data/bag_files/train/04_nominal.csv",
+            "../data/bag_files/train/07_nominal.csv",
+            "../data/bag_files/train/09_nominal.csv",
         ],
-        filter_train=True
+        test_file="../data/bag_files/train/09_nominal.csv"
     )
-    # save_model(model, "hmm_best.pkl")
+    save_model(model, "hmm_best.pkl")
