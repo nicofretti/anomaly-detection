@@ -82,7 +82,7 @@ if __name__ == '__main__':
     filename = ''
     model = train_hmm(
         files=[
-            "../data/bag_files/train/01_nominal.csv",
+            #"../data/bag_files/train/01_nominal.csv",
             "../data/bag_files/train/03_nominal.csv",
             "../data/bag_files/train/04_nominal.csv",
             "../data/bag_files/train/07_nominal.csv",

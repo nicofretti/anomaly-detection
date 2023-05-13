@@ -100,7 +100,6 @@ def is_anomaly(h2_variables, state_means, state_covariance):
 def window_processing(dataHMM, hmm_model):
     '''Predict anomalies of KAIROS robot by processing a window of data'''
     global h2_variables
-    # global hellinger_distances
     hmm.GaussianHMM(algorithm='viterbi')
     prediction = hmm_model.predict(dataHMM)  # predict a state for each read row in dataHMM
     most_frequent_state = np.argmax(np.bincount(prediction))  # check which is the most frequent state
@@ -182,20 +181,23 @@ def robot_pose_callback(data):
         Y = Y - Y_first
         row[0:3] = [X, Y, Z_orientation]
         dataHMM = np.append(dataHMM, np.array([row]), axis=0)
-        training_filename = 'nominal_01.csv'
-        with open(training_filename, 'a') as train_csv:
-            writer = csv.writer(train_csv, delimiter=',')
-            writer.writerow(row)
+        #training_filename = 'nominal_01.csv'
+        #with open(training_filename, 'a') as train_csv:
+        #    writer = csv.writer(train_csv, delimiter=',')
+        #    writer.writerow(row)
         n_rows = np.shape(dataHMM)[0]
         # when the number of rows, so the number of collected data is equal to the window length
         # I process the data using the HMM
         if n_rows == w:
             hel_score, h2 = window_processing(dataHMM=dataHMM, hmm_model=model)
-            # all hellinger distances in order to have a complete plot over time
-            hellinger_distances.append(hel_score)
 
-            # with open('hellingers_anomaly_1.npy', 'wb') as f:
-            #     np.save(f, hellinger_distances)
+            # hellinger_filename = 'hellinger_score.csv'
+            # with open(hellinger_filename, 'a') as hell_csv:
+            #     hell_csv.write(str(hel_score)+"\n")
+            # h2_filename = 'h2_score.csv'
+            # with open(h2_filename, 'a') as h2_csv:
+            #     writer = csv.writer(h2_csv, delimiter=',')
+            #     writer.writerow(h2)
 
             # POSITION ANOMALY USING THE TOTAL HELLINGER
             # if hel_score > threshold_nominal_1_data:
@@ -259,7 +261,6 @@ def variable_decomposition_callback(variables_decomposition):
         data[variables[i]] = variables_decomposition[i]
     MQTT_CLIENT.publish(CONFIG["mqtt"]["decomposition_topic"], json.dumps(data))
 
-
 if __name__ == '__main__':
     MQTT_CLIENT = mqtt.Client("kairos")
     MQTT_CLIENT.connect(host=CONFIG["mqtt"]["host"], port=int(CONFIG["mqtt"]["port"]))
@@ -272,7 +273,7 @@ if __name__ == '__main__':
     # w = 40
 
     # THRESHOLD OBTAINED RUNNING THE NODE ON THE nominal_1 file with w = 30
-    threshold_nominal_1_data = 0.9994715267699249
+    # threshold_nominal_1_data = 0.9994715267699249
     # THRESHOLD OBTAINED RUNNING THE NODE ON THE nominal_1 file with w = 40
     # threshold_nominal_1_data = 0.9996722536629078
 
@@ -281,7 +282,6 @@ if __name__ == '__main__':
 
     # EMPTY ARRAY INTO WHICH WE GROUP THE DATA THAT ARE RECEIVED AT SEVERAL SAMPLE RATES
     dataHMM = np.empty((0, cols), float)
-    # hellinger_distances = []
 
     row = np.full(cols, np.nan)
     semaphore = False
@@ -290,7 +290,6 @@ if __name__ == '__main__':
 
     points = []
     h2_variables = np.empty((0, cols), float)
-    hellinger_distances = []
     # h2_thr = np.zeros((6))
     # DATASET NOMNALE 2
     h2_thr = list(map(float, CONFIG["charts"]["decomposition_thr"].strip().split(",")))
