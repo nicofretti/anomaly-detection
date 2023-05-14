@@ -18,160 +18,13 @@ import paho.mqtt.client as mqtt
 # in the config file set up the server options
 CONFIG = configparser.ConfigParser()
 CONFIG.read('config.ini')
-SERVER = Flask(__name__)
-APP = dash.Dash(
-    __name__,
-    server=SERVER,
-    update_title=None,
-    meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
-    external_scripts=[
-        # Tailwind CSS
-        "https://tailwindcss.com/",
-        {
-            "src": "https://cdn.tailwindcss.com"
-        }
-    ],
-    external_stylesheets=[
-        # Font Awesome
-        {
-            'href': 'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
-            'rel': 'stylesheet',
-            'integrity': 'sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf',
-            'crossorigin': 'anonymous'
-        }
-    ]
-)
+# SERVER = Flask(__name__)
+
 MAP_CHART, VARIABLE_DECOMPOSITION_CHART = {}, {}
-CHARTS_CONTROLLER = None
-
-
-# -------
-# Layout methods
-# -------
-
-def app_init():
-    global CHARTS_CONTROLLER
-    map_chart_init()
-    variable_decomposition_chart_init()
-    APP.title = "Anomaly Detection"
-    APP.layout = html.Div(
-        id="app",
-        children=[
-            # global interval for refreshing data
-            dcc.Interval(
-                id="interval-component",
-                interval=500,
-                n_intervals=0,
-            ),
-
-            # hidden input for the last position, if value is 0, the chart is not updated
-            dcc.Input(
-                id="hidden_map_position_trigger",
-                type="hidden",
-                value=0
-            ),
-            # hidden input for the last variable decomposition, if value is 0, the chart is not updated
-            dcc.Input(
-                id="hidden_variable_decomposition_trigger",
-                type="hidden",
-                value=0
-            ),
-
-            # banner
-            html.Div(
-                id="banner",
-                className="banner text-5xl font-bold flex justify-between items-center",
-                children=[
-                    html.Div(
-                        className="flex items-center",
-                        children=[
-                            html.Div(className="fa fa-chart-bar text-blue-500"),
-                            html.H3("Anomaly Detection", className="ml-3 font-bold")
-                        ],
-                    ),
-                    # button to reset the charts
-                    html.Button(
-                        id="reset_button",
-                        className="bg-blue-500 text-xl hover:bg-blue-700 text-white font-bold py-2 px-4 rounded",
-                        style={"border": "none"},
-                        children=[
-                            html.Div(className="fa fa-redo-alt mr-2 text-white"),
-                            html.Span(
-                                className="text-white",
-                                children="Reset"
-                            )
-                        ]
-                    )
-                ]
-            ),
-            # left column
-            # html.Div(
-            #     id="left-column",
-            #     className="three columns",
-            #     children=[
-            #     ],
-            # ),
-            # Right column
-            html.Div(
-                id="right-column",
-                className="twelve columns shadow-lg",
-                children=[
-                    html.Div(
-                        id="charts",
-                        className="flex bg-white mt-2 rounded-lg shadow-lg",
-                        children=[
-                            html.Div(
-                                className="p-8",
-                                children=[
-                                    html.P(
-                                        className="text-left text-4xl font-bold pl-2",
-                                        children="Ice lab map"
-                                    ),
-                                    dcc.Graph(
-                                        id="map_position_chart",
-                                        className="p-2",
-                                        config=dict(
-                                            displayModeBar=False
-                                        ),
-                                        figure={},
-                                        style={"height": "600px", "width": "400px"},
-                                    ),
-                                ]
-                            ),
-                            html.Div(
-                                className="p-8 w-full relative",
-                                children=[
-                                    html.P(
-                                        className="text-left text-4xl font-bold pl-2",
-                                        children="Hellinger distance decomposition"
-                                    ),
-                                    html.Div(
-                                        id="variable_decomposition_semaphore",
-                                        className="absolute top-36 left-20 text-center z-10 text-black " + \
-                                                  "pl-2 pr-6",
-                                        style={
-                                            "background-color": "rgba(255, 255, 255, 0.9)",
-                                        },
-                                        children=semaphore_generator()
-                                    ),
-                                    dcc.Graph(
-                                        id="variable_decomposition_chart",
-                                        className="p-2",
-                                        style={"height": "600px"},
-                                        config=dict(
-                                            displayModeBar=True,
-                                            modeBarButtonsToRemove=["lasso2d", "select2d"]
-                                        )
-                                    ),
-                                ]
-                            )
-                        ]
-                    ),
-
-                ],
-            ),
-        ],
-    )
+CHARTS_CONTROLLER = ChartsController(
+    CONFIG["charts"]["decomposition_variables"].split(","),
+    list(map(float, CONFIG["charts"]["decomposition_thr"].strip().split(","))),
+)
 
 
 def semaphore_generator():
@@ -198,21 +51,175 @@ def semaphore_generator():
     return r
 
 
+APP = dash.Dash(
+    __name__,
+    # server=SERVER,
+    update_title=None,
+    meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
+    external_scripts=[
+        # Tailwind CSS
+        "https://tailwindcss.com/",
+        {
+            "src": "https://cdn.tailwindcss.com"
+        }
+    ],
+    external_stylesheets=[
+        # Font Awesome
+        {
+            'href': 'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
+            'rel': 'stylesheet',
+            'integrity': 'sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf',
+            'crossorigin': 'anonymous'
+        }
+    ],
+    suppress_callback_exceptions=True,
+)
+APP.layout = html.Div(
+    id="app",
+    children=[
+        # global interval for refreshing data
+        dcc.Interval(
+            id="interval-component",
+            interval=500,
+            n_intervals=0,
+        ),
+
+        # hidden input for the last position, if value is 0, the chart is not updated
+        dcc.Input(
+            id="hidden_map_position_trigger",
+            type="hidden",
+            value=0
+        ),
+        # hidden input for the last variable decomposition, if value is 0, the chart is not updated
+        dcc.Input(
+            id="hidden_variable_decomposition_trigger",
+            type="hidden",
+            value=0
+        ),
+
+        # banner
+        html.Div(
+            id="banner",
+            className="banner text-5xl font-bold flex justify-between items-center",
+            children=[
+                html.Div(
+                    className="flex items-center",
+                    children=[
+                        html.Div(className="fa fa-chart-bar text-blue-500"),
+                        html.H3("Anomaly Detection", className="ml-3 font-bold")
+                    ],
+                ),
+                # button to reset the charts
+                html.Button(
+                    id="reset_button",
+                    className="bg-blue-500 text-xl hover:bg-blue-700 text-white font-bold py-2 px-4 rounded",
+                    style={"border": "none"},
+                    children=[
+                        html.Div(className="fa fa-redo-alt mr-2 text-white"),
+                        html.Span(
+                            className="text-white",
+                            children="Reset"
+                        )
+                    ]
+                )
+            ]
+        ),
+        # left column
+        # html.Div(
+        #     id="left-column",
+        #     className="three columns",
+        #     children=[
+        #     ],
+        # ),
+        # Right column
+        html.Div(
+            id="right-column",
+            className="twelve columns shadow-lg",
+            children=[
+                html.Div(
+                    id="charts",
+                    className="flex bg-white mt-2 rounded-lg shadow-lg",
+                    children=[
+                        html.Div(
+                            className="p-8",
+                            children=[
+                                html.P(
+                                    className="text-left text-4xl font-bold pl-2",
+                                    children="Ice lab map"
+                                ),
+                                dcc.Graph(
+                                    id="map_position_chart",
+                                    className="p-2",
+                                    config=dict(
+                                        displayModeBar=False
+                                    ),
+                                    figure={},
+                                    style={"height": "600px", "width": "400px"},
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            className="p-8 w-full relative",
+                            children=[
+                                html.P(
+                                    className="text-left text-4xl font-bold pl-2",
+                                    children="Hellinger distance decomposition"
+                                ),
+                                html.Div(
+                                    id="variable_decomposition_semaphore",
+                                    className="absolute top-36 left-20 text-center z-10 text-black " + \
+                                              "pl-2 pr-6",
+                                    style={
+                                        "background-color": "rgba(255, 255, 255, 0.9)",
+                                    },
+                                    children=semaphore_generator()
+                                ),
+                                dcc.Graph(
+                                    id="variable_decomposition_chart",
+                                    className="p-2",
+                                    style={"height": "600px"},
+                                    config=dict(
+                                        displayModeBar=True,
+                                        modeBarButtonsToRemove=["lasso2d", "select2d"]
+                                    )
+                                ),
+                            ]
+                        )
+                    ]
+                ),
+
+            ],
+        ),
+    ],
+)
+
+
+# -------
+# Layout methods
+# -------
+
+def app_init():
+    global CHARTS_CONTROLLER
+    map_chart_init()
+    variable_decomposition_chart_init()
+    APP.title = "Anomaly Detection"
+
+
 # Init only at the startup the chart of the ICE-lab
 def map_chart_init():
     global MAP_CHART
     MAP_CHART = go.Figure()
     MAP_CHART.add_layout_image(
-       source="assets/ICE_lab.png",
-       y=2.35,
-       x=-5.65,
-       sizex=21,
-       sizey=5.5,
-       xref="x",
-       yref="y",
-       opacity=1,
-       layer="below",
-       sizing="stretch")
+        source="assets/ICE_lab.png",
+        y=2.35,
+        x=-5.65,
+        sizex=21,
+        sizey=5.5,
+        xref="x",
+        yref="y",
+        opacity=1,
+        layer="below",
+        sizing="stretch")
 
     # set limits
     MAP_CHART.update_layout(
@@ -268,12 +275,12 @@ def map_chart_init():
             line={"color": "green"},
             name="nominal position 1",
         ),
-        #go.Scatter(
+        # go.Scatter(
         #    x=nominal_1[:, 0], y=nominal_1[:, 1],
         #    mode="lines",
         #    line={"color": "lightgreen"},
         #    name="nominal position 2",
-        #)
+        # )
     ])
 
 
@@ -437,36 +444,36 @@ def callback_reset_button(n_clicks):
 # Custom apis
 # --------
 
-@SERVER.route("/map_position_insert", methods=['GET', 'POST'])
-def api_map_position_insert():
-    global CHARTS_CONTROLLER
-    if request.method != 'POST':
-        return 'Method not allowed', 405
-    # bytes to dict
-    CHARTS_CONTROLLER.map_position_insert(json.loads(request.data.decode('utf-8')))
-    # Return 200 OK
-    return "OK", 200
+# @SERVER.route("/map_position_insert", methods=['GET', 'POST'])
+# def api_map_position_insert():
+#     global CHARTS_CONTROLLER
+#     if request.method != 'POST':
+#         return 'Method not allowed', 405
+#     # bytes to dict
+#     CHARTS_CONTROLLER.map_position_insert(json.loads(request.data.decode('utf-8')))
+#     # Return 200 OK
+#     return "OK", 200
 
 
-@SERVER.route("/variable_decomposition_insert", methods=['GET', 'POST'])
-def api_variable_decomposition_insert():
-    global CHARTS_CONTROLLER
-    if request.method != 'POST':
-        return 'Method not allowed', 405
-    CHARTS_CONTROLLER.variable_decomposition_insert(json.loads(request.data.decode('utf-8')))
-    # Return 200
-    return "OK", 200
-
-
-@SERVER.route("/commit", methods=['GET', 'POST'])
-def api_commit():
-    global CHARTS_CONTROLLER
-    if request.method == 'GET':
-        # Here we reset the data
-        CHARTS_CONTROLLER.reset()
-        return "OK", 200
-    # TODO: implement save to database
-    return "Not implemented", 501
+# @SERVER.route("/variable_decomposition_insert", methods=['GET', 'POST'])
+# def api_variable_decomposition_insert():
+#     global CHARTS_CONTROLLER
+#     if request.method != 'POST':
+#         return 'Method not allowed', 405
+#     CHARTS_CONTROLLER.variable_decomposition_insert(json.loads(request.data.decode('utf-8')))
+#     # Return 200
+#     return "OK", 200
+#
+#
+# @SERVER.route("/commit", methods=['GET', 'POST'])
+# def api_commit():
+#     global CHARTS_CONTROLLER
+#     if request.method == 'GET':
+#         # Here we reset the data
+#         CHARTS_CONTROLLER.reset()
+#         return "OK", 200
+#     # TODO: implement save to database
+#     return "Not implemented", 501
 
 
 # --------
@@ -502,14 +509,9 @@ def mqtt_on_message(client, userdata, msg):
 
 
 if __name__ == "__main__":
-    # init the controller with the configuration
-    CHARTS_CONTROLLER = ChartsController(
-        CONFIG["charts"]["decomposition_variables"].split(","),
-        list(map(float, CONFIG["charts"]["decomposition_thr"].strip().split(","))),
-    )
+    mqtt_init(CONFIG["mqtt"]["host"], int(CONFIG["mqtt"]["port"]))
     # initialize the app variables
     app_init()
     # initialize the mqtt client
-    mqtt_init(CONFIG["mqtt"]["host"], int(CONFIG["mqtt"]["port"]))
     # Start the app
     APP.run(debug=False, host=CONFIG["app"]["host"], port=int(CONFIG["app"]["port"]))

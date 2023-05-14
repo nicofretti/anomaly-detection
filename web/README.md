@@ -12,3 +12,13 @@ This web interface in written using python3.8 with the library Dash. It is used 
 ```bash
 python app.py 
 ```
+
+# Build the docker image
+```bash
+docker build -t anomalydetectionkairos_web .
+```
+Now you can run the docker image with:
+```bash
+# name the container anomalydetectionkairos_web
+docker run -p 8080:8080 --name anomalydetectionkairos_web anomalydetectionkairos_web  
+```
