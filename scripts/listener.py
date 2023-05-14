@@ -24,6 +24,7 @@ CONFIG.read('src/anomalydetectionkairos/scripts/config.ini')
 NEW_VERSION = bool(CONFIG["kairos"]["new_version"])
 DEBUG = CONFIG["global"]["debug"] == "1"
 MQTT_CLIENT = False
+#HELLINGER_THR = float(CONFIG["kairos"]["hellinger_thr"])
 
 
 def quaternion_to_euler(w, x, y, z):
@@ -128,7 +129,7 @@ def window_processing(dataHMM, hmm_model):
     h2_variables = np.append(h2_variables, np.array([variables_decomposition]), axis=0)
 
     # callback of variable decomposition
-    variable_decomposition_callback(variables_decomposition);
+    variable_decomposition_callback(variables_decomposition)
 
     # with open('anomaly_1_decomposition.npy', 'wb') as f:
     #     np.save(f, h2_variables)
@@ -157,6 +158,7 @@ def robot_pose_callback(data):
     global Y_first
     global points
     global anomaly
+    #global HELLINGER_THR
     global NEW_VERSION
     if not NEW_VERSION:
         position = data.position
