@@ -193,13 +193,13 @@ def robot_pose_callback(data):
         if n_rows == w:
             hel_score, h2 = window_processing(dataHMM=dataHMM, hmm_model=model)
 
-            # hellinger_filename = 'hellinger_score.csv'
-            # with open(hellinger_filename, 'a') as hell_csv:
-            #     hell_csv.write(str(hel_score)+"\n")
-            # h2_filename = 'h2_score.csv'
-            # with open(h2_filename, 'a') as h2_csv:
-            #     writer = csv.writer(h2_csv, delimiter=',')
-            #     writer.writerow(h2)
+            hellinger_filename = 'hellinger_score.csv'
+            with open(hellinger_filename, 'a') as hell_csv:
+                hell_csv.write(str(hel_score)+"\n")
+            h2_filename = 'h2_score.csv'
+            with open(h2_filename, 'a') as h2_csv:
+                writer = csv.writer(h2_csv, delimiter=',')
+                writer.writerow(h2)
 
             # POSITION ANOMALY USING THE TOTAL HELLINGER
             # if hel_score > threshold_nominal_1_data:

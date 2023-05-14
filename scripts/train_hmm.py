@@ -45,15 +45,15 @@ def bic_score(sample_size, log_likelihood, n_param):
 def train_hmm(files, test_file):
     assert len(files) > 0, "No files to train the hmm"
     assert test_file is not None, "No test file to test the hmm"
-    train_data = np.loadtxt(files[0], delimiter=',', skiprows=0)
+    test_data = np.loadtxt(test_file, delimiter=',')
+    train_data = np.loadtxt(files[0], delimiter=',')
     lengths = [len(train_data)]
     for f in files[1:]:
-        data = np.loadtxt(f, delimiter=',', skiprows=0)
+        data = np.loadtxt(f, delimiter=',')
         lengths.append(len(data))
         # add each element of data to train_data
         train_data = np.concatenate((train_data, data), axis=0)
-    test_data = np.loadtxt(test_file, delimiter=',', skiprows=0)
-    min_states, max_states = 6, 20
+    min_states, max_states = 6, 15
     best_features, best_bic, best_model = 0, None, None
     for state in range(min_states, max_states + 1):
         model = hmm.GaussianHMM(n_components=state, covariance_type="diag")
@@ -67,8 +67,7 @@ def train_hmm(files, test_file):
             best_features = state
             best_model = model
 
-    print("Best model has a number of states equal to: " + str(best_features))
-    return best_model
+    return best_model, best_bic, best_features
 
 
 def save_model(model, filename):
@@ -80,14 +79,21 @@ if __name__ == '__main__':
     # filename is in the catkin_ws folder
     # REMEMBER TO DELETE FIRST ROW WITH TITLES IF NEEDED, OTHERWISE ERROR
     filename = ''
-    model = train_hmm(
-        files=[
-            #"../data/bag_files/train/01_nominal.csv",
-            "../data/bag_files/train/03_nominal.csv",
-            "../data/bag_files/train/04_nominal.csv",
-            "../data/bag_files/train/07_nominal.csv",
-            "../data/bag_files/train/09_nominal.csv",
-        ],
-        test_file="../data/bag_files/train/09_nominal.csv"
-    )
-    save_model(model, "hmm_best.pkl")
+    best_model, best_bic, best_features = False, False, False
+    for i in range(10):
+        model, bic, features = train_hmm(
+            files=[
+                "../data/bag_files/train/02_nominal_stack.csv",
+                # "../data/bag_files/train/03_nominal.csv",
+                "../data/bag_files/train/04_nominal.csv",
+                "../data/bag_files/train/07_nominal.csv",
+                # "../data/bag_files/train/09_nominal.csv",
+            ],
+            test_file="../data/bag_files/train/04_nominal.csv"
+        )
+        print("BIC: " + str(bic) + " with " + str(features) + " features")
+        if not best_model or bic < best_bic:
+            best_model, best_bic, best_features = model, bic, features
+    print("Best model has a number of states equal to: " + str(best_features))
+
+    save_model(best_model, "hmm_best.pkl")
