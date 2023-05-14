@@ -202,23 +202,25 @@ def semaphore_generator():
 def map_chart_init():
     global MAP_CHART
     MAP_CHART = go.Figure()
-    #MAP_CHART.add_layout_image(
-    #   source="assets/ICE_lab.png",
-    #   y=1,
-    #   x=-1.5,
-    #   sizex=12,
-    #   sizey=15,
-    #   xref="x",
-    #   yref="y",
-    #   opacity=1,
-    #   layer="below",
-    #   sizing="contain")
+    MAP_CHART.add_layout_image(
+       source="assets/ICE_lab.png",
+       y=2.35,
+       x=-5.65,
+       sizex=21,
+       sizey=5.5,
+       xref="x",
+       yref="y",
+       opacity=1,
+       layer="below",
+       sizing="stretch")
 
     # set limits
     MAP_CHART.update_layout(
+        plot_bgcolor='rgba(0, 0, 0, 0)',
+        paper_bgcolor='rgba(0, 0, 0, 0)',
         clickmode="event+select",
-        # xaxis_range=[-1.5, 2.5],
-        # yaxis_range=[-5, 1],
+        xaxis_range=[-4, 14],
+        yaxis_range=[-5, 6],
         xaxis=dict(showgrid=False, fixedrange=True),
         yaxis=dict(showgrid=False, fixedrange=True),
         legend=dict(
@@ -258,7 +260,7 @@ def map_chart_init():
     ])
     # Adding nominal position
     nominal_0 = pd.read_csv(CONFIG["app"]["nominal_0"]).to_numpy()
-    nominal_1 = pd.read_csv(CONFIG["app"]["nominal_1"]).to_numpy()
+    # nominal_1 = pd.read_csv(CONFIG["app"]["nominal_1"]).to_numpy()
     MAP_CHART.add_traces([
         go.Scatter(
             x=nominal_0[:, 0], y=nominal_0[:, 1],
@@ -266,12 +268,12 @@ def map_chart_init():
             line={"color": "green"},
             name="nominal position 1",
         ),
-        go.Scatter(
-            x=nominal_1[:, 0], y=nominal_1[:, 1],
-            mode="lines",
-            line={"color": "lightgreen"},
-            name="nominal position 2",
-        )
+        #go.Scatter(
+        #    x=nominal_1[:, 0], y=nominal_1[:, 1],
+        #    mode="lines",
+        #    line={"color": "lightgreen"},
+        #    name="nominal position 2",
+        #)
     ])
 
 
