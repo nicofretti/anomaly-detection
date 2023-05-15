@@ -236,8 +236,11 @@ def listener():
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
 
-
+conn = 0
 def map_update_callback(X, Y, anomaly):
+    global conn
+    conn +=1
+    print(CONFIG["kairos"]["robot_name"]+" "+str(conn))
     global DEBUG
     if DEBUG:
         print("Map update: {}, {}, {}".format(X, Y, anomaly))
@@ -246,7 +249,7 @@ def map_update_callback(X, Y, anomaly):
         "Y": round(Y, 3),
         "anomaly": 1 if anomaly else 0
     }
-    MQTT_CLIENT.publish(CONFIG["mqtt"]["map_topic"], json.dumps(data))
+    MQTT_CLIENT.publish(CONFIG["mqtt"]["map_topic"]+"/"+CONFIG["kairos"]["robot_name"], json.dumps(data))
 
 
 def variable_decomposition_callback(variables_decomposition):
@@ -261,7 +264,8 @@ def variable_decomposition_callback(variables_decomposition):
     data = dict()
     for i in range(len(variables)):
         data[variables[i]] = variables_decomposition[i]
-    MQTT_CLIENT.publish(CONFIG["mqtt"]["decomposition_topic"], json.dumps(data))
+    MQTT_CLIENT.publish(CONFIG["mqtt"]["decomposition_topic"]+"/"+CONFIG["kairos"]["robot_name"], json.dumps(data))
+
 
 if __name__ == '__main__':
     MQTT_CLIENT = mqtt.Client("kairos")
