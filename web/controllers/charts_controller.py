@@ -1,6 +1,6 @@
 # class to manage the charts displayed in the application
 class ChartsController:
-    def __init__(self, variables, decomposition_thr):
+    def __init__(self, variables, decomposition_thr, window_size):
         # flag to indicate if new data is available
         self.new_data = False
         # flag to force the update of the charts
@@ -11,7 +11,7 @@ class ChartsController:
         self.decomposition_counter = 0
         self.variables = variables
         self.decomposition_thr = decomposition_thr
-        self.window_size = 500
+        self.window_size = window_size
 
     def update_charts(self, value):
         self.new_data = value

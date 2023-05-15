@@ -59,7 +59,7 @@ def train_hmm(files, test_file):
     # shift = np.array([9.57, 2.42])
     # train_data[:, :2] = train_data[:, :2] + shift
     # number of states to try
-    min_states, max_states = 15, 22
+    min_states, max_states = 10, 20
     best_features, best_bic, best_model = 0, None, None
     for state in range(min_states, max_states + 1):
         model = hmm.GaussianHMM(n_components=state, covariance_type="diag")
@@ -89,19 +89,19 @@ if __name__ == '__main__':
     for i in range(5):
         model, bic, features = train_hmm(
             files=[
-                "../data/bag_files/train/02_nominal_stack.csv",
-                # "../data/bag_files/train/03_nominal.csv",
-                "../data/bag_files/train/04_nominal.csv",
-                "../data/bag_files/train/07_nominal.csv",
-                # "../data/bag_files/train/09_nominal.csv",
-                "../data/bag_files/train/10_nominal_true.csv",
-                "../data/bag_files/train/11_nominal_true.csv",
+                # "../data/bag_files/train_for_demo/02_nominal_stack.csv",
+                "../data/bag_files/train_for_demo/03_nominal.csv",
+                "../data/bag_files/train_for_demo/04_nominal.csv",
+                "../data/bag_files/train_for_demo/07_nominal.csv",
+                "../data/bag_files/train_for_demo/09_nominal.csv",
+                "../data/bag_files/train_for_demo/10_nominal_true.csv",
+                "../data/bag_files/train_for_demo/11_nominal_true.csv",
             ],
-            test_file="../data/bag_files/train/11_nominal_true.csv"
+            test_file="../data/bag_files/train_for_demo/11_nominal_true.csv"
         )
         print("BIC: " + str(bic) + " with " + str(features) + " features")
         if not best_model or bic < best_bic:
             best_model, best_bic, best_features = model, bic, features
     print("Best model has a number of states equal to: " + str(best_features))
 
-    save_model(best_model, "hmm_best.pkl")
+    save_model(best_model, "hmm_best_3.pkl")

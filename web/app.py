@@ -24,6 +24,7 @@ MAP_CHART, VARIABLE_DECOMPOSITION_CHART = {}, {}
 CHARTS_CONTROLLER = ChartsController(
     CONFIG["charts"]["decomposition_variables"].split(","),
     list(map(float, CONFIG["charts"]["decomposition_thr"].strip().split(","))),
+    int(CONFIG["app"]["window_size"])
 )
 
 
@@ -211,8 +212,8 @@ def map_chart_init():
     MAP_CHART = go.Figure()
     MAP_CHART.add_layout_image(
         source="assets/ICE_lab.png",
-        y=2.35,
-        x=-5.65,
+        y=2.35+2.6,
+        x=-5.70+9.6,
         sizex=21,
         sizey=5.5,
         xref="x",
@@ -226,8 +227,8 @@ def map_chart_init():
         plot_bgcolor='rgba(0, 0, 0, 0)',
         paper_bgcolor='rgba(0, 0, 0, 0)',
         clickmode="event+select",
-        xaxis_range=[-4, 14],
-        yaxis_range=[-5, 6],
+        xaxis_range=[-4+9.6, 14+9.6],
+        yaxis_range=[-5+2.6, 6+2.6],
         xaxis=dict(showgrid=False, fixedrange=True),
         yaxis=dict(showgrid=False, fixedrange=True),
         legend=dict(
@@ -272,8 +273,8 @@ def map_chart_init():
         go.Scatter(
             x=nominal_0[:, 0], y=nominal_0[:, 1],
             mode="lines",
-            line={"color": "green"},
-            name="nominal position 1",
+            line={"color": "lightgreen"},
+            name="nominal position",
         ),
         # go.Scatter(
         #    x=nominal_1[:, 0], y=nominal_1[:, 1],
