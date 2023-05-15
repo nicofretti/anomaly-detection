@@ -183,25 +183,25 @@ def robot_pose_callback(data):
         Y = Y - Y_first
         row[0:3] = [X, Y, Z_orientation]
         dataHMM = np.append(dataHMM, np.array([row]), axis=0)
-        #training_filename = 'nominal_01.csv'
-        #with open(training_filename, 'a') as train_csv:
-        #    writer = csv.writer(train_csv, delimiter=',')
-        #    writer.writerow(row)
+        training_filename = 'nominal_02.csv'
+        with open(training_filename, 'a') as train_csv:
+            writer = csv.writer(train_csv, delimiter=',')
+            writer.writerow(row)
         n_rows = np.shape(dataHMM)[0]
         # when the number of rows, so the number of collected data is equal to the window length
         # I process the data using the HMM
         if n_rows == w:
             hel_score, h2 = window_processing(dataHMM=dataHMM, hmm_model=model)
+            # Uncomment to write the scores to files
+            # hellinger_filename = 'hellinger_score.csv'
+            # with open(hellinger_filename, 'a') as hell_csv:
+            #     hell_csv.write(str(hel_score)+"\n")
+            # h2_filename = 'h2_score.csv'
+            # with open(h2_filename, 'a') as h2_csv:
+            #     writer = csv.writer(h2_csv, delimiter=',')
+            #     writer.writerow(h2)
 
-            hellinger_filename = 'hellinger_score.csv'
-            with open(hellinger_filename, 'a') as hell_csv:
-                hell_csv.write(str(hel_score)+"\n")
-            h2_filename = 'h2_score.csv'
-            with open(h2_filename, 'a') as h2_csv:
-                writer = csv.writer(h2_csv, delimiter=',')
-                writer.writerow(h2)
-
-            # POSITION ANOMALY USING THE TOTAL HELLINGER
+            # (deprecated) POSITION ANOMALY USING THE TOTAL HELLINGER
             # if hel_score > threshold_nominal_1_data:
             #     anomaly = True
             # else:
