@@ -1,8 +1,0 @@
-FROM osrf/ros:melodic-desktop-full
-
-# RUN sudo ./opt/ros/melodic/setup.sh
-# COPY ./kairos_ws-robot_b_work/src/summit_packages/deb ./tmp/deb
-# RUN cd /tmp/deb && ./install_debs.sh
-RUN mkdir -p ~/catkin_ws/src
-# RUN cd ~/catkin_ws/
-# RUN catkin_make

@@ -1,3 +1,7 @@
+# Installation for Demo
+Defined in `installation.md`.
+
+
 # Anomaly detection on Kairos
 - `kairos_ws-robot_b_work`: contains all source packages for the robot
 - `data`: contains all data used for the anomaly detection
