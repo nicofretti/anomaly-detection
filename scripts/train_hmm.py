@@ -50,10 +50,16 @@ def train_hmm(files, test_file):
     lengths = [len(train_data)]
     for f in files[1:]:
         data = np.loadtxt(f, delimiter=',')
+
         lengths.append(len(data))
         # add each element of data to train_data
         train_data = np.concatenate((train_data, data), axis=0)
-    min_states, max_states = 6, 15
+
+    # add some shift to the first two columns, caused by the bag files not well synchronized with the real data
+    shift = np.array([9.60, 2.46])
+    train_data[:, :2] = train_data[:, :2] + shift
+    # number of states to try
+    min_states, max_states = 15, 22
     best_features, best_bic, best_model = 0, None, None
     for state in range(min_states, max_states + 1):
         model = hmm.GaussianHMM(n_components=state, covariance_type="diag")
@@ -80,7 +86,7 @@ if __name__ == '__main__':
     # REMEMBER TO DELETE FIRST ROW WITH TITLES IF NEEDED, OTHERWISE ERROR
     filename = ''
     best_model, best_bic, best_features = False, False, False
-    for i in range(10):
+    for i in range(5):
         model, bic, features = train_hmm(
             files=[
                 "../data/bag_files/train/02_nominal_stack.csv",
@@ -88,8 +94,10 @@ if __name__ == '__main__':
                 "../data/bag_files/train/04_nominal.csv",
                 "../data/bag_files/train/07_nominal.csv",
                 # "../data/bag_files/train/09_nominal.csv",
+                "../data/bag_files/train/10_nominal_true.csv",
+                "../data/bag_files/train/11_nominal_true.csv",
             ],
-            test_file="../data/bag_files/train/04_nominal.csv"
+            test_file="../data/bag_files/train/11_nominal_true.csv"
         )
         print("BIC: " + str(bic) + " with " + str(features) + " features")
         if not best_model or bic < best_bic:
