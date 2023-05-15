@@ -31,7 +31,7 @@ CHARTS_CONTROLLER = ChartsController(
 )
 
 CHARTS_CONTROLLER_2 = ChartsController(
-    CONFIG["charts"]["decomposition_variables"].split(","),
+    CONFIG["charts"]["decomposition_vareiables"].split(","),
     list(map(float, CONFIG["charts"]["decomposition_thr"].strip().split(","))),
     int(CONFIG["app"]["window_size"])
 )
@@ -154,7 +154,7 @@ APP.layout = html.Div(
                     className="flex bg-white mt-2 rounded-lg shadow-lg",
                     children=[
                         html.Div(
-                            className="p-8",
+                            className="pl-8 pt-8 pr-8",
                             children=[
                                 html.P(
                                     className="text-left text-4xl font-bold pl-2 d-flex justify-center",
@@ -175,7 +175,7 @@ APP.layout = html.Div(
                             ]
                         ),
                         html.Div(
-                            className="p-8 w-full relative",
+                            className="pt-8 pr-8 w-full relative",
                             children=[
                                 html.P(
                                     className="text-left text-4xl font-bold pl-2 d-flex justify-center",
@@ -211,7 +211,7 @@ APP.layout = html.Div(
                     className="flex bg-white mt-2 rounded-lg shadow-lg",
                     children=[
                         html.Div(
-                            className="p-8",
+                            className="pt-8 pr-8",
                             children=[
                                 html.P(
                                     className="text-left text-4xl font-bold pl-2 d-flex justify-center",
@@ -232,7 +232,7 @@ APP.layout = html.Div(
                             ]
                         ),
                         html.Div(
-                            className="p-8 w-full relative",
+                            className="pt-8 pr-8 w-full relative",
                             children=[
                                 html.P(
                                     className="text-left text-4xl font-bold pl-2 d-flex justify-center",
