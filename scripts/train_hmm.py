@@ -56,8 +56,8 @@ def train_hmm(files, test_file):
         train_data = np.concatenate((train_data, data), axis=0)
 
     # add some shift to the first two columns, caused by the bag files not well synchronized with the real data
-    shift = np.array([9.60, 2.46])
-    train_data[:, :2] = train_data[:, :2] + shift
+    # shift = np.array([9.57, 2.42])
+    # train_data[:, :2] = train_data[:, :2] + shift
     # number of states to try
     min_states, max_states = 15, 22
     best_features, best_bic, best_model = 0, None, None

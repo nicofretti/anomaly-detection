@@ -172,18 +172,18 @@ def robot_pose_callback(data):
     X = position.x
     Y = position.y
     # Z_orientation = position.theta
-
     # check_nan = np.sum(row)
     if semaphore:
-        if np.shape(dataHMM)[0] == 0:
-            X_first = X
-            Y_first = Y
-            # real_time_position_plot(X_current = (X - X_first), Y_current = (Y - Y_first), color = 'g+', marker = 13)
-        X = X - X_first
-        Y = Y - Y_first
+        # commented for demo purposes
+        # if np.shape(dataHMM)[0] == 0:
+        #     X_first = X
+        #     Y_first = Y
+        #     # real_time_position_plot(X_current = (X - X_first), Y_current = (Y - Y_first), color = 'g+', marker = 13)
+        # X = X - X_first
+        # Y = Y - Y_first
         row[0:3] = [X, Y, Z_orientation]
         dataHMM = np.append(dataHMM, np.array([row]), axis=0)
-        training_filename = 'nominal_02.csv'
+        training_filename = 'nominal_01.csv'
         with open(training_filename, 'a') as train_csv:
             writer = csv.writer(train_csv, delimiter=',')
             writer.writerow(row)
