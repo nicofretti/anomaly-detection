@@ -31,7 +31,7 @@ CHARTS_CONTROLLER = ChartsController(
 )
 
 CHARTS_CONTROLLER_2 = ChartsController(
-    CONFIG["charts"]["decomposition_vareiables"].split(","),
+    CONFIG["charts"]["decomposition_variables"].split(","),
     list(map(float, CONFIG["charts"]["decomposition_thr"].strip().split(","))),
     int(CONFIG["app"]["window_size"])
 )
