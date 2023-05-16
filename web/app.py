@@ -37,6 +37,7 @@ CHARTS_CONTROLLER_2 = ChartsController(
 )
 
 
+# the variables semaphore shown in the variable decomposition chart
 def semaphore_generator(charts_controller):
     r = []
     if not charts_controller.decomposition or len(charts_controller.decomposition) == 0:
@@ -122,6 +123,7 @@ APP.layout = html.Div(
         html.Div(
             id="banner",
             className="banner text-5xl font-bold flex justify-between items-center",
+            style={"minWidth": "800px"},
             children=[
                 html.Div(
                     className="flex items-center",
@@ -148,6 +150,7 @@ APP.layout = html.Div(
         html.Div(
             id="right-column",
             className="twelve columns shadow-lg",
+            style={"minWidth": "800px"},
             children=[
                 html.Div(
                     id="charts",
@@ -178,11 +181,9 @@ APP.layout = html.Div(
                             className="pt-8 pr-8 w-full relative",
                             children=[
                                 html.P(
-                                    className="text-left text-4xl font-bold pl-2 d-flex justify-center uppercase text-gray-500",
-                                    children=[
-                                        # html.Span(className="fas fas fa-chart-line mr-2 text-orange-500"),
-                                        "Variables view"
-                                    ]
+                                    className="text-left text-4xl font-bold pl-2 d-flex justify-center uppercase " +\
+                                              "text-gray-500",
+                                    children="Variables view"
                                 ),
                                 html.Div(
                                     id="variable_decomposition_semaphore",
@@ -214,11 +215,9 @@ APP.layout = html.Div(
                             className="pl-8 pt-8 pr-8",
                             children=[
                                 html.P(
-                                    className="text-left text-4xl font-bold pl-2 d-flex justify-center uppercase text-gray-500",
-                                    children=[
-                                        # html.Span(className="fas fa-car-side mr-2 text-orange-500"),
-                                        "ICE map \"Robot 2\"",
-                                    ]
+                                    className="text-left text-4xl font-bold pl-2 d-flex justify-center uppercase " +\
+                                              "text-gray-500",
+                                    children="ICE map \"Robot 2\""
                                 ),
                                 dcc.Graph(
                                     id="map_position_chart_2",
@@ -235,11 +234,9 @@ APP.layout = html.Div(
                             className="pt-8 pr-8 w-full relative",
                             children=[
                                 html.P(
-                                    className="text-left text-4xl font-bold pl-2 d-flex justify-center uppercase text-gray-500",
-                                    children=[
-                                        # html.Span(className="fas fas fa-chart-line mr-2 text-orange-500"),
-                                        "Variables view"
-                                    ]
+                                    className="text-left text-4xl font-bold pl-2 d-flex justify-center uppercase " +\
+                                              "text-gray-500",
+                                    children="Variables view"
                                 ),
                                 html.Div(
                                     id="variable_decomposition_semaphore_2",
@@ -505,23 +502,6 @@ def callback_variable_decomposition(update_chart):
     if not update_chart:
         # do not update the chart
         raise PreventUpdate
-    # if len(CHARTS_CONTROLLER.decomposition) == 0:
-    #     # no point, reset the chart
-    #     for i in range(len(CHARTS_CONTROLLER.variables) * 2):
-    #         VARIABLE_DECOMPOSITION_CHART["data"][i]["x"], VARIABLE_DECOMPOSITION_CHART["data"][i]["y"] = [], []
-    #     return VARIABLE_DECOMPOSITION_CHART, semaphore_generator(CHARTS_CONTROLLER)
-    # points_copy = np.array(CHARTS_CONTROLLER.decomposition)
-    # x_axis = CHARTS_CONTROLLER.decomposition_x
-    # count = 0
-    # for i in range(len(CHARTS_CONTROLLER.variables)):
-    #     # calculate the period of anomaly
-    #     anomaly = np.where(points_copy[:, i] > CHARTS_CONTROLLER.decomposition_thr[i], points_copy[:, i], np.nan)
-    #     VARIABLE_DECOMPOSITION_CHART["data"][count]["x"], VARIABLE_DECOMPOSITION_CHART["data"][count]["y"] = \
-    #         x_axis, points_copy[:, i]
-    #     count += 1
-    #     VARIABLE_DECOMPOSITION_CHART["data"][count]["x"], VARIABLE_DECOMPOSITION_CHART["data"][count]["y"] = \
-    #         x_axis, anomaly
-    #     count += 1
     VARIABLE_DECOMPOSITION_CHART, sem = variable_decomposition_update_from_controller(VARIABLE_DECOMPOSITION_CHART,
                                                                                       CHARTS_CONTROLLER)
     return VARIABLE_DECOMPOSITION_CHART, sem
@@ -614,43 +594,6 @@ def callback_reset_button(n_clicks):
     CHARTS_CONTROLLER_2.reset()
     # nothing to update
     raise PreventUpdate
-
-
-# --------
-# Custom apis
-# --------
-
-# @SERVER.route("/map_position_insert", methods=['GET', 'POST'])
-# def api_map_position_insert():
-#     global CHARTS_CONTROLLER
-#     if request.method != 'POST':
-#         return 'Method not allowed', 405
-#     # bytes to dict
-#     CHARTS_CONTROLLER.map_position_insert(json.loads(request.data.decode('utf-8')))
-#     # Return 200 OK
-#     return "OK", 200
-
-
-# @SERVER.route("/variable_decomposition_insert", methods=['GET', 'POST'])
-# def api_variable_decomposition_insert():
-#     global CHARTS_CONTROLLER
-#     if request.method != 'POST':
-#         return 'Method not allowed', 405
-#     CHARTS_CONTROLLER.variable_decomposition_insert(json.loads(request.data.decode('utf-8')))
-#     # Return 200
-#     return "OK", 200
-#
-#
-# @SERVER.route("/commit", methods=['GET', 'POST'])
-# def api_commit():
-#     global CHARTS_CONTROLLER
-#     if request.method == 'GET':
-#         # Here we reset the data
-#         CHARTS_CONTROLLER.reset()
-#         return "OK", 200
-#     # TODO: implement save to database
-#     return "Not implemented", 501
-
 
 # --------
 # mqtt client
