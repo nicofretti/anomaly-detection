@@ -81,7 +81,7 @@ APP = dash.Dash(
             'crossorigin': 'anonymous'
         }
     ],
-    #suppress_callback_exceptions=True,
+    suppress_callback_exceptions=True,
 )
 APP.layout = html.Div(
     id="app",
@@ -157,7 +157,7 @@ APP.layout = html.Div(
                             className="pl-8 pt-8 pr-8",
                             children=[
                                 html.P(
-                                    className="text-left text-4xl font-bold pl-2 d-flex justify-center",
+                                    className="text-left text-4xl font-bold pl-2 d-flex justify-center uppercase text-gray-500",
                                     children=[
                                         # html.Span(className="fas fa-car-side mr-2 text-orange-500"),
                                         "ICE map \"Robot 1\"",
@@ -178,7 +178,7 @@ APP.layout = html.Div(
                             className="pt-8 pr-8 w-full relative",
                             children=[
                                 html.P(
-                                    className="text-left text-4xl font-bold pl-2 d-flex justify-center",
+                                    className="text-left text-4xl font-bold pl-2 d-flex justify-center uppercase text-gray-500",
                                     children=[
                                         # html.Span(className="fas fas fa-chart-line mr-2 text-orange-500"),
                                         "Variables view"
@@ -189,7 +189,7 @@ APP.layout = html.Div(
                                     className="absolute top-36 left-20 text-center z-10 text-black " + \
                                               "pl-2 pr-6",
                                     style={
-                                        "background-color": "rgba(255, 255, 255, 0.9)",
+                                        "backgroundColor": "rgba(255, 255, 255, 0.9)",
                                     },
                                     children=semaphore_generator(CHARTS_CONTROLLER)
                                 ),
@@ -211,10 +211,10 @@ APP.layout = html.Div(
                     className="flex bg-white mt-2 rounded-lg shadow-lg",
                     children=[
                         html.Div(
-                            className="pt-8 pr-8",
+                            className="pl-8 pt-8 pr-8",
                             children=[
                                 html.P(
-                                    className="text-left text-4xl font-bold pl-2 d-flex justify-center",
+                                    className="text-left text-4xl font-bold pl-2 d-flex justify-center uppercase text-gray-500",
                                     children=[
                                         # html.Span(className="fas fa-car-side mr-2 text-orange-500"),
                                         "ICE map \"Robot 2\"",
@@ -235,7 +235,7 @@ APP.layout = html.Div(
                             className="pt-8 pr-8 w-full relative",
                             children=[
                                 html.P(
-                                    className="text-left text-4xl font-bold pl-2 d-flex justify-center",
+                                    className="text-left text-4xl font-bold pl-2 d-flex justify-center uppercase text-gray-500",
                                     children=[
                                         # html.Span(className="fas fas fa-chart-line mr-2 text-orange-500"),
                                         "Variables view"
@@ -246,7 +246,7 @@ APP.layout = html.Div(
                                     className="absolute top-36 left-20 text-center z-10 text-black " + \
                                               "pl-2 pr-6",
                                     style={
-                                        "background-color": "rgba(255, 255, 255, 0.9)",
+                                        "backgroundColor": "rgba(255, 255, 255, 0.9)",
                                     },
                                     children=semaphore_generator(CHARTS_CONTROLLER_2)
                                 ),

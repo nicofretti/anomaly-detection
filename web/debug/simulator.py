@@ -26,6 +26,9 @@ def mqtt_sender(map_data, decomposition_data, timeout):
     client.connect(host=host, port=port)
     m_lines = max(map_data.shape[0], decomposition_data.shape[0])
     for index in range(m_lines):
+        # add a shift to the first two columns of the map data
+        map_data.iloc[index, 0] += 9.6
+        map_data.iloc[index, 1] += 2.4
         if index < map_data.shape[0]:
             client.publish(topic_map+"/robot_1", json.dumps(map_data.iloc[index].to_dict()))
             client.publish(topic_map+"/robot_2", json.dumps(map_data.iloc[index].to_dict()))

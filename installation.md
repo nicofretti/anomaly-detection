@@ -5,14 +5,14 @@ There are two configuration files, one located in `scripts/config.ini` for the r
 The `scripts` and `web` are two different projects, so they must be installed separately.
 
 ### Robot installation
-For the robot is needed only the folder `scripts` (the trained model is located in the same folder as `hmm_best.pkl`). In the `config.ini` edit:
+For the robot is needed the folder `scripts` (the trained model is located in the same folder as `hmm_best.pkl`) and the other files located in the root directory excepted for the folder `web`. Extract them in a directory `anomalydetection` to create a ROS node. Then in the `config.ini` edit:
 - `kairos - robot_name`: the robot name (one must be 'robot_1' and the other 'robot_2')
 - `mqtt - map_topic`: is the topic for the map update (attention: the topic will be `${map_topic}/${robot_name}`, where `${robot_name}` is the robot name as specified in the previous point)
 - `mqtt - decomposition_topic`: is the topic for the decomposition update (attention: the topic will be `${decomposition_topic}/${robot_name}`)
 - `mqtt - host`: is the mqtt broker host
 - `mqtt - port`: is the mqtt broker port
 
-To run the anomaly detection script:
+To run the anomaly detection script after creating the ROS node, type:
 ```bash
 rosrun anomalydetection listener.py
 ```
