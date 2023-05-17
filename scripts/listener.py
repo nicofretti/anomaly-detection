@@ -236,11 +236,7 @@ def listener():
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
 
-conn = 0
 def map_update_callback(X, Y, anomaly):
-    global conn
-    conn +=1
-    print(CONFIG["kairos"]["robot_name"]+" "+str(conn))
     global DEBUG
     if DEBUG:
         print("Map update: {}, {}, {}".format(X, Y, anomaly))
