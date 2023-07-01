@@ -22,6 +22,7 @@ import csv
 CONFIG = configparser.ConfigParser()
 CONFIG.read('src/anomalydetectionkairos/scripts/config.ini')
 NEW_VERSION = bool(CONFIG["kairos"]["new_version"])
+print(NEW_VERSION)
 DEBUG = CONFIG["global"]["debug"] == "1"
 MQTT_CLIENT = False
 #HELLINGER_THR = float(CONFIG["kairos"]["hellinger_thr"])
@@ -105,12 +106,19 @@ def window_processing(dataHMM, hmm_model):
     prediction = hmm_model.predict(dataHMM)  # predict a state for each read row in dataHMM
     most_frequent_state = np.argmax(np.bincount(prediction))  # check which is the most frequent state
     data_frequent = dataHMM[prediction == most_frequent_state]  # returns the rows with the most frequent state
+    # print("Most frequent state: ", most_frequent_state)
+    # print("Window", dataHMM)
+    # print("predition", prediction)
+    # print("data frequent", data_frequent)
     # mean and variance
     mean = np.array(np.mean(data_frequent, axis=0))  # mean of all the rows in data_frequent
     variance = np.var(data_frequent, axis=0)
     # Hellinger base score
     model_m = hmm_model.means_[most_frequent_state]
     model_v = hmm_model.covars_[most_frequent_state]
+
+    # print("mean_m", model_m)
+    # print("mean", mean)
     n = len(data_frequent)
     if n == 1:
         print("ERROR: can't calculate the confidence interval because of n = 1 --> df = 0\n")
@@ -142,6 +150,7 @@ def front_laser_callback(data):
     global row
     global semaphore
     laser_range = np.nan_to_num(data.ranges)
+    # print(laser_range.shape)
     left_lasers = np.mean(laser_range[0:180])
     front_lasers = np.mean(laser_range[180:360])
     right_lasers = np.mean(laser_range[360:541])

@@ -283,7 +283,7 @@ def map_chart_init():
     MAP_CHART = go.Figure()
     MAP_CHART.add_layout_image(
         source="assets/ICE_lab.png",
-        y=2.35 + 2.6,
+        y=2.35 + 2.5,
         x=-5.70 + 9.6,
         sizex=21,
         sizey=5.5,
@@ -636,6 +636,5 @@ if __name__ == "__main__":
     mqtt_init(CONFIG["mqtt"]["host"], int(CONFIG["mqtt"]["port"]))
     # initialize the app variables
     app_init()
-    # initialize the mqtt client
-    # Start the app
+    # start the app
     APP.run(debug=False, host=CONFIG["app"]["host"], port=int(CONFIG["app"]["port"]))
